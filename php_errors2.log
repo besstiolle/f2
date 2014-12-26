@@ -1,0 +1,23 @@
+[26-Dec-2014 13:14:54 Europe/Paris] PHP Fatal error:  Attempt to connect to database beta on beta@localhost failed in D:\www\forge2\lib\adodb.functions.php on line 57
+[26-Dec-2014 13:14:54 Europe/Paris] PHP Stack trace:
+[26-Dec-2014 13:14:54 Europe/Paris] PHP   1. {main}() D:\www\forge2\index.php:0
+[26-Dec-2014 13:14:54 Europe/Paris] PHP   2. require_once() D:\www\forge2\index.php:43
+[26-Dec-2014 13:14:54 Europe/Paris] PHP   3. CmsApp->GetDb() D:\www\forge2\include.php:164
+[26-Dec-2014 13:14:54 Europe/Paris] PHP   4. adodb_connect() D:\www\forge2\lib\classes\class.CmsApp.php:326
+[26-Dec-2014 13:14:54 Europe/Paris] PHP   5. trigger_error() D:\www\forge2\lib\adodb.functions.php:57
+[26-Dec-2014 13:15:25 Europe/Paris] PHP Fatal error:  Call to undefined method Project::addUniqueIndexes() in D:\www\forge2\modules\Forge2\lib\class.Project.php on line 173
+[26-Dec-2014 13:15:25 Europe/Paris] PHP Stack trace:
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   1. {main}() D:\www\forge2\index.php:0
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   2. Smarty_CMS->fetch() D:\www\forge2\index.php:172
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   3. Smarty_Internal_TemplateBase->fetch() D:\www\forge2\lib\classes\internal\class.Smarty_CMS.php:306
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   4. content_549d515cd2c417_85968586() D:\www\forge2\lib\smarty\sysplugins\smarty_internal_templatebase.php:182
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   5. CMS_Content_Block::smarty_internal_fetch_contentblock() D:\www\forge2\lib\smarty\sysplugins\smarty_internal_templatebase.php(151) : eval()'d code:143
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   6. Smarty_CMS->fetch() D:\www\forge2\lib\classes\internal\class.CMS_Content_Block.php:281
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   7. Smarty_Internal_TemplateBase->fetch() D:\www\forge2\lib\classes\internal\class.Smarty_CMS.php:306
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   8. content_549d515d2c41a3_54135295() D:\www\forge2\lib\smarty\sysplugins\smarty_internal_templatebase.php:182
+[26-Dec-2014 13:15:25 Europe/Paris] PHP   9. CMSModule::function_plugin() D:\www\forge2\lib\smarty\sysplugins\smarty_internal_templatebase.php(151) : eval()'d code:23
+[26-Dec-2014 13:15:25 Europe/Paris] PHP  10. cms_module_plugin() D:\www\forge2\lib\classes\class.CMSModule.php:260
+[26-Dec-2014 13:15:25 Europe/Paris] PHP  11. CMSModule->DoActionBase() D:\www\forge2\lib\module.functions.php:106
+[26-Dec-2014 13:15:25 Europe/Paris] PHP  12. CMSModule->DoAction() D:\www\forge2\lib\classes\class.CMSModule.php:1441
+[26-Dec-2014 13:15:25 Europe/Paris] PHP  13. include() D:\www\forge2\lib\classes\class.CMSModule.php:1377
+[26-Dec-2014 13:15:25 Europe/Paris] PHP  14. Project->__construct() D:\www\forge2\modules\Forge2\action.default.php:10
