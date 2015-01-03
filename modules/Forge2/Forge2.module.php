@@ -103,7 +103,7 @@ class Forge2 extends Orm
 		$prefix = 'rest';
 		$version = 'v1';
 		$prefixProject = 'projects';
-		$projectId = '(?P<projectId>[0-9]+)';
+		$projectId = '(?P<projectId>[a-z0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
 
@@ -116,8 +116,15 @@ class Forge2 extends Orm
 		$this->_add_static($route, array('action'=>'projects'));
 
 		//Page of project
-		$route = $this->_generateRoute($prefixProject, $projectName, $projectId);
-		$this->_add_static($route, array('action'=>'projectById'));
+		/*$route = $this->_generateRoute($prefix, $version, 'projects',$projectId, $projectName);
+		$this->_add_static($route, array('action'=>'projects'));*/
+		
+		//Page of project
+		$route = $this->_generateRoute($prefix, $version, 'projects',$projectId, 'a');
+		$this->_add_static($route, array('action'=>'projects'));
+
+		/*$route = new CmsRoute('/rest\/v1\/projects\/(?P<projectId>[0][0][a]+)$/',$this->GetName(),array('action'=>'projects', 'showtemplate' => 'false'));
+		cms_route_manager::add_static($route);*/
 	}
 
 	private function _generateRoute(){

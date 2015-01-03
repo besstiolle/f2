@@ -2,8 +2,10 @@
 
 if (!function_exists("cmsms")) exit;
 
-//Ask the last 10 modules
-$json = RestAPI::GET('rest/v1/projects');
+$projectId = $params['projectId'];
+
+//Ask the module/tag/...
+$json = RestAPI::GET('rest/v1/projects/'.$projectId.'/a');
 $response = json_decode($json);
 
 //Get the response data
@@ -17,7 +19,7 @@ $projects = $data->projects;
 echo "<table><thead><tr><th>Id</th><th>Name</th></tr></thead>";
 $config = cmsms()->GetConfig();
 foreach ($projects as $project) {
-	$link = $config['root_url'].'/project/'.$project->id.'/'.$project->unix_name;
+	$link = $config['root_url'].'/project/'.$project->unix_name.'/'.$project->id;
 	echo "<tr><td><a href='".$link."'>".$project->id."</a></td><td>".$project->name."</td></tr>";
 }
 echo "</table><br/><br/>";

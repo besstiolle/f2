@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+if(array_key_exists('projectId', $params)) {
+	$_GET['projectId'] = $params['projectId'];
+}
+
+
 $response = new ApiResponse($_GET);
 
 //Check the token
@@ -13,16 +18,29 @@ if($code != 200){
 	exit;
 }
 
-//Select last 10 module modules updated
+$params = $response->getParams();
+
+//Select by example
 $example = new OrmExample();
 $example->addCriteria('state', OrmTypeCriteria::$EQ, array(EnumProjectState::accepted));
 $example->addCriteria('project_type', OrmTypeCriteria::$EQ, array(EnumProjectType::module));
-$projects = OrmCore::findByExample(new Project, $example, new OrmOrderBy(array('last_file_date' => OrmOrderBy::$DESC)), new OrmLimit(0, 10));
+
+if(array_key_exists('projectId', $params)){
+	$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['projectId']));
+} else {
+
+}
+
+$projects = OrmCore::findByExample(new Project, 
+									$example, 
+									new OrmOrderBy(array('last_file_date' => OrmOrderBy::$DESC)), 
+									new OrmLimit(0, 10));
 
 $projectsList = array();
 foreach ($projects as $project) {
 	$projectsList[] = $project->getValues();
 }
+
 
 $response->setContent(array('projects' => $projectsList));
 

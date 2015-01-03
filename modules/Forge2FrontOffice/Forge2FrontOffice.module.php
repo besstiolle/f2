@@ -88,8 +88,9 @@ class Forge2FrontOffice extends Orm
 	{
 		$this->RegisterModulePlugin(true, false);
 		$this->RestrictUnknownParams();
-	/*	$this->SetParameterType('accept_file_types',CLEAN_STRING);
-		$this->SetParameterType('number',CLEAN_INT);
+		$this->SetParameterType('projectId',CLEAN_INT);
+		$this->SetParameterType('projectName',CLEAN_STRING);
+	/*	$this->SetParameterType('number',CLEAN_INT);
 		$this->SetParameterType('max_width',CLEAN_INT);
 		$this->SetParameterType('max_height',CLEAN_INT);
 		$this->SetParameterType('min_width',CLEAN_INT);
@@ -112,7 +113,7 @@ class Forge2FrontOffice extends Orm
 		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
 
 		//Page of project
-		$route = $this->_generateRoute($prefixProject, $projectName, $projectId);
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName);
 		$this->_add_static($route, array('action'=>'projectById', 'returnid'=>$returnid));
 	}
 
