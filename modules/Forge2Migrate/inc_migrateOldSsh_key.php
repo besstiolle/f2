@@ -27,7 +27,7 @@ for ($j = 0; $j < $nbIteration; $j++) {
 		$arr[] = $e->get('id');
 		$arr[] = $e->get('user_id');
 		$arr[] = $e->get('name');
-		$arr[] = $e->get('key');
+		$arr[] = $e->get('sshkey');
 		$arr[] = date("y-m-d H:i:s",$e->get('created_at'));
 		$arr[] = date("y-m-d H:i:s",$e->get('updated_at'));
 

@@ -25,7 +25,7 @@
 				, TRUE 
 				, NULL 
 			));
-			$this->add(new OrmField('key'	
+			$this->add(new OrmField('sshkey'	
 				, OrmCAST::$BUFFER
 				, NULL	
 				, TRUE 
