@@ -113,7 +113,7 @@ class Forge2 extends Orm
 
 		//List of Projects
 		$route = $this->_generateRoute($prefix, $version, 'projects');
-		$this->_add_static($route, array('action'=>'projectList'));
+		$this->_add_static($route, array('action'=>'projects'));
 
 		//Page of project
 		$route = $this->_generateRoute($prefixProject, $projectName, $projectId);
