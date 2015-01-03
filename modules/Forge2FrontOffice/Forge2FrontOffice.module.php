@@ -9,17 +9,11 @@ if( !is_readable( $Orm ) ) {
 }
 require_once($Orm);
 
-//$config = cmsms()->GetConfig();
-require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.Enum.php');
-require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectState.php');
-require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectRepository.php');
-require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectJoinRequestState.php');
-require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectType.php');
 
-class Forge2 extends Orm
+class Forge2FrontOffice extends Orm
 {   
 	function GetName() {
-		return 'Forge2';
+		return 'Forge2FrontOffice';
 	}
 
 	function GetFriendlyName() {
@@ -77,11 +71,11 @@ class Forge2 extends Orm
 	function InitializeFrontend()
 	{
 		$this->RegisterModulePlugin(true, false);
-	/*	$this->RestrictUnknownParams();
-		$this->SetParameterType('projectId',CLEAN_INT);
-		$this->SetParameterType('projectName',CLEAN_STRING);
-		$this->SetParameterType('packageId',CLEAN_INT);*/
-	/*	$this->SetParameterType('max_height',CLEAN_INT);
+		$this->RestrictUnknownParams();
+	/*	$this->SetParameterType('accept_file_types',CLEAN_STRING);
+		$this->SetParameterType('number',CLEAN_INT);
+		$this->SetParameterType('max_width',CLEAN_INT);
+		$this->SetParameterType('max_height',CLEAN_INT);
 		$this->SetParameterType('min_width',CLEAN_INT);
 		$this->SetParameterType('min_height',CLEAN_INT);
 		$this->SetParameterType('clean_name',CLEAN_STRING);
@@ -91,25 +85,19 @@ class Forge2 extends Orm
 	}
 
 	function CreateStaticRoutes() {
-
-		$prefix = 'rest';
-		$version = 'v1';
-		$prefixProject = 'projects';
+		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
+		$prefixProject = 'project';
 		$projectId = '(?P<projectId>[0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
 
-		//Get Token
-		$route = $this->_generateRoute($prefix, $version, 'token');
-		$this->_add_static($route, array('action'=>'token'));
-
 		//List of Projects
-		$route = $this->_generateRoute($prefix, $version, 'projects');
-		$this->_add_static($route, array('action'=>'projectList'));
+		$route = $this->_generateRoute($prefixProject, 'list');
+		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
 
 		//Page of project
 		$route = $this->_generateRoute($prefixProject, $projectName, $projectId);
-		$this->_add_static($route, array('action'=>'projectById'));
+		$this->_add_static($route, array('action'=>'projectById', 'returnid'=>$returnid));
 	}
 
 	private function _generateRoute(){
@@ -117,7 +105,7 @@ class Forge2 extends Orm
     }
 
     private function _add_static($route, $params){
-		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), array_merge($params, array( 'showtemplate' => 'false' ))));
+		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), $params));
     }
 
 	function InitializeAdmin() {

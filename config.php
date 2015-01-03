@@ -9,4 +9,9 @@ $config['db_password'] = 'forge2';
 $config['db_name'] = 'forge2';
 $config['db_prefix'] = 'cms_';
 $config['timezone'] = 'Europe/Paris';
+
+
+
+$config['url_rewriting'] = 'mod_rewrite';
+$config['page_extension'] = '';
 ?>

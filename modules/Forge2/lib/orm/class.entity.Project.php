@@ -1,6 +1,5 @@
 <?php
 
-	
 	/**
 	 * Here you will provide some informations about this new Entity Project
 	 *  

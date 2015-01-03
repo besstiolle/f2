@@ -1,5 +1,5 @@
 <?php
-$lang['friendlyname'] = 'Forge Back Office';
+$lang['friendlyname'] = 'Forge Front Office';
 $lang['postinstall'] = '';
 $lang['postuninstall'] = 'Module uninstalled, bye !"';
 $lang['really_uninstall'] = 'Really? Are you sure you want to uninstall this fine module?';
