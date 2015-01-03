@@ -9,6 +9,22 @@ if( !is_readable( $Orm ) ) {
 }
 require_once($Orm);
 
+//$config = cmsms()->GetConfig();
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.Enum.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectState.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectRepository.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectJoinRequestState.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumProjectType.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumAssignmentRole.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumTaggingType.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumHistoryType.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumCommentType.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumTrackerItemResolution.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumTrackerItemSeverity.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumTrackerItemState.php');
+require_once($config['root_path'].'/modules/Forge2/lib/Enum/class.EnumTrackerItemType.php');
+
+
 
 class Forge2FrontOffice extends Orm
 {   
