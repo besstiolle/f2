@@ -17,6 +17,7 @@ $lang['article'] = 'Article&nbsp;';
 $lang['articleadded'] = 'L\'article a été ajouté avec succès.';
 $lang['articledeleted'] = 'L\'article a été supprimé avec succès.';
 $lang['articles'] = 'Articles&nbsp;';
+$lang['articlesubmitted'] = 'L\'article a été soumis avec succès.';
 $lang['articleupdated'] = 'L\'article a été mis à jour avec succès.';
 $lang['author'] = 'Auteur&nbsp;';
 $lang['author_label'] = 'Posté par&nbsp;:';
@@ -153,9 +154,9 @@ $lang['formtemplate'] = 'Gabarit soumission article';
 $lang['help'] = '<h3>Notes Importantes</h3>
 <p>la Version 2.9 a supprimé le format "formatpostdate" des gabarits, et a également supprimé le paramètre "dateformat". Vous devez utiliser le paramètre "cms_date_format" (comme indiqué dans les gabarits par défaut) pour les format des dates, et devrait utiliser entry->postdate au lieu de entry->formatpostdate dans vos gabarits.</p>
 <h3>Que fait ce module ?</h3>
-	<p>Articles (News en anglais) est un module qui sert à afficher des articles sur vos pages, de façon similaire à un blog, mais avec plus de fonctions ! Dès que le module est installé, une page de gestion des articles est ajoutée au menu d\'administration qui vous permettra de sélectionner ou ajouter des catégories d\'articles. Dès qu\'une catégorie d\'article est sélectionnée ou créée, une liste des articles pour cette catégorie est affichée. Depuis là, vous pouvez ajouter, éditer ou supprimer les articles dans cette catégorie.</p>
+	<p>Le module News (menu Contenu/Articles), est un module qui sert à afficher des articles dans vos pages, de façon similaire à un blog, mais avec plus de fonctions ! Dès que le module est installé, une page de gestion des articles est ajoutée au menu d\'administration qui vous permettra de sélectionner ou ajouter des catégories d\'articles. Dès qu\'une catégorie d\'article est sélectionnée ou créée, une liste des articles associés à cette catégorie est affichée. A partir de là , vous pouvez ajouter, éditer ou supprimer des articles dans cette catégorie.</p>
 <h4>Champs personnalisés</h4>
-<p>Le module permet de définir de nombreux champs personnalisés (y compris les fichiers et images) qui vous permettront de joindre des fichiers PDF ou de nombreuses images à vos articles.</p>
+<p>Le module permet de définir de nombreux champs personnalisés (y compris des fichiers et des images) qui vous permettront de joindre des fichiers PDF ou de nombreuses images à vos articles.</p>
             <h4>Catégories</h4>
 	<p>Le module News (Articles) fournit un mécanisme de catégories hiérarchiques pour l\'organisation de vos articles. Un article ne peut être qu\'en un seul endroit dans la hiérarchie</p>
 	<h4>Date d\'expiration et statut</h4>
@@ -169,10 +170,10 @@ $lang['help'] = '<h3>Notes Importantes</h3>
 	<h3>Comment l\'utiliser&nbsp;?</h3>
 	<p>La façon la plus facile de l\'utiliser est avec la balise wrapper {news} (englobe le module dans une simple balise pour simplifier la syntaxe).  Cela insérera votre module dans votre gabarit ou votre page à l\'endroit désiré, et y affichera les articles.  Exemple de syntaxe : <code>{news number=\'5\'}</code></p>
 <h3>Gabarits</h3>
-	<p>Depuis la version 2.3 le module News peut utiliser différents gabarits en base de données, et donc n\'utilise plus les fichiers de "templates". Les utilisateurs qui avaient des anciens fichiers gabarits doivent faire les modifications suivantes (pour chaque fichier gabarits) :</p>
+	<p>Depuis la version 2.3 le module News utilise différents gabarits en base de données, et donc n\'utilise plus les fichiers de "templates". Les utilisateurs qui avaient d\'anciens fichiers gabarits doivent faire les modifications suivantes (pour chaque fichier gabarit) :</p>
 <ul>
 <li>Copier le fichier dans le presse papier</li>
-<li>Créer un nouveau gabarit <em>(sommaire ou détail suivant le besoin)</em>. Donner le même nom au gabarit que l\'ancien nom du gabarits (y compris l\'extension .tpl), et coller le contenu depuis le presse papier.</li>
+<li>Créer un nouveau gabarit <em>(sommaire ou détail suivant le besoin)</em>. Donner le même nom au gabarit que l\'ancien nom du gabarits (<strong>sans</strong> l\'extension .tpl), et coller le contenu depuis le presse papier.</li>
 <li>Cliquer sur le bouton Envoyer</li>
 </ul>
 <p>Ces différentes étapes résolvent le problème de ces nouveaux gabarits afin d\'éviter les différentes erreurs de Smarty quand vous mettez à jour vers une version de CMS avec un module de News version 2.3 ou supérieure.</p>';
@@ -184,11 +185,11 @@ $lang['helpaction'] = 'Outrepasse l\'action par défaut. Les valeurs possibles s
 <li>"browsecat" - pour afficher une liste de catégories.</li>
 </ul>';
 $lang['helpbrowsecat'] = 'Afficher une liste navigable de catégories';
-$lang['helpbrowsecattemplate'] = 'Utilise la base de données pour afficher les gabarits de catégories. Ce gabarit doit exister et, est visible dans l\'onglet \'Gabarit de catégories\' de Contenu/Articles, et n\'est pas nécessaire par défaut. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
+$lang['helpbrowsecattemplate'] = 'Utilise la base de données pour afficher les gabarits de catégories. Ce gabarit doit exister dans la Gestion du design avec le type Article::Parcourir la catégorie. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
 $lang['helpcategory'] = 'Affiche les articles de cette catégorie seulement. Utiliser * pour afficher les sous-catégories. Des catégories multiples peuvent être affichées en les séparant par une virgule. Laisser ce paramètre vide affichera tous les articles.';
 $lang['helpdetailpage'] = 'Page dans laquelle afficher le détail des articles. Vous pouvez entrer soit un alias, soit un ID de page. Utile pour permettre d\'afficher le détail de l\'article dans un gabarit de page différent de celui du sommaire. Ce paramètre n\'a aucun effet pour les articles qui ont des URLs personnalisées.';
-$lang['helpdetailtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission du détail des articles.  Ce gabarit doit exister et, est visible dans l\'onglet \'Gabarit du détail article\' de Contenu/Articles, et n\'est pas nécessaire par défaut. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé. Ce paramètre n\'est pas utilisé lors de la génération des URLs si vous avez défini une URL personnalisée.';
-$lang['helpformtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission de l\'article. Ce gabarit doit exister et, est visible dans l\'onglet \'Gabarit soumission article\' de Contenu/Articles, et n\'est pas nécessaire par défaut. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
+$lang['helpdetailtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission du détail des articles.  Ce gabarit doit exister dans la Gestion du design avec le type Article::Détail. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé. Ce paramètre n\'est pas utilisé lors de la génération des URLs si vous avez défini une URL personnalisée.';
+$lang['helpformtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission de l\'article. Ce gabarit doit exister dans la Gestion du design avec le type Article::Formulaire du site (Frontend). Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
 $lang['helpmoretext'] = 'Texte à afficher à la fin d\'un article qui dépasse la longueur définie du sommaire. Par défaut = "Plus"';
 $lang['helpnumber'] = 'Le nombre maximal d\'articles à afficher -- laisser ce paramètre vide affichera tous les articles. C\'est identique au paramètre "pagelimit".';
 $lang['helpshowall'] = 'Si positionné à 1 : affiche tous les articles, quelle que soit la date de fin';
@@ -196,7 +197,7 @@ $lang['helpshowarchive'] = 'Afficher seulement les articles expirés.';
 $lang['helpsortasc'] = 'Trie les articles dans un ordre de date ascendant plutôt que descendant. Par défaut: descendant.';
 $lang['helpsortby'] = 'Champ sur lequel trier les articles.  Les options sont : "news_date", "summary", "news_data", "news_category", "news_title", "news_extra",  "end_time", "start_time",  "random".  Par défaut: "news_date".  Si "random" est spécifié, le critère de tri est ignoré.';
 $lang['helpstart'] = 'Commence au énième article -- laisser ce paramètre vide commencera l\'affichage au premier article';
-$lang['helpsummarytemplate'] = 'Utilise la base de donnée pour afficher le formulaire de soumission du sommaire des articles. Ce gabarit doit exister et, est visible dans l\'onglet \'Gabarit du sommaire article\' de Contenu/Articles, et n\'est pas nécessaire par défaut. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
+$lang['helpsummarytemplate'] = 'Utilise la base de donnée pour afficher le formulaire de soumission du sommaire des articles. Ce gabarit doit exister dans la Gestion du design avec le type Article::Sommaire. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
 $lang['help_articleid'] = 'Ce paramètre est applicable uniquement à la vue de détail. Il permet de spécifier que l\'article sera afficher en mode détail. Si la valeur utilisée est -1, le système affichera l\'article le plus récemment, publié, mais non expiré.';
 $lang['help_article_title'] = 'Entrez le titre de l\'article. Il devrait être court et ne doit pas inclure des balises HTML.';
 $lang['help_article_category'] = 'Aux fins de l\'organisation, vous pouvez sélectionner une catégorie.';
@@ -222,7 +223,7 @@ $lang['help_fielddef_name'] = 'Chaque définition de champ doit avoir un nom. Bi
 $lang['help_fielddef_options'] = 'Ici vous pouvez spécifier les options valides pour les champs de la liste déroulante.';
 $lang['help_fielddef_public'] = 'Spécifiez si la définition du champ est publique ou non. Les définitions de champ public sont visualisables dans le site Web et peuvent être saisies par l\'action fesubmit. Les Champs personnalisés qui ne sont pas publiques, ne sont modifiables uniquement que dans l\'interface d\'administration par les utilisateurs autorisés.';
 $lang['help_fielddef_type'] = 'Chaque champ personnalisé peut être d\'un type différent pour différentes utilisations. Sélectionnez le type de champ qui correspond le mieux à la demande.';
-$lang['help_idlist'] = 'Applicable uniquement à l\'action par défaut (Affiche le sommaire). Ce paramètre accepte une liste séparée par des virgules des ID numériques des articles et permet de filtrer davantage d\'articles que "articleid". La sortie de la liste actuelle des articles est toujours soumise à l\'état de l\'article, à date d\'expiration, et à d\'autres paramètres.';
+$lang['help_idlist'] = 'Applicable uniquement à l\'action par défaut (Affiche le sommaire). Ce paramètre accepte une liste séparée par des virgules des ID numériques des articles et permet de filtrer davantage d\'articles que "articleid". La sortie de la liste actuelle des articles est toujours soumise à l\'état de l\'article, à sa date d\'expiration et à d\'autres paramètres.';
 $lang['help_opt_allowed_upload_types'] = 'Pour les champs personnalisés de type "file", ce paramètre indique une liste, séparée par des virgules, des extensions de fichier valides pour l\'upload';
 $lang['help_opt_dflt_category'] = 'Cette option permet de spécifier la catégorie par défaut pour les nouveaux articles.';
 $lang['help_opt_hide_summary'] = 'Cette option permet de désactiver le champ sommaire lors de l\'ajout et/ou édition d\'un article <em>(y compris avec l\'action fesubmit)</em>';
@@ -242,7 +243,7 @@ $lang['info_searchable'] = 'Ce champ indique que cet article doit être indexé 
 $lang['info_sysdefault'] = '(le gabarit utilisé par défaut quand un nouveau gabarit est sélectionné)';
 $lang['info_sysdefault2'] = '<strong>Note :</strong> cette page contient des zones d\'édition des gabarits qui sont disponibles quand vous créez un \'Nouveau\' gabarit Sommaire, Détail ou Soumission d\'article. Le fait de cliquer sur \'Envoyer\' les données de cette page <strong>n\'aura aucun effet immédiat sur l\'affichage déjà existant</strong>.';
 $lang['lastpage'] = '>>';
-$lang['lbl_adminsearch'] = 'Recherche les articles (News)';
+$lang['lbl_adminsearch'] = 'Recherche les articles';
 $lang['maxlength'] = 'Longueur maximale&nbsp;';
 $lang['msg_cancelled'] = 'Opération annulée';
 $lang['msg_categoriesreordered'] = 'Ordre des catégories mise à jour';
@@ -254,7 +255,7 @@ $lang['name'] = 'Nom&nbsp;';
 $lang['nameexists'] = 'Un champ de ce nom existe déjà';
 $lang['needpermission'] = 'Vous devez avoir la permission \'%s\' pour exécuter cette action.';
 $lang['newcategory'] = 'Nouvelle catégorie';
-$lang['news'] = 'Articles (News)';
+$lang['news'] = 'Articles';
 $lang['news_return'] = 'Retour';
 $lang['nextpage'] = '>';
 $lang['noarticles'] = 'Il n\'y a actuellement aucun article créé';
@@ -340,9 +341,9 @@ $lang['title_fesubmit_settings'] = 'Paramètres de soumission via le Frontend';
 $lang['title_filter'] = 'Filtres';
 $lang['title_form_sysdefault'] = 'Gabarit de soumission article par défaut (frontend)';
 $lang['title_form_template'] = 'Éditeur du gabarit soumission d\'article via les pages du site (frontend)';
-$lang['title_news_settings'] = 'Paramètres des articles (News)';
+$lang['title_news_settings'] = 'Paramètres des articles';
 $lang['title_notification_settings'] = 'Paramètres des notifications';
-$lang['title_submission_settings'] = 'Paramètres de soumission des articles (News)';
+$lang['title_submission_settings'] = 'Paramètres de soumission des articles';
 $lang['title_summary_sysdefault'] = 'Gabarit du sommaire par défaut';
 $lang['title_summary_template'] = 'Éditeur du gabarit du sommaire';
 $lang['toggle_bulk'] = 'Selectionner cet article pour une opération en série';

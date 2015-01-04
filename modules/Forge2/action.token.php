@@ -1,5 +1,4 @@
 <?php
-
 if (!function_exists("cmsms")) exit;
 
 $response = new ApiResponse($_GET);

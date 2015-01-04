@@ -20,12 +20,6 @@ $(document).ready(function(){
     </p>
   </div>
 
-   <div class="pageoverflow">
-    <p class="pagetext"><label for="allowuninstall">{$ModuleManager->Lang('allowuninstall')}:</label>&nbsp;{cms_help key2='help_allowuninstall' title=$ModuleManager->Lang('allowuninstall')}</p>
-    <p class="pageinput">
-      <select id="allowuninstall" name="{$actionid}allowuninstall">{cms_yesno selected=$allowuninstall}</select>
-    </p>
-  </div>
 {/if}
 
   <div class="pageoverflow">
@@ -53,7 +47,7 @@ $(document).ready(function(){
 
 {if isset($disable_caching)}
   <div class="pageoverflow">
-    <p class="pagetext"><label for="disable_caching">{$ModuleManager->Lang('prompt_disable_caching')}:</label></p>
+    <p class="pagetext"><label for="disable_caching">{$ModuleManager->Lang('prompt_disable_caching')}:</label>&nbsp;{cms_help key2='help_disable_caching' title=$ModuleManager->Lang('prompt_disable_caching')}</p>
     <p class="pageinput">
       <select id="disable_caching" name="{$actionid}disable_caching">{cms_yesno selected=$disable_caching}</select>
     </p>

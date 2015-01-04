@@ -246,7 +246,7 @@ $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3>
 </li>
 </ul>
 <h3>Support</h3>
-<p>Ce module ne contient aucun support commercial. Cependant, ces ressources sont disponibles pour vous aider&nbsp;:</p>
+<p>Ce module ne contient aucun support commercial. Cependant, ses ressources sont disponibles pour vous aider&nbsp;:</p>
 <ul>
 <li>Pour la dernière version de ce module, les FAQs, ou pour annoncer un bug, veuillez visiter la <a href="http://dev.cmsmadesimple.org/" target="_blank">forge de CMS Made Simple</a>.</li>
 <li>Des discussions complémentaires relatives à ce module peuvent aussi être trouvées sur les <a href="http://forum.cmsmadesimple.org" target="_blank">Forums CMS Made Simple</a>.</li>

@@ -59,7 +59,7 @@ class RestAPI{
 		$request->send();
 		$status = $request->getStatus();
 		if($status !== 200){
-			throw new Exception("Error Processing Request on $restUrl\ncode returned = ".$status, 1);
+			throw new Exception("Error Processing Request on $restUrl\ncode returned = ".$status." \n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
 		return $request->getResponse();

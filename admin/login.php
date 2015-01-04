@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: login.php 9537 2014-05-17 23:42:22Z calguy1000 $
+#$Id: login.php 9708 2014-09-02 14:47:11Z calguy1000 $
 
 $CMS_ADMIN_PAGE=1;
 $CMS_LOGIN_PAGE=1;
@@ -45,9 +45,7 @@ function send_recovery_email($username)
   $userops = $gCms->GetUserOperations();
   $user = $userops->LoadUserByUsername($username);
 
-  $obj = cms_utils::get_module('CMSMailer');
-  if ($obj == null) return false;
-
+  $obj = new cms_mailer;
   $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
   $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(get_site_preference('sitename','CMSMS Site'))));
 

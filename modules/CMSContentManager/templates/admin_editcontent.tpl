@@ -128,11 +128,20 @@ $(document).ready(function(){
       $.get('{$designchanged_ajax_url}',data,function(data,text) {
         if( typeof data == 'object' ) {
 	  var sel = $('#template_id').val();
+	  var fnd = false;
+	  var first = null;
           $('#template_id').empty();
           for( key in data ) {
+	    if( key == sel ) fnd = true;
+	    if( first == null ) first = key;
 	    $('#template_id').append('<option value="'+key+'">'+data[key]+'</option>');
 	  }
-	  $('#template_id').val(sel);
+	  if( fnd ) {
+  	    $('#template_id').val(sel);
+	  }
+	  else {
+  	    $('#template_id').val(first);
+	  }
         }
       }, 'json' );
     });
@@ -160,7 +169,7 @@ $(document).ready(function(){
   {if $content_id != ''}
     <input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" class="pagebutton" title="{$mod->Lang('title_editpage_apply')}"/>
   {/if}
-  {if $content_obj->IsViewable() && $content_obj->Active()}
+  {if ($content_id != '') && $content_obj->IsViewable() && $content_obj->Active()}
     <a id="viewpage" rel="external" href="{$content_obj->GetURL()}" title="{$mod->Lang('title_editpage_view')}">{admin_icon icon='view.gif' alt='view_page'|lang}</a>
   {/if}
 </p>

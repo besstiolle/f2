@@ -59,10 +59,10 @@ $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3><h3 style="color: red;">ATTEN
 
 <h3>Mise en cache</h3>
 <p>Ce module a la capacité de mettre en cache sa sortie dans des fichiers statiques pour réduire les besoins en mémoire et des requêtes SQL, et pour améliorer les performances du site Web. Cela offre tous les avantages des menus statiques sans les inconvénients impliqués lors de la création ou la modification des pages.</p>
-<p>Chaque gabarit de menu peut être marqué comme "être mis en cache". Quand un modèle de menu cachable est utilisée sur une page de contenu qui est mis en cache, toute sortie de menu en cache qui est disponible pour cette page sera utilisés. Le paramètre nocache sur l\'étiquette de menu peut être utilisé pour désactiver complètement la mise en cache.</p>
+<p>Chaque gabarit de menu peut être marqué comme "être mis en cache". Quand un modèle de menu cachable est utilisé sur une page de contenu qui est mis en cache, toute sortie de menu en cache qui est disponible pour cette page sera utilisés. Le paramètre nocache sur l\'étiquette de menu peut être utilisé pour désactiver complètement la mise en cache.</p>
 <p>Tous les fichiers mis en cache menu sont effacés si un élément de contenu est ajouté, modifié ou supprimé ... et aussi quand un gabarit de menu est ajouté/modifié ou supprimé.</p>	
 <h3>Balise alternative :</h3>
-<p>La balise <strong>{cms_breadcrumbs}</strong>(raccourci de {menu action=breadcrumbs} ) peut être utilisé pour créer un fil d’Ariane de navigation pour la page actuellement affichée.';
+<p>La balise <strong>{cms_breadcrumbs}</strong>(raccourci de {menu action=\'breadcrumbs\'} ) peut être utilisé pour créer un fil d’Ariane de navigation pour la page actuellement affichée.';
 $lang['help_action'] = 'Spécifie le comportement du module. Il y a deux possibilités pour ce paramètre :
   <br/>default <em>(default)</em> - Utilisé pour la construction d\'un menu de navigation.
   <br/>breadcrumbs - Utilisé pour construire une fil d\'Ariane de navigation pour la page actuellement affichée.  <strong>Note : {cms_breadcrumbs}</strong> est une façon d\'appeler cette action.';
@@ -72,13 +72,13 @@ $lang['help_excludeprefix'] = 'Exclut toutes les données des pages (et de leurs
 $lang['help_includeprefix'] = 'Inclut seulement les données des pages dont l\'alias contient le préfixe indiqué (virgule comme séparateur). Ce paramètre ne peut pas être combiné avec le paramètre excludeprefix.';
 $lang['help_items'] = 'Utilisez ceci pour sélectionner la liste de pages à afficher dans le menu. La valeur entrée doit être la liste des alias, séparée par des virgules.';
 $lang['help_loadprops'] = 'Utiliser ce paramètre lorsque vous n\'utilisez PAS les propriétés avancées  dans votre gabarit de gestionnaire de menu. Ce paramètre permet de désactiver le chargement de toutes les propriétés des contenus de tous les nœuds (tel que extra1, image, thumbnail, etc). Cette opération réduira considérablement le nombre de requêtes nécessaires à la construction d\'un menu en contrepartie la consommation en mémoire augmente, mais cela permet de gérer des menus plus avancés.';
-$lang['help_number_of_levels'] = 'Ce paramètre permet au menu d\'afficher uniquement un certain nombre de niveaux. Par défaut la valeur de ce paramètre est supposé être illimitée pour montrer tous les niveaux enfants. Sauf si vous utilisez le paramètre, dans lequel number_of_levels est implicite à 1 sauf s\'il est modifié.';
+$lang['help_number_of_levels'] = 'Ce paramètre permet au menu d\'afficher uniquement un certain nombre de niveaux. Par défaut la valeur de ce paramètre est supposé être illimitée pour montrer tous les niveaux enfants, sauf si vous utilisez le paramètre number_of_levels à 1.';
 $lang['help_root'] = 'Applicable uniquement à breadcrumbs, permet de spécifier un niveau qui n\'est la page par défaut.';
-$lang['help_show_all'] = 'Cette option affichera tous les niveaux même s\'ils sont configuré pour ne pas être afficher dans le menu. Il n\'affichera pas les pages inactives.';
+$lang['help_show_all'] = 'Cette option affichera tous les niveaux même s\'ils sont configurés pour ne pas être afficher dans le menu. Il n\'affichera pas les pages inactives.';
 $lang['help_show_root_siblings'] = 'Cette option est utile lorsque start_element ou start_page est utilisé. Les autres éléments du même niveau que l\'élément sélectionné seront affichés.';
 $lang['help_start_element'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'un élément donné (start_element), ainsi que les niveaux en-dessous de cet élément.  la valeur doit être égale à la position hiérarchique de l\'élément (exemple : 5.1.2).';
 $lang['help_start_level'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'un niveau donné. Un exemple: vous avez un menu avec number_of_levels=\'1\'.  Puis, comme second menu, vous avez start_level=\'2\'.  Le second menu affichera les éléments basés sur ce qui est sélectionné dans le premier menu.';
-$lang['help_start_page'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'une page donnée (start_page), ainsi que les niveaux en-dessous de cet élément.  la valeur doit être égale à l\'alias de l\'élément.';
+$lang['help_start_page'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'une page donnée (start_page), ainsi que les niveaux en-dessous de cet élément. La valeur doit être égale à l\'alias de l\'élément.';
 $lang['help_template'] = 'Le gabarit à utiliser pour l\'affichage du menu. Le gabarit est issu de la base de données sauf si son nom fini par .tpl, auquel cas il vient du fichier du même nom se trouvant dans le dossier des gabarits (templates) du module MenuManager (Par défaut simple_navigation.tpl)';
 $lang['import'] = 'Importer';
 $lang['importtemplate'] = 'Importer le gabarit dans la base de données';

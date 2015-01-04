@@ -74,6 +74,7 @@ class ApiResponse {
 	}
 
 	public function __toString(){
+
 		header($_SERVER["SERVER_PROTOCOL"]." ".$this->code." ".$this->message); 
 		header('Content-Type: application/json');
 

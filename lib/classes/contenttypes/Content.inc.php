@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: Content.inc.php 9583 2014-05-30 23:40:25Z calguy1000 $
+#$Id: Content.inc.php 9701 2014-08-30 15:48:29Z calguy1000 $
 
 /**
  * Class definition and methods for the main Content class.
@@ -520,8 +520,6 @@ class Content extends ContentBase
 		if( $blockName == 'content_en' && $label == $blockName ) {
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_content_en',lang('help_title_maincontent'));
 			$label = lang('content');
-			$blockInfo['required'] = true;
-			$required = true;
 		}
 		if( $required ) $label = '*'.$label;
 

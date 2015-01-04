@@ -41,6 +41,7 @@ tinymce.init({
     statusbar: cmsms_tiny.statusbar,
     resize: cmsms_tiny.resize,
     removed_menuitems: 'newdocument',
+    browser_spellcheck: true,
     // smarty logic stuff
 {if isset($mt_cssname) && $mt_cssname != ''}
     content_css : '{cms_stylesheet name=$mt_cssname nolinks=1}',
@@ -50,7 +51,7 @@ tinymce.init({
     plugins: ['autolink link anchor wordcount {if $mt_profile.allowimages} media image{/if}'],
 {else}
     image_advtab: true,
-    toolbar: 'undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link unlink cmsms_linker{if $mt_profile.allowimages} | image cmsms_filebrowser{/if}',
+    toolbar: 'undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | anchor link unlink cmsms_linker{if $mt_profile.allowimages} | image cmsms_filebrowser{/if}',
     plugins: ['autolink link cmsms_linker charmap anchor searchreplace wordcount code fullscreen insertdatetime {if $mt_profile.allowimages}media image cmsms_filepicker cmsms_filebrowser{/if}'],
 {/if}
     // callback functions

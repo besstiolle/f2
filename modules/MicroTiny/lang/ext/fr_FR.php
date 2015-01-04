@@ -1,10 +1,10 @@
 <?php
-$lang['admindescription'] = 'Ce module permet principalement de gérer le contenu, avec un éditeur WYSIWYG très simplifié, en utilisant le projet TinyMCE.';
+$lang['admindescription'] = 'Ce module permet principalement de gérer le contenu, avec un éditeur WYSIWYG très simplifié,  basé sur le projet TinyMCE.';
 $lang['browse'] = 'Parcourir';
 $lang['cancel'] = 'Annuler';
 $lang['class'] = 'Classe';
 $lang['cmsms_linker'] = 'Lien vers une page CMSMS';
-$lang['css_styles_help'] = 'Les styles CSS mentionnés ici seront ajoutés à une boite de sélection déroulante dans l\'éditeur. Laisser le champ de saisie vide donnera la boîte déroulante cachée (par défaut).';
+$lang['css_styles_help'] = 'Les styles CSS mentionnés ici seront ajoutés à une boite de sélection déroulante dans l\'éditeur. Laisser le champ de saisie vide ne permettra pas l\'apparition de la boîte déroulante (par défaut).';
 $lang['css_styles_help2'] = 'Les styles peuvent être simplement le nom de la classe, ou une classe avec un nouveau nom à afficher.
 Ils doivent être séparés soit par des virgules soit par des sauts de ligne.
 <br/>Exemple : monstyle1, Mon nom de style=monstyle2
@@ -29,7 +29,7 @@ $lang['filterby'] = 'Filtrer par&nbsp;';
 $lang['height'] = 'Hauteur';
 $lang['help'] = '<strong>Que fait ce module ?</strong>
 <p>MicroTiny est une version restreinte de l\'éditeur <a href="http://www.tinymce.com" target="_blank">TinyMCE</a> permettant l\'édition de contenus avec l\'apparence proche d\'un WYSIWYG.
-Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quand un WYSIWYG est autorisé), sur les pages d\'administration où les éditeurs WYSIWYG sont autorisés, et permet des utilisations restreintes pour l\'édition de blocs HTML sur les pages du site Web (frontend).</p>
+Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quand un WYSIWYG est autorisé), sur les pages d\'administration où les éditeurs WYSIWYG sont autorisés et permet des utilisations restreintes pour l\'édition de blocs HTML sur les pages du site Web (frontend).</p>
 <p>Pour que MicroTiny puisse être utilisé comme éditeur WYSIWYG dans l\'administration, cet éditeur WYSIWYG doit être sélectionné dans la console d\'administration de CMSMS dans"Mon compte/Préférences utilisateur/Sélection du WYSIWYG à utiliser". Des options supplémentaires, dans différents modules ou dans des pages de contenu, peuvent contrôler si une zone de texte ou un champ WYSIWYG est fourni sous diverses formes d\'édition.</p>
 <p>Une possibilité d\'édition sur le site Web (frontend) de l\'éditeur MicroTiny doit être sélectionnée comme "WYSIWYG de la partie publique" dans "Paramètres globaux/Paramètres généraux" de la console d\'administration de CMSMS. </p>
 <h3>Caractéristiques :</h3>
@@ -38,7 +38,7 @@ Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quan
   <li>Profils distincts pour les éditeurs d\'administration et les éditeurs du site web (frontend).</li>
   <li>Un sélecteur de fichiers médias personnalisé utilisant des fichiers déjà uploadés.</li>
   <li>Plugin personnalisé pour créer des liens internes CMSMS <em>(administrateur uniquement)</em>.</li>
-  <li>Personnalisation (sommaire) du profil d\'dministration et du profil utilisateur du du site web (frontend).</li>
+  <li>Personnalisation (sommaire) du profil d\'administration et du profil utilisateur du du site web (frontend).</li>
   <li>Apparence personnalisable en spécifiant une feuille de style à utiliser pour l\'éditeur.</li> 
 </ul>
  <h3>Comment l\'utiliser ? </h3>
@@ -49,7 +49,7 @@ Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quan
 <h3>À propos de HTML, TinyMCE, et l\'édition de contenu :</h3>
   <ul>
     <li>Éditeur WYSIWYG :
-       <p>Cet éditeur permet de modifier le contenu dans un environnement qui est similaire <em>(mais pas identique nécessairement)</em> à la vue sur le site Web (frontend). De nombreux facteurs peuvent influer sur les différences, y compris :</p>
+       <p>Cet éditeur permet de modifier le contenu dans un environnement qui est similaire <em>(mais pas nécessairement identique)</em> à la vue sur le site Web (frontend). De nombreux facteurs peuvent influer sur les différences, y compris :</p>
        <ul>
          <li>L\'utilisation de feuilles de style incomplètes ou incorrectes,</li>
          <li>L\'utilisation de style avancé que l\'éditeur WYSIWYG ne peut pas comprendre,</li>
@@ -58,7 +58,7 @@ Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quan
     </li>
 
     <li>Sous-ensemble d\'éléments HTML :
-      <p>Comme un éditeur de contenu simplifié, cet éditeur ne prend pas en charge tous les éléments HTML (en particulier les nouveaux éléments de niveau bloc de HTML5). Tous les éléments que l\'éditeur ne comprend pas ou ne supporte pas seront supprimés du contenu et non sauvegardés. D\'une manière générale <em>(non compris les div)</em> vous pouvez supposer que l\'éditeur prend en charge uniquement que les éléments qui sont directement disponibles via les différents menus et options de la barre d\'outils. <p>
+      <p>Comme tout éditeur de contenu simplifié, cet éditeur ne prend pas en charge tous les éléments HTML (en particulier les nouveaux éléments de niveau bloc de HTML5). Tous les éléments que l\'éditeur ne comprend pas ou ne supporte pas seront supprimés du contenu et non sauvegardés. D\'une manière générale <em>(non compris les div)</em> vous pouvez supposer que l\'éditeur prend en charge uniquement les éléments qui sont directement disponibles via les différents menus et options de la barre d\'outils. <p>
     </li>
 
     <li>Modifier des blocs de contenu, et non la page entière :
@@ -66,19 +66,19 @@ Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quan
     </li>
 
     <li>Destiné à l\'édition simple de contenu et non à la conception de design :
-      <p>L\'intention et le but de ce module est de fournir un environnement de type WYSIWYG où les utilisateurs peuvent insérer et éditer du contenu dans des blocs spécifiques avec des capacités limitées de mise en forme. Ce module ne pourra pas interférer avec, ou remplacer, le style du gabarit de page. Il n\'est pas prévu de se comporter comme un éditeur HTML général ou comme un éditeur généraliste.</p>
+      <p>L\'intention et le but de ce module est de fournir un environnement de type WYSIWYG où les utilisateurs peuvent insérer et éditer du contenu dans des blocs spécifiques avec des capacités limitées de mise en forme. Ce module ne pourra pas interférer avec, ou remplacer, le style du gabarit de page. Il n\'est pas prévu qu\'il se comporte comme un éditeur HTML général ou comme un éditeur généraliste.</p>
       <p>Les concepteurs de sites Web doivent comprendre les points ci-après :  les utilisateurs du contenu peuvent et doivent éditer dans une zone WYSIWYG et veiller à ce que le contenu soit simple. Si les techniques de mise en page avancées sont nécessaires pour une zone spécifique, les concepteurs doivent modifier les gabarits appropriés de sorte que l\'éditeur WYSIWYG avec des fonctionnalités restreintes puisse fonctionner correctement.</p>
     </li>
   
     <li>Séparation de la logique, de la fonctionnalité et du design de contenu :
-      <p>Cet éditeur est construit sur l\'hypothèse que le contenu d\'une zone spécifique d\'une page (un article de blog ou de News (Articles), ou la description du produit, ...) sont des données. Les données sont organisées grâce à des gabarits appropriés, et, ne doivent pas être mélangées avec des éléments de design, ou des fonctionnalités du site Web.</p>
-      <p>Un exemple simple : Si vous définissez que les utilisateurs utilisent certaines classes pour les images, ou pour la mise en page de leurs images, ou encore insérer des éléments de bloc tels que < div > ou < section > dans leur contenu pour avoir un style correct, <strong>ce n\'est pas le module de l\'éditeur WYSIWYG qui le fera pour vous</strong>. Ces fonctions de styles devraient être prises en charge dans les feuilles de style et par des gabarits. Votre éditeur WYSIWYG doit saisir du texte sans avoir à mémoriser ces règles de style.</p>
-      <p>Ce module n\'est pas conçu pour gérer cas spéciaux où le HTML avancé est nécessaire. Pour ces pages ou blocs, l\'éditeur WYSIWYG doit être désactivé, et l\'accès à l\'édition de la page doit être restreint à ceux qui ont la capacité de comprendre et de modifier le code HTML manuellement.</p>
-      <p>Ce module est destiné à fournir un éditeur restreint WYSIWYG pour des blocs spécifiques, pour une utilisation par des utilisateurs sans connaissances HTML. L\'éditeur WYSIWYG ne comprenant pas la logique Smarty, vous ne devriez pas (en règle générale) mélanger des balises Smarty ou d\'autres modules faisant appels à cet éditeur WYSIWYG. Il sera préférable de désactiver cet éditeur WYSIWYG pour ces zones/pages/blocs et donc de restreindre l\'accès d\'édition à ces pages.</p>
+      <p>Cet éditeur est construit sur l\'hypothèse que le contenu d\'une zone spécifique d\'une page (un article de blog ou de News (Articles), ou la description du produit, ...) sont des données. Les données sont organisées grâce à des gabarits appropriés et ne doivent pas être mélangées avec des éléments de design, ou des fonctionnalités du site Web.</p>
+      <p>Un exemple simple : Si vous définissez que les utilisateurs utilisent certaines classes pour les images, ou pour la mise en page de leurs images, ou encore insérent des éléments de bloc tels que < div > ou < section > dans leur contenu pour avoir un style correct, <strong>ce n\'est pas le module de l\'éditeur WYSIWYG qui le fera pour vous</strong>. Ces fonctions de styles devraient être prises en charge dans les feuilles de style et par des gabarits. Votre éditeur WYSIWYG doit saisir du texte sans avoir à mémoriser ces règles de style.</p>
+      <p>Ce module n\'est pas conçu pour gérer les cas spéciaux où le HTML avancé est nécessaire. Pour ces pages ou blocs, l\'éditeur WYSIWYG doit être désactivé, et l\'accès à l\'édition de la page doit être restreint à ceux qui ont la capacité de comprendre et de modifier le code HTML manuellement.</p>
+      <p>Ce module est destiné à fournir un éditeur restreint WYSIWYG pour des blocs spécifiques et pour une utilisation par des utilisateurs sans connaissances HTML. L\'éditeur WYSIWYG ne comprenant pas la logique Smarty, vous ne devriez pas (en règle générale) mélanger des balises Smarty ou d\'autres modules faisant appels à cet éditeur WYSIWYG. Il sera préférable de désactiver cet éditeur WYSIWYG pour ces zones/pages/blocs et donc de restreindre l\'accès d\'édition à ces pages.</p>
     </li>
   </ul>
 <h3>À propos des images et des médias :</h3>
-<p>Chaque profil a la possibilité d\'activer et/ou de désactiver la possibilité de l\'éditeur à insérer des images ou des médias dans le contenu édité. Ceci est utile dans des environnements très structurés où les images et autres médias peuvent être inclus dans la vue finale par d\'autres moyens. Particulièrement sur les formulaires du site Web (frontend) (où l\'identité de l\'utilisateur ne peut être douteuse), il est recommandé que les utilisateurs n\'aient pas la possibilité d\'insérer des images ou autres médias.</p>
+<p>Chaque profil a la possibilité d\'activer et/ou de désactiver la possibilité pour l\'éditeur d\' insérer des images ou des médias dans le contenu édité. Ceci est utile dans des environnements très structurés où les images et autres médias peuvent être inclus dans la vue finale par d\'autres moyens. Particulièrement sur les formulaires du site Web (frontend) (où l\'identité de l\'utilisateur ne peut être douteuse). Il est recommandé que les utilisateurs n\'aient pas la possibilité d\'insérer des images ou autres médias.</p>
   <p><strong>Note :</strong> Ce module ne fournit pas la possibilité de télécharger ou de manipuler des fichiers, des images ou des médias. Cette fonctionnalité est gérée ailleurs dans CMSMS™ (Voir le Gestionnaire de fichiers ou la dépose des fichiers en haut à droite de la page).</p>
 
 <h3>À propos de l\'éditeur du site Web (Frontend) :</h3>
@@ -87,12 +87,12 @@ Il fonctionne avec les blocs de contenu dans les pages de contenu de CMSMS (quan
 
 <h3>À propos des styles et des couleurs :</h3>
   <p>Ce module fournit la possibilité <em>(facultative)</em> d\'associer une feuille de style avec le profil utilisateur. Cela donne la possibilité de générer l\'apparence de la partie en édition, avec l\'éditeur WYSIWYG, de manière similaire au style du site Web. Cela fourni un plus au WYSIWYG pour l\'utilisateur éditeur du contenu.</p>
-  <p>En outre, en grâce à la balise <code>classname</code> paramètre des balises <code>{cms_textarea}</code> et <code>{content}</code>, ce module permet à l\'éditeur de contenu WYSIWYG d\'ignorer la feuille de style spécifiée différente pour chaque bloc de contenu. Cela permet  la possibilité d\'un style différemment pour chaque zone WYSIWYG, s\'il y a plusieurs zones WYSIWYG dans la page. Cette fonctionnalité est limitée uniquement à l\'interface d\'administration.</p>
+  <p>En outre grâce à la balise <code>classname</code> paramètre des balises <code>{cms_textarea}</code> et <code>{content}</code>, ce module permet à l\'éditeur de contenu WYSIWYG d\'ignorer une feuille de style spécifiée différente pour chaque bloc de contenu. Cela permet  la possibilité d\'un style différemment pour chaque zone WYSIWYG, s\'il y a plusieurs zones WYSIWYG dans la page. Cette fonctionnalité est limitée uniquement à l\'interface d\'administration.</p>
   <p>Par exemple, dans un gabarit de page en ajouter le paramètre "cssname" à la  balise {content}, permet de spécifier une feuille de CMSMS™ à utiliser pour personnaliser l\'apparence de ce bloc de contenu. Exemple : <code>{content block=\'second block\' cssname=\'whiteonblack\'}</code>
   <p>En outre, un paramètre "Utilisez le bloc Id ..." dans "Paramètres globaux/Paramètres des contenus" permet de fournir automatiquement le paramètre de "cssname" avec le nom du bloc de contenu.</p>
 
   <h4>Styles pour l\'éditeur WYSIWYG</h4>
-    <p>La feuille de style pour la zone de l\'éditeur WYSIWYG "devrait" configurer tout l\'élément du contenu depuis haut vers le bas. Il est seulement nécessaire de configurer le style des éléments disponibles pour, et utilisé par l\'éditeur de contenu. Voici un exemple simple d\'une feuille de style pour un thème blanc sur noir :</p>
+    <p>La feuille de style pour la zone de l\'éditeur WYSIWYG "devrait" configurer tout l\'élément du contenu depuis haut vers le bas. Il est seulement nécessaire de configurer le style des éléments disponibles utilisés par l\'éditeur de contenu. Voici un exemple simple d\'une feuille de style pour un thème blanc sur noir :</p>
 <pre><code>
 body {
  background: black;
@@ -114,7 +114,7 @@ h2 {
 <h3>FAQ :</h3>
   <dl>
    <dt>Q : Où se trouve le support pour <em style="color: red";>"certaines fonctionnalités"</em> dans l\'éditeur, et comment puis-je l\'activer ?</dt>
-      <dd>R : La version de TinyMCE distribué avec MicroTiny est un package personnalisé minimum. Nous avons ajouté nos propres plugins personnalisés, mais nous ne supportons pas les ajouts de plugins personnalisés ou la possibilité de personnaliser la configuration autre que le formulaire de modification du profil utilisateur. Si vous avez besoin des fonctionnalités supplémentaires pour un éditeur WYSIWYG, vous pouvez utiliser un module tiers de <a href="http://dev.cmsmadesimple.org/" target="_blank">CMS Made Simple - Forge</a>.</dd>
+      <dd>R : La version de TinyMCE distribué avec MicroTiny est un package personnalisé minimum. Nous avons ajouté nos propres plugins personnalisés, mais nous ne supportons pas les ajouts de plugins personnalisés ou les possibilités de personnaliser la configuration autre que le formulaire de modification du profil utilisateur. Si vous avez besoin des fonctionnalités supplémentaires pour un éditeur WYSIWYG, vous pouvez utiliser un module tiers de <a href="http://dev.cmsmadesimple.org/" target="_blank">CMS Made Simple - Forge</a>.</dd>
     
     <dt>Q : Quelles balises HTML/HTML5 sont pris en charge par ce module, et comment changer cela ?</dt>
       <dd>R : La liste des éléments pris en charge par défaut dans l\'éditeur TinyMCE se trouvent sur le  <a href="http://www.tinymce.com/wiki.php/Configuration" target="_blank">site de TinyMCE</a>. Ces extensions ne sont pas prévu dans le module MicroTiny..</dd>
@@ -130,10 +130,10 @@ h2 {
         </ol>
       </dd>
     <dt>Q :Comment puis-je insérer un <br/> au lieu de créer un nouveau paragraphe ?</dt>
-      <dd>R : Presser [shift]+Entrée au lieu de simplement la touche Entrée.</dd>
+      <dd>R : Presser [shift]+Entrée au lieu de simplement lde a touche Entrée seule.</dd>
     
     <dt> : Pourquoi <em style="color: red";>"certaines fonctionnalités"</em> sont disponibles dans la barre de menu et non dans la barre d\'outils ?</dt>
-      <dd>R : Afin de permettre aux développeurs Web de restreindre davantage les fonctionnalités de certains profils de l\'éditeur. La barre de menu peut être affiché ou non dans des profils différents, privant ainsi l\'utilisateur de la fonctionnalité uniquement disponible dans la barre de menu.</dd>
+      <dd>R : Afin de permettre aux développeurs Web de restreindre davantage les fonctionnalités de certains profils de l\'éditeur, la barre de menu peut être affichée ou non dans des profils différents, privant ainsi l\'utilisateur de la fonctionnalité uniquement disponible dans la barre de menu.</dd>
   </dl>
 <h3>La mise en cache :</h3>
   <p>Pour améliorer les performances, MicroTiny va tenter de mettre en cache les fichiers JavaScript générés à moins que quelque chose ait changé. Cette fonctionnalité peut être désactivée en définissant une ligne spéciale <code> mt_disable_cache </code> à "true" dans la configuration. Exemple ajout de : <strong><code>$config["mt_disable_cache"] = true;</code></strong> dans le fichier config.php.</p>
@@ -149,12 +149,12 @@ $lang['info_linker_autocomplete'] = 'Commencez par taper quelques caractères de
 $lang['loading_info'] = 'Chargement ...';
 $lang['msg_cancelled'] = 'Opération annulée';
 $lang['mthelp_allowcssoverride'] = 'Si activé, spécifiera le nom d\'une feuille de style à utiliser (pour le WYSIWYG MicroTiny ) à la place de la feuille de style par défaut indiqué ci-dessus';
-$lang['mthelp_dfltstylesheet'] = 'Associer une feuille de style avec des éditeurs en utilisant ce profil. Cela permet quel éditeur WYSIWYG apparaisse semblable à l\'aspect du site Web';
-$lang['mthelp_profileallowimages'] = 'Laisser l\'éditeur intégrer des images et des vidéos dans la zone de texte. Pour certains gabarits les éditeurs de contenu peuvent ne pas être en mesure de sélectionner des images ou vidéos pour les zones spécifiques d\'une page Web';
-$lang['mthelp_profilelabel'] = 'Une description de ce profil. La description ne peut être modifié pour des profils système.';
+$lang['mthelp_dfltstylesheet'] = 'Associer une feuille de style avec des éditeurs en utilisant ce profil. Cela permet que l\'éditeur WYSIWYG apparaisse semblable à l\'aspect du site Web';
+$lang['mthelp_profileallowimages'] = 'Laisser l\'éditeur intégrer des images et des vidéos dans la zone de texte. Avec certains gabarits, les éditeurs de contenu peuvent ne pas être en mesure de sélectionner des images ou vidéos pour les zones spécifiques d\'une page Web';
+$lang['mthelp_profilelabel'] = 'Une description de ce profil. La description ne peut être modifiée pour des profils système.';
 $lang['mthelp_profilename'] = 'Le nom de ce profil. Le nom des profils système ne peut pas être modifié.';
-$lang['mthelp_profilemenubar'] = 'Indique si la barre de menu doit être activé dans les profils visibles. La barre de menus a généralement plus d\'options que la barre d\'outils.';
-$lang['mthelp_profilestatusbar'] = 'Cette sélection indique si la barre d\'état au bas de la zone WYSIWYG doit être activé. La barre d\'état affiche des informations de portée utile pour les éditeurs avancés, ainsi que d\'autres informations utiles.';
+$lang['mthelp_profilemenubar'] = 'Indique si la barre de menu doit être activée dans les profils visibles. La barre de menus a généralement plus d\'options que la barre d\'outils.';
+$lang['mthelp_profilestatusbar'] = 'Cette sélection indique si la barre d\'état au bas de la zone WYSIWYG doit être activé. La barre d\'état affiche des informations importantes pour les éditeurs avancés, ainsi que d\'autres informations utiles.';
 $lang['mthelp_profileresize'] = 'Cette sélection indique si la zone WYSIWYG peut être redimensionnée. Pour pouvoir être redimensionnée la barre d\'état doit être activée.';
 $lang['newwindow'] = 'Nouvelle fenêtre';
 $lang['none'] = 'Aucun';

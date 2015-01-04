@@ -11,14 +11,14 @@ $lang['filter'] = 'Filtre&nbsp;';
 $lang['finished'] = 'Terminé';
 $lang['friendlyname'] = 'Recherche dans l\'administration';
 $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3>
-<p>Ce module permet de trouver rapidement dans les gabarits, les pages de contenu et la base de données une recherche sur une chaîne de texte. C\'est particulièrement utile pour trouver des balises Smarty, des morceaux de code, des IDs ou des parties de code HTML pouvant être difficiles à trouver dans l\'administration d\'un grand site Web.</p>
+<p>Ce module permet de trouver rapidement une chaîne de texte dans les gabarits, les pages de contenu et la base de données. C\'est particulièrement utile pour trouver des balises Smarty, des morceaux de code, des IDs ou des parties de code HTML pouvant être difficiles à trouver dans l\'administration d\'un grand site Web.</p>
 <p>Ce module n\'a pas d\'interaction avec le site Web (frontend), il est conçu pour être utilisé par les développeurs du site CMSMS™ ou les éditeurs pour trouver des sous-chaînes de texte ou de code. Il ne sert absolument pas dans la recherche de texte sur la partie visible des pages du site Web.</p>
 
 <h3>Comment l\'utiliser&nbsp;?</h3>
 <p>Ce module est visible pour la plupart des administrateurs du site ayant au moins certaines permissions pour modifier les gabarits, feuilles de style ou une partie du contenu, avec la possibilité d\'une recherche réduite par critères.</p>
 <p>Le module fournit un champ de texte où une seule chaîne peut être saisie (la chaîne n\'est pas divisée en mots ou autre coupure). Il offre également la possibilité de rechercher uniquement dans certaines sections du site.</p>
-<p>La recherche va générer une liste extensible imbriquée de sections où les occurrences ont été trouvées. Sous chaque section une description de l\'occurence est affichée lors du clic sur la section. Généralement avec un lien qui vous dirigera vers un formulaire pour modifier l\'élément.</p>
-<!-- p>TODO</p -->
+<p>La recherche va générer une liste extensible imbriquée de sections où les occurrences ont été trouvées. Sous chaque section une description de l’occurrence est affichée lors du clic sur la section généralement avec un lien qui vous dirigera vers un formulaire pour modifier l\'élément.</p>
+
 <h3>Support</h3>
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
 <p>Conformément à la licence GPL, ce logiciel est fourni tel quel. Merci de lire le texte complet de la licence.</p>

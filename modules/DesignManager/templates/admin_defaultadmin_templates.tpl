@@ -5,7 +5,8 @@ $(document).ready(function(){
     $('#tpl_bulk_action,#tpl_bulk_submit').attr('disabled','disabled');
     $('#tpl_bulk_submit').button({ 'disabled' : true });
     $('#tpl_selall,.tpl_select').on('click',function(){
-      if( !$(this).is(':checked') ) {
+      var l = $('.tpl_select:checked').length;
+      if( l == 0 ) {
         $('#tpl_bulk_action').attr('disabled','disabled');
         $('#tpl_bulk_submit').attr('disabled','disabled');
         $('#tpl_bulk_submit').button({ 'disabled' : true });
@@ -91,7 +92,7 @@ $(document).ready(function(){
 </script>
 
 <div id="filterdialog" style="display: none;" title="{$mod->Lang('tpl_filter')|escape:'javascript'}">
-  {form_start action='defaultadmin' id='filterdialog_form'}
+  {form_start action='defaultadmin' id='filterdialog_form' __activetab='templates'}
     <input type="hidden" name="{$actionid}submit_filter_tpl" value="1"/>
     <div class="pageoverflow">
       <p class="pagetext"><label for="filter_tpl">{$mod->Lang('prompt_options')}:</label></p>

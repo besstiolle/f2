@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: moduleinterface.php 9682 2014-08-05 16:00:44Z calguy1000 $
+#$Id: moduleinterface.php 9756 2014-11-09 17:23:36Z calguy1000 $
 
 $CMS_ADMIN_PAGE=1;
 $CMS_MODULE_PAGE=1;
@@ -86,9 +86,12 @@ if( $USE_THEME ) {
     include_once("header.php");
     echo '<div class="pagecontainer">';
     echo '<div class="pageoverflow">';
-    $title = $themeObject->get_active_title();
+    $title = $themeObject->title;
+    $module_help_type = 'both';
+    if( $title ) $module_help_type = null;
+    if( !$title ) $title = $themeObject->get_active_title();
     if( !$title ) $title = $modinst->GetFriendlyName();
-    echo $themeObject->ShowHeader($title, '', '', 'both').'</div>';
+    echo $themeObject->ShowHeader($title,'','',$module_help_type).'</div>';
     echo $content;
 } else {
     echo $modinst->DoActionBase($action, $id, $params);

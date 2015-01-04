@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listusertags.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: listusertags.php 9695 2014-08-18 18:56:33Z rolf1 $
 
 $CMS_ADMIN_PAGE=1;
 
@@ -60,7 +60,7 @@ if (FALSE == empty($_GET['message'])) {
 echo '<div class="pagecontainer">';
 echo '<div class="pageoverflow">';
 echo $themeObject->ShowHeader('userdefinedtags');
-echo "<table cellspacing=\"0\" class=\"pagetable\">\n";
+echo "<table class=\"pagetable\">\n";
 echo '<thead>';
 echo "<tr>\n";
 echo "<th>".lang('name')."</th>\n";

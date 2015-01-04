@@ -18,7 +18,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #END_LICENSE
-#$Id: index.php 9537 2014-05-17 23:42:22Z calguy1000 $
+#$Id: index.php 9756 2014-11-09 17:23:36Z calguy1000 $
 
 $starttime = microtime();
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
@@ -101,7 +101,7 @@ while( $trycount < 2 ) {
       throw new CmsError404Exception('Cannot view an unviewable page');
     }
 
-    if( $contentobj->Secure() && (!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ) {
+    if( $contentobj->Secure() && !cmsms()->is_https_request() ) {
       redirect($contentobj->GetURL()); // if this page is marked to be secure, make sure we redirect to the secure page
     }
 
@@ -131,7 +131,7 @@ while( $trycount < 2 ) {
     $smarty->assign('page_id', $page);
     $smarty->assign('page_alias', $contentobj->Alias());
 
-    if( $contentobj->Secure() && (! isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ) {
+    if( $contentobj->Secure() && !cmsms()->is_https_request() ) {
       redirect($contentobj->GetURL()); // if this page is marked to be secure, make sure we redirect to the secure page
     }
 

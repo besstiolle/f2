@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: misc.functions.php 9675 2014-08-01 14:21:07Z calguy1000 $
+#$Id: misc.functions.php 9756 2014-11-09 17:23:36Z calguy1000 $
 
 /**
  * Miscellaneous support functions
@@ -42,7 +42,7 @@ function redirect($to)
   $_SERVER['PHP_SELF'] = null;
 
   $schema = 'http';
-  if( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ) $schema = 'https';
+  if( cmsms()->is_https_request ) $schema = 'https';
 
   $host = $_SERVER['HTTP_HOST'];
   $components = parse_url($to);
@@ -830,8 +830,8 @@ function munge_string_to_url($alias, $tolower = false, $withslash = false)
   if ($tolower == true) $alias = mb_strtolower($alias);
 
   // remove invalid chars
-  $expr = '/[^\p{L}_\-\ \d]/u';
-  if( $withslash ) $expr = '/[^\p{L}_\-\ \d\/]/u';
+  $expr = '/[^\p{L}_\-\.\ \d]/u';
+  if( $withslash ) $expr = '/[^\p{L}_\.\-\ \d\/]/u';
   $tmp = preg_replace($expr,'',$alias);
 
   // remove extra dashes and spaces.

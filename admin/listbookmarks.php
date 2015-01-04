@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listbookmarks.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: listbookmarks.php 9695 2014-08-18 18:56:33Z rolf1 $
 
 $CMS_ADMIN_PAGE=1;
 
@@ -53,7 +53,7 @@ include_once("header.php");
 	
 		echo'<p class="pagewarning visible">' . lang('show_shortcuts_message') . '</p>';
 
-		echo "<table cellspacing=\"0\" class=\"pagetable\">\n";
+		echo "<table class=\"pagetable\">\n";
 		echo '<thead>';
 		echo "<tr>\n";
 		echo "<th class=\"pagew60\">".lang('name')."</th>\n";

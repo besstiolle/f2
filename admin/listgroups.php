@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listgroups.php 9555 2014-05-21 17:20:32Z calguy1000 $
+#$Id: listgroups.php 9695 2014-08-18 18:56:33Z rolf1 $
 
 $CMS_ADMIN_PAGE=1;
 
@@ -74,7 +74,7 @@ if (check_permission($userid, 'Add Groups')) {
 	  echo "<p class=\"pageshowrows\">".pagination($page, count($grouplist), $limit)."</p>";
 	}
 	if (count($grouplist) > 0) {
-	  echo "<table cellspacing=\"0\" class=\"pagetable\">\n";
+	  echo "<table class=\"pagetable\">\n";
 	  echo '<thead>';
 	  echo "<tr>\n";
 	  echo "<th class=\"pagew60\">".lang('name')."</th>\n";

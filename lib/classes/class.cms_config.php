@@ -306,7 +306,9 @@ final class cms_config implements ArrayAccess
 			  }
 			  if( ($pos = strpos($path,'/index.php')) !== FALSE ) $path = substr($path,0,$pos);
 		  }
-		  $str = 'http://'.$_SERVER['HTTP_HOST'].$path;
+		  $prefix = 'http://';
+		  if( cmsms()->is_https_request() ) $prefix = 'https://';
+		  $str = $prefix.$_SERVER['HTTP_HOST'].$path;
 		  $this->_cache[$key] = $str;
 		  return $str;
 		  break;
@@ -490,7 +492,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_root_url()
   {
-	  if( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ) return $this->offsetGet('ssl_url');
+	  if( cmsms()->is_https_request() ) return $this->offsetGet('ssl_url');
 	  return $this->offsetGet('root_url');
   }
 
@@ -499,7 +501,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_uploads_url()
   {
-	  if( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ) return $this->offsetGet('ssl_uploads_url');
+	  if(cmsms()->is_https_request() ) return $this->offsetGet('ssl_uploads_url');
 	  return $this->offsetGet('uploads_url');
   }
 
@@ -508,7 +510,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_image_uploads_url()
   {
-	  if( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ) return $this->offsetGet('ssl_image_uploads_url');
+	  if(cmsms()->is_https_request() ) return $this->offsetGet('ssl_image_uploads_url');
 	  return $this->offsetGet('image_uploads_url');
   }
 } // end of class
