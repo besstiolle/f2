@@ -13,8 +13,35 @@ class OAuth{
 				$response->setCode(401);
 				$response->setMessage("Unauthorized token");
 			} else {
-				$response->setCode(200);
-				$response->setMessage("ok");
+
+				$forge2 = ModuleOperations::get_instance()->get_module_instance('Forge2');
+				$oauthToken = $tokens[0];
+				$timeout = $forge2->GetPreference('token_timeout', 30); 
+
+				//If the token is expired
+				if($oauthToken->get('dt') + $timeout < time()){
+					$response->setCode(401);
+					$response->setMessage("Unauthorized token expired");
+				} else{
+					$response->setCode(200);
+					$response->setMessage("ok");
+
+					$isUnique = $forge2->GetPreference('token_is_unique', FALSE);
+
+					if( $forge2->GetPreference('token_is_unique', FALSE) ){
+						//If the token is unique, we delete it
+						OrmCore::deleteByIds($oauthToken, array($params['token']));
+					} else {
+						//else we "touch" it with a new creation date
+						$oauthToken->set('dt', time());
+						$oauthToken->save();
+
+						// and prepare the information for the return
+						$response->setContentToken(array('token' => $oauthToken->get('token'), 
+														 'expireOn' => ($oauthToken->get('dt') + $timeout), 
+														 'isUnique' => $isUnique ));
+					}
+				}
 			}
 		} else {
 			$response->setCode(401);
@@ -56,9 +83,10 @@ class OAuth{
 					$forge2 = ModuleOperations::get_instance()->get_module_instance('Forge2');
 					$timeout = $forge2->GetPreference('token_timeout', 30); 
 					$isUnique = $forge2->GetPreference('token_is_unique', FALSE); 
+
 					$response->setCode(200);
 					$response->setMessage("ok");
-					$response->setContent(array('token' => $token, 'expireOn' => ($dt + $timeout), 'isUnique' => $isUnique ));
+					$response->setContentToken(array('token' => $token, 'expireOn' => ($dt + $timeout), 'isUnique' => $isUnique ));
 				} else {
 					$response->setCode(401);
 					$response->setMessage("Unauthorized password");

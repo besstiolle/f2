@@ -9,7 +9,8 @@ class ApiResponse {
 	private $code; // Something like 200, 401, 403 ...
 	private $message; 
 
-	private $content = '';
+	private $content = '';     // will contain the response
+	private $contentToken = ''; // will contain the informations about the token
 	
 	public function __construct($params){
 		$this->startdt = microtime(true);
@@ -40,6 +41,13 @@ class ApiResponse {
 	}
 	public function getContent(){
 		return $this->content;
+	}
+
+	public function setContentToken($contentToken){
+		$this->contentToken = $contentToken;
+	}
+	public function getContentToken(){
+		return $this->contentToken;
 	}
 
 	public function parseGet($params){
@@ -84,6 +92,7 @@ class ApiResponse {
 								'microtime' => microtime(true) - $this->startdt,
 								'code' => $this->code,
 								'message' => $this->message,
+								'token' => $this->contentToken,
 							),
 					'data' => $this->content,
 				);

@@ -49,9 +49,9 @@ class RestAPI{
 		$responseContent = json_decode($json);
 		//Todo : test responseContent (null or other)
 
-		RestAPI::$token = $responseContent->data->token;
-		RestAPI::$tokenExpireOn = $responseContent->data->expireOn;
-		RestAPI::$tokenIsUnique = $responseContent->data->isUnique;
+		RestAPI::$token = $responseContent->server->token->token;
+		RestAPI::$tokenExpireOn = $responseContent->server->token->expireOn;
+		RestAPI::$tokenIsUnique = $responseContent->server->token->isUnique;
 
 		return RestAPI::$token;
 
