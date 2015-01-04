@@ -2,8 +2,8 @@
 
 if (!function_exists("cmsms")) exit;
 
-//Paranoïd mode : only GET method
-ApiRequest::allowMethods(ApiRequest::$GET);
+//Paranoïd mode : ALL methods
+ApiRequest::allowMethods(ApiRequest::$ALL);
 
 $response = new ApiResponse($params);
 
@@ -16,6 +16,7 @@ $params = $response->getParams();
 $example = new OrmExample();
 $example->addCriteria('state', OrmTypeCriteria::$EQ, array(EnumProjectState::accepted));
 $example->addCriteria('project_type', OrmTypeCriteria::$EQ, array(EnumProjectType::module));
+$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['projectId']));
 
 $projects = OrmCore::findByExample(new Project, 
 									$example, 
