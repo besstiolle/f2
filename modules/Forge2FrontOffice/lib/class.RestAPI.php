@@ -28,18 +28,38 @@ class RestAPI{
 
 	private static $dump = array();
 
-
+	private static $token = null;
+	private static $tokenExpireOn = null;
+	private static $tokenIsUnique = null;
 
 	public static function getToken(){
-		return RestAPI::_GET('rest/v1/token', array(
+
+		// if we already have a valid token which is not unique
+		if(RestAPI::$token != null && RestAPI::$tokenExpireOn != null && RestAPI::$tokenIsUnique != null 
+			&& RestAPI::$tokenIsUnique === FALSE && time() < RestAPI::$tokenExpireOn) {
+			return RestAPI::$token;
+		}
+
+		// else we ask a new token
+		$json = RestAPI::_GET('rest/v1/token', array(
 							'user' => RestAPI::$login, 
 							'pass' => RestAPI::$pass 
 							));
+
+		$responseContent = json_decode($json);
+		//Todo : test responseContent (null or other)
+
+		RestAPI::$token = $responseContent->data->token;
+		RestAPI::$tokenExpireOn = $responseContent->data->expireOn;
+		RestAPI::$tokenIsUnique = $responseContent->data->isUnique;
+
+		return RestAPI::$token;
+
 	}
 
 	public static function GET($route, $params = null){
-		$array = json_decode(RestAPI::getToken());
-		$params['token'] = $array->data->token;
+		$token = RestAPI::getToken();
+		$params['token'] = $token;
 		return RestAPI::_GET($route, $params);
 	}
 

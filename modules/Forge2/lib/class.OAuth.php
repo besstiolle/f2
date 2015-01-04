@@ -24,7 +24,7 @@ class OAuth{
 		return $response;
 	}
 
-	public static function validOAuth(\ApiResponse $response){
+	public static function getToken(\ApiResponse $response){
 
 		$params = $response->getParams();
 
@@ -52,9 +52,13 @@ class OAuth{
 					$oauthToken->set('dt', $dt);
 					$oauthToken->save();
 
+					//Retrive the timeout
+					$forge2 = ModuleOperations::get_instance()->get_module_instance('Forge2');
+					$timeout = $forge2->GetPreference('token_timeout', 30); 
+					$isUnique = $forge2->GetPreference('token_is_unique', FALSE); 
 					$response->setCode(200);
 					$response->setMessage("ok");
-					$response->setContent(array('token' => $token));
+					$response->setContent(array('token' => $token, 'expireOn' => ($dt + $timeout), 'isUnique' => $isUnique ));
 				} else {
 					$response->setCode(401);
 					$response->setMessage("Unauthorized password");

@@ -8,9 +8,8 @@ foreach($entities as $anEntity) {
 	OrmCore::createTable($anEntity);
 }*/
 
-OrmCore::createTable(new License());
-OrmCore::createTable(new Ssh_key());
-OrmCore::createTable(new Project());
+$this->SetPreference('token_timeout', 30); 
+$this->SetPreference('token_is_unique', FALSE); 
 
 // put mention into the admin log
 $this->Audit( 0, 
