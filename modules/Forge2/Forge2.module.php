@@ -123,6 +123,10 @@ class Forge2 extends Orm
 		$route = $this->_generateRoute($prefix, $version, 'projects',$projectId, 'a');
 		$this->_add_static($route, array('action'=>'projects'));
 
+		//sandbox for quick test
+		$route = $this->_generateRoute($prefix, $version, 'sandbox');
+		$this->_add_static($route, array('action'=>'default'));
+
 		/*$route = new CmsRoute('/rest\/v1\/projects\/(?P<projectId>[a-z0-9]+)$/',$this->GetName(),array('action'=>'default'));
 		cms_route_manager::add_static($route);*/
 	}

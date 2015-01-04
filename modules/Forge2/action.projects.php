@@ -2,21 +2,10 @@
 
 if (!function_exists("cmsms")) exit;
 
-if(array_key_exists('projectId', $params)) {
-	$_GET['projectId'] = $params['projectId'];
-}
-
-
-$response = new ApiResponse($_GET);
+$response = new ApiResponse($params);
 
 //Check the token
 $response = OAuth::validToken($response);
-$code = $response->getCode();
-if($code != 200){
-	//Display result
-	echo $response;
-	exit;
-}
 
 $params = $response->getParams();
 

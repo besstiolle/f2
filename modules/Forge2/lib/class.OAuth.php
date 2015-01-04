@@ -5,6 +5,7 @@ class OAuth{
 	public static function validToken(\ApiResponse $response){
 		
 		$params = $response->getParams();
+		$isTokenValid = false;
 
 		if(!empty($params['token'])){
 			$oauthToken = new OAuthToken();
@@ -41,6 +42,8 @@ class OAuth{
 														 'expireOn' => ($oauthToken->get('dt') + $timeout), 
 														 'isUnique' => $isUnique ));
 					}
+
+					$isTokenValid = true;
 				}
 			}
 		} else {
@@ -48,10 +51,16 @@ class OAuth{
 			$response->setMessage("Unauthorized no token");
 		}
 
+		//If the token is not valid, we stop here the process
+		if(!$isTokenValid){
+			echo $response;
+			exit;
+		}
+
 		return $response;
 	}
 
-	public static function getToken(\ApiResponse $response){
+	public static function getNewToken(\ApiResponse $response){
 
 		$params = $response->getParams();
 
