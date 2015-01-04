@@ -36,9 +36,9 @@ class RestAPI{
 
 		// if we already have a valid token which is not unique
 		if(RestAPI::$token != null && RestAPI::$tokenExpireOn != null && RestAPI::$tokenIsUnique != null 
-			&& RestAPI::$tokenIsUnique === FALSE && time() < RestAPI::$tokenExpireOn) {
+			&& RestAPI::$tokenIsUnique == FALSE && time() < RestAPI::$tokenExpireOn) {
 			return RestAPI::$token;
-		}
+		} 
 
 		// else we ask a new token
 		$json = RestAPI::_GET('rest/v1/token', array(
