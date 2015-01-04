@@ -19,7 +19,7 @@ $projects = $data->projects;
 echo "<table><thead><tr><th>Id</th><th>Name</th></tr></thead>";
 $config = cmsms()->GetConfig();
 foreach ($projects as $project) {
-	$link = $config['root_url'].'/project/'.$project->unix_name.'/'.$project->id;
+	$link = $config['root_url'].'/project/'.$project->id.'/'.$project->unix_name;
 	echo "<tr><td><a href='".$link."'>".$project->id."</a></td><td>".$project->name."</td></tr>";
 }
 echo "</table><br/><br/>";
