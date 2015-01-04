@@ -2,7 +2,7 @@
 
 if (!function_exists("cmsms")) exit;
 
-//Paranoïd mode : ALL methods
+//Paranoïd mode : ALL methods : GET PUT POST DELETE
 ApiRequest::allowMethods(ApiRequest::$ALL);
 
 $response = new ApiResponse($params);
@@ -12,25 +12,5 @@ $response = OAuth::validToken($response);
 
 $params = $response->getParams();
 
-//Select by example
-$example = new OrmExample();
-$example->addCriteria('state', OrmTypeCriteria::$EQ, array(EnumProjectState::accepted));
-$example->addCriteria('project_type', OrmTypeCriteria::$EQ, array(EnumProjectType::module));
-$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['projectId']));
-
-$projects = OrmCore::findByExample(new Project, 
-									$example, 
-									new OrmOrderBy(array('last_file_date' => OrmOrderBy::$DESC)), 
-									new OrmLimit(0, 10));
-
-$projectsList = array();
-foreach ($projects as $project) {
-	$projectsList[] = $project->getValues();
-}
-
-
-$response->setContent(array('projects' => $projectsList));
-
-//Display result
-echo $response;
-exit;
+$config = cmsms()->GetConfig();
+include_once($this->getPath().'lib/actions/action.project_'.$_SERVER['REQUEST_METHOD'].'.php');
