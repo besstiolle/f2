@@ -46,12 +46,12 @@ class RestAPI{
 							'pass' => RestAPI::$pass 
 							));
 
-		$responseContent = json_decode($json);
+		$responseContent = json_decode($json, true);
 		//Todo : test responseContent (null or other)
 
-		RestAPI::$token = $responseContent->server->token->token;
-		RestAPI::$tokenExpireOn = $responseContent->server->token->expireOn;
-		RestAPI::$tokenIsUnique = $responseContent->server->token->isUnique;
+		RestAPI::$token = $responseContent['server']['token']['token'];
+		RestAPI::$tokenExpireOn = $responseContent['server']['token']['expireOn'];
+		RestAPI::$tokenIsUnique = $responseContent['server']['token']['isUnique'];
 
 		return RestAPI::$token;
 
