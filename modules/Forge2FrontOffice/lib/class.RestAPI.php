@@ -63,6 +63,12 @@ class RestAPI{
 		return RestAPI::_GET($route, $params);
 	}
 
+	public static function POST($route, $params = null){
+		$token = RestAPI::getToken();
+		$params['token'] = $token;
+		return RestAPI::_POST($route, $params);
+	}
+
 	private static function _GET($route, $params = null){
 
 		$stringParameters = '';
@@ -85,6 +91,27 @@ class RestAPI{
 		return $request->getResponse();
 	}
 
+	private static function _POST($route, $params = null){
+
+		$stringParameters = '';
+		if(!empty($params)){
+			$stringParameters = '?'.http_build_query($params);
+		}
+
+		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
+
+		//For future debug
+		RestAPI::$dump[] = $restUrl;
+
+		$request = new Curl\POST( $restUrl , ['data' => $params]);
+		$request->send();
+		$status = $request->getStatus();
+		if($status !== 200){
+			throw new Exception("Error Processing Request on $restUrl\ncode returned = ".$status." \n ".print_r(RestAPI::getDump(),true), 1);
+		}
+
+		return $request->getResponse();
+	}
 	public static function getDump(){
 		return RestAPI::$dump;
 	}
