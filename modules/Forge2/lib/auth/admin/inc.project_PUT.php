@@ -4,15 +4,15 @@ if (!function_exists("cmsms")) exit;
 
 $fieldsRequired = [
 	'id',
+	'name',
+	'unix_name',
+	'project_type',
 				];
 
 
 $fieldsOptional = [
-	'name',
-	'unix_name',
 	'description',
 	'registration_reason',
-	'project_type',
 	'project_category_1',
 	'project_category_2',
 //	'created_at',
