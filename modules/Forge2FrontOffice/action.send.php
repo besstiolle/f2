@@ -17,6 +17,8 @@ unset($params['action']);
 unset($params['returnid']);
 unset($params['method']);
 unset($params['routing']);
+unset($params['link_next_success']);
+unset($params['link_next_failed']);
 
 $json = RestAPI::$_SERVER['REQUEST_METHOD']($route, $params);
 $response = json_decode($json, true);
