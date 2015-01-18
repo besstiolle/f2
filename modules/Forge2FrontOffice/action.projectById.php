@@ -14,6 +14,8 @@ $projects = $response['data']['projects'];
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'send', 'post','', true, '',  array()));
 $smarty->assign('project', $projects[0]);
 $smarty->assign('link_back', $config['root_url'].'/project/list');
+$smarty->assign('link_next_success', $config['root_url'].'/project/'.$projectId.'/a');
+$smarty->assign('link_next_failed', $config['root_url'].'/project/'.$projectId.'/a');
 
 //TODO let the choice between create / delete / update
 $smarty->assign('routing', '/rest/v1/projects/'.$projects[0]['id'].'/a');

@@ -90,6 +90,8 @@ class Forge2FrontOffice extends Orm
 		$this->RestrictUnknownParams();
 		$this->SetParameterType('routing',CLEAN_STRING);
 		$this->SetParameterType('method',CLEAN_STRING);
+		$this->SetParameterType('link_next_success',CLEAN_STRING);
+		$this->SetParameterType('link_next_failed',CLEAN_STRING);
 		$this->SetParameterType('projectId',CLEAN_INT);
 		$this->SetParameterType('projectName',CLEAN_STRING);
 		$this->SetParameterType('name',CLEAN_STRING);

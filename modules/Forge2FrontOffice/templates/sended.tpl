@@ -1,0 +1,1 @@
+<p>{$message}. <a href='{$link}'>Clic here to continue</a></p>
