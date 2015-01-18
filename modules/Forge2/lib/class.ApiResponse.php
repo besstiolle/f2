@@ -7,9 +7,9 @@ class ApiResponse {
 	private $params = array();
 
 	private $code; // Something like 200, 401, 403 ...
-	private $message; 
+	private $message; // Something like "Ok" or "Forbidden"
 
-	private $content = '';     // will contain the response
+	private $content = [];     // will contain the response
 	private $contentToken = ''; // will contain the informations about the token
 	
 	public function __construct($paramsCmsms){
@@ -45,8 +45,8 @@ class ApiResponse {
 		return $this->message;
 	}
 
-	public function setContent($content){
-		$this->content = $content;
+	public function addContent($key, $value){
+		$this->content[$key] = $value;
 	}
 	public function getContent(){
 		return $this->content;

@@ -3,7 +3,7 @@
 if (!function_exists("cmsms")) exit;
 
 $fieldsRequired = [
-	'id',
+	'sid', //Passed by url
 	'name',
 	'unix_name',
 	'project_type',

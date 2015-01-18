@@ -52,7 +52,7 @@ class ApiRequest {
 			$sanitized['token'] = $params['token'];
 		}
 
-		$pattern = '#^[0-9]+$#';
+	/*	$pattern = '#^[0-9]+$#';
 		if(isset($params['projectId']) && preg_match($pattern, $params['projectId'])){
 			$sanitized['projectId'] = $params['projectId'];
 		}
@@ -60,7 +60,7 @@ class ApiRequest {
 		$pattern = '#^[a-zA-Z0-9]+$#';
 		if(isset($params['projectUnixName']) && preg_match($pattern, $params['projectUnixName'])){
 			$sanitized['projectUnixName'] = $params['projectUnixName'];
-		}
+		}  */
 
 		return $sanitized;
 	}

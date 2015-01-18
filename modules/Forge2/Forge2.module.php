@@ -86,7 +86,6 @@ class Forge2 extends Orm
 	{
 		$this->RegisterModulePlugin(true, false);
 	/*	$this->RestrictUnknownParams();
-		$this->SetParameterType('projectId',CLEAN_INT);
 		$this->SetParameterType('projectName',CLEAN_STRING);
 		$this->SetParameterType('packageId',CLEAN_INT);*/
 	/*	$this->SetParameterType('max_height',CLEAN_INT);
@@ -103,7 +102,7 @@ class Forge2 extends Orm
 		$prefix = 'rest';
 		$version = 'v1';
 		$prefixProject = 'projects';
-		$projectId = '(?P<projectId>[0-9]+)';
+		$sid = '(?P<sid>[0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
 
@@ -116,18 +115,18 @@ class Forge2 extends Orm
 		$this->_add_static($route, array('action'=>'projects'));
 
 		//Page of project
-		/*$route = $this->_generateRoute($prefix, $version, 'projects',$projectId, $projectName);
+		/*$route = $this->_generateRoute($prefix, $version, 'projects',$sid, $projectName);
 		$this->_add_static($route, array('action'=>'projects'));*/
 		
 		//Page of project
-		$route = $this->_generateRoute($prefix, $version, 'projects',$projectId, 'a');
+		$route = $this->_generateRoute($prefix, $version, 'projects',$sid, 'a');
 		$this->_add_static($route, array('action'=>'project'));
 
 		//sandbox for quick test
 		$route = $this->_generateRoute($prefix, $version, 'sandbox');
 		$this->_add_static($route, array('action'=>'default'));
 
-		/*$route = new CmsRoute('/rest\/v1\/projects\/(?P<projectId>[a-z0-9]+)$/',$this->GetName(),array('action'=>'default'));
+		/*$route = new CmsRoute('/rest\/v1\/projects\/(?P<sid>[a-z0-9]+)$/',$this->GetName(),array('action'=>'default'));
 		cms_route_manager::add_static($route);*/
 	}
 

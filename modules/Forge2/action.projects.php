@@ -28,7 +28,7 @@ foreach ($projects as $project) {
 }
 
 
-$response->setContent(array('projects' => $projectsList));
+$response->addContent('projects', $projectsList);
 
 //Display result
 echo $response;

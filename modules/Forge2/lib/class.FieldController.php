@@ -21,6 +21,15 @@ class FieldController{
 	}
 
 	public function validate(ApiResponse $response){
+
+		// Operation, we remove the cmsms values
+		unset($this->params['inline']);
+		unset($this->params['action']);
+		unset($this->params['returnid']);
+		unset($this->params['module']);
+		unset($this->params['showtemplate']);
+		unset($this->params['token']);
+		
 		$patterns = $this->path.'lib/auth/inc.project.php';
 		$definitions = $this->path.'lib/auth/admin/inc.project_'.$_SERVER['REQUEST_METHOD'].'.php';
 
@@ -63,7 +72,7 @@ class FieldController{
 			}
 		}
 
-		//Test #2 : the fields optionnal, if there are present, must respect the pattern.
+		//Test #1 : the fields optionnal, if there are present, must respect the pattern.
 		foreach ($fieldsOptional as $fieldName) {
 			if(!empty($this->params[$fieldName])){
 				
@@ -78,12 +87,13 @@ class FieldController{
 
 		//Test #3 : the extra fields are ignored
 		foreach ($this->params as $fieldName => $values) {
-			if(!array_key_exists($fieldName, $fieldsOptional) && !array_key_exists($fieldName, $fieldsRequired)){
+			if(!in_array($fieldName, $fieldsOptional) && !in_array($fieldName, $fieldsRequired)){
 				$this->notice[] = 'field '.$fieldName.' was unexpected and have been dropped from request';
 				unset($this->params[$fieldName]);
 				continue;
 			}
 		}
+
 	}
 
 	private function controlPattern($value, $pattern){

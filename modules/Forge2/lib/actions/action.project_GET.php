@@ -4,7 +4,10 @@ if (!function_exists("cmsms")) exit;
 
 //Select by example
 $example = new OrmExample();
-$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['projectId']));
+$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['sid']));
+
+//We don't need the sid anymore
+unset($params['sid']);
 
 $projects = OrmCore::findByExample(new Project, 
 									$example, 
@@ -16,9 +19,4 @@ foreach ($projects as $project) {
 	$projectsList[] = $project->getValues();
 }
 
-
-$response->setContent(array('projects' => $projectsList));
-
-//Display result
-echo $response;
-exit;
+$response->addContent('projects', $projectsList);

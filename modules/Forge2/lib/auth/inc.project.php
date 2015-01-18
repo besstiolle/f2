@@ -5,7 +5,7 @@ if (!function_exists("cmsms")) exit;
 //TODO make constants and put everything into another file 
 //DEFINE('SID', '...');
 $fields = [
-	'id' => '#^[0-9]+$#',
+	'sid' => '#^[0-9]+$#',
 	'name' => '',
 	'unix_name' => '#^[a-zA-Z0-9]+$#',
 	'description' => '*',
