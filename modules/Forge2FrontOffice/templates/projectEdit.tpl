@@ -4,6 +4,9 @@
 	{if isset($warn)}{$warn}{/if}
 	{$form}
 
+		{* We don't need Id as the routing will include it *}
+		{* <input type='hidden' name='{$actionid}sid' value='{$project.id}'/> *}
+		
 		<input type='hidden' name='{$actionid}routing' value='{$routing}'/>
 		<input type='hidden' name='{$actionid}method' value='{$method}'/>
 		<input type='hidden' name='{$actionid}link_next_success' value='{$link_next_success}'/>
