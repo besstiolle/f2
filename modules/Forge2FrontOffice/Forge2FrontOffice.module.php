@@ -102,6 +102,9 @@ class Forge2FrontOffice extends Orm
 	function CreateStaticRoutes() {
 		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
 		$prefixProject = 'project';
+		$new = 'new';
+		$delete = 'delete';
+		$edit = 'edit';
 		$projectId = '(?P<projectId>[0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
@@ -112,7 +115,19 @@ class Forge2FrontOffice extends Orm
 
 		//Page of project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName);
-		$this->_add_static($route, array('action'=>'projectById', 'returnid'=>$returnid));
+		$this->_add_static($route, array('action'=>'projectView', 'returnid'=>$returnid));
+
+		//Page of delete project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $delete);
+		$this->_add_static($route, array('action'=>'projectDelete', 'returnid'=>$returnid));
+
+		//Page of edit project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $edit);
+		$this->_add_static($route, array('action'=>'projectEdit', 'returnid'=>$returnid));
+		
+		//Page of new project
+		$route = $this->_generateRoute($prefixProject, $new);
+		$this->_add_static($route, array('action'=>'projectNew', 'returnid'=>$returnid));
 	}
 
 	private function _generateRoute(){
