@@ -17,7 +17,13 @@ class ApiRequest {
 		
 		$parametersGET = ApiRequest::sanitizeParameters($_GET);
 		//$parametersPOST = ApiRequest::sanitizeParameters($_POST);
-		$parametersPOST = $_POST;
+		if(ApiRequest::isPOST()){
+			$parametersPOST = $_POST;
+		}
+		
+		if(ApiRequest::isPUT()){
+			parse_str(file_get_contents("php://input"),$parametersPUT);
+		}
 
 		//Check the method allowed. We work in paranoïd mode. 
 		if( !in_array(ApiRequest::$ALL, ApiRequest::$allowedMethod)
@@ -27,8 +33,10 @@ class ApiRequest {
 
 		if(ApiRequest::isGET() || ApiRequest::isDELETE()) {
 			$this->params = array_merge($paramsCmsms, $parametersGET);
-		} else if(ApiRequest::isPOST() || ApiRequest::isPUT()) { 
+		} else if(ApiRequest::isPOST()) { 
 			$this->params = array_merge($paramsCmsms, $parametersGET, $parametersPOST);
+		} else if(ApiRequest::isPUT()) { 
+			$this->params = array_merge($paramsCmsms, $parametersGET, $parametersPUT);
 		} else {
 			throw new Exception("Error HTTP method ".$_SERVER['REQUEST_METHOD']." not supported ", 1);
 		}

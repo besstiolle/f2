@@ -2,14 +2,10 @@
 
 if (!function_exists("cmsms")) exit;
 
-//Select by example
-$example = new OrmExample();
-$example->addCriteria('id', OrmTypeCriteria::$EQ, array($params['sid']));
+$entities = OrmCore::findByIds(new Project, array($params['sid']));
 
 //We don't need the sid anymore
 unset($params['sid']);
-
-$entities = OrmCore::findByExample(new Project, $example);
 
 if(empty($entities)){
 	$response->addContent('warn', 'entity not found');
@@ -24,4 +20,4 @@ foreach ($params as $key => $value) {
 //Save the entity
 $entity->save();
 
-$response->addContent('info', 'entity saved with success');
+$response->addContent('info', 'entity updated with success');

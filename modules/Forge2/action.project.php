@@ -11,7 +11,6 @@ $response = new ApiResponse($params);
 $response = OAuth::validToken($response);
 
 $params = $response->getParams();
-
 $config = cmsms()->GetConfig();
 
 
