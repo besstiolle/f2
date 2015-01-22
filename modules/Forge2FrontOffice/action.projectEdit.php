@@ -19,7 +19,7 @@ if(empty($projects)){
 	$smarty->assign('link_next_success', $config['root_url'].'/project/'.$projectId.'/'.$projects[0]['unix_name'].'/edit');
 	$smarty->assign('link_next_failed', $config['root_url'].'/project/'.$projectId.'/'.$projects[0]['unix_name'].'/edit');
 	$smarty->assign('method', 'POST'); // = edit
-	$smarty->assign('routing', '/rest/v1/projects/'.$projectId.'/a');
+	$smarty->assign('routing', 'rest/v1/projects/'.$projectId.'/a');
 	$smarty->assign('project', $projects[0]);
 }
 

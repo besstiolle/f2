@@ -6,6 +6,7 @@ $route = $params['routing'];
 $returnid = $params['returnid'];
 $success = $params['link_next_success'];
 $failed = $params['link_next_failed'];
+$method = $params['method'];
 
 //TODO make some test about "do he have the right to use this route"
 
@@ -19,16 +20,16 @@ unset($params['routing']);
 unset($params['link_next_success']);
 unset($params['link_next_failed']);
 
-$json = RestAPI::$_SERVER['REQUEST_METHOD']($route, $params);
+$json = RestAPI::$method($route, array(), $params);
 $response = json_decode($json, true);
 
 if($response['server']['code'] == 200){
 	$link = $success;
-	if($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if($method == 'POST') {
 		$message = 'the entity is updated with success';	
-	} else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
+	} else if($method == 'PUT') {
 		$message = 'the entity is created with success';	
-	}  else if($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+	}  else if($method == 'DELETE') {
 		$message = 'the entity is deleted with success';	
 	} else {
 		$message = 'the operation is a success';
@@ -44,5 +45,8 @@ $smarty->assign('link',$link);
 
 echo $this->processTemplate('sended.tpl');
 
-//var_dump($json);
-//var_dump($response);
+//Debug part
+var_dump($response['request']);
+var_dump($response['server']);
+var_dump($response['data']);
+var_dump(RestAPI::getDump());

@@ -20,7 +20,7 @@ class OAuth{
 				$timeout = $forge2->GetPreference('token_timeout', 30); 
 
 				//If the token is expired
-				if($oauthToken->get('dt') + $timeout < time()){
+				if(false && $oauthToken->get('dt') + $timeout < time()){
 					$response->setCode(401);
 					$response->setMessage("Unauthorized token expired");
 				} else{
@@ -95,7 +95,9 @@ class OAuth{
 
 					$response->setCode(200);
 					$response->setMessage("ok");
-					$response->setContentToken(array('token' => $token, 'expireOn' => ($dt + $timeout), 'isUnique' => $isUnique ));
+					$response->setContentToken(array('token' => $token, 
+													'expireOn' => ($dt + $timeout), 
+													'isUnique' => $isUnique ));
 				} else {
 					$response->setCode(401);
 					$response->setMessage("Unauthorized password");
