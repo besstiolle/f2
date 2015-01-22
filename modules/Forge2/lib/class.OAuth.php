@@ -20,7 +20,7 @@ class OAuth{
 				$timeout = $forge2->GetPreference('token_timeout', 30); 
 
 				//If the token is expired
-				if(false && $oauthToken->get('dt') + $timeout < time()){
+				if($oauthToken->get('dt') + $timeout < time()){
 					$response->setCode(401);
 					$response->setMessage("Unauthorized token expired");
 				} else{
