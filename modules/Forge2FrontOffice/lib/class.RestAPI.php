@@ -57,23 +57,48 @@ class RestAPI{
 
 	}
 
-	public static function GET($route, $params = null){
+	public static function GET($route, $paramsUrl = null){
 		$token = RestAPI::getToken();
-		$params['token'] = $token;
-		return RestAPI::_GET($route, $params);
+		if($paramsUrl == null){
+			$paramsUrl = array();
+		}
+		$paramsUrl['token'] = $token;
+		return RestAPI::_GET($route, $paramsUrl);
 	}
 
-	public static function POST($route, $params = null){
+	public static function POST($route, $paramsUrl = null, $paramsData = null){
 		$token = RestAPI::getToken();
-		$params['token'] = $token;
-		return RestAPI::_POST($route, $params);
+		if($paramsUrl == null){
+			$paramsUrl = array();
+		}
+		$paramsUrl['token'] = $token;
+		return RestAPI::_POST($route, $paramsUrl, $paramsData);
 	}
 
-	private static function _GET($route, $params = null){
+	public static function PUT($route, $paramsUrl = null, $paramsData = null){
+		$token = RestAPI::getToken();
+		if($paramsUrl == null){
+			$paramsUrl = array();
+		}
+		$paramsUrl['token'] = $token;
+		return RestAPI::_PUT($route, $paramsUrl, $paramsData);
+	}
+
+	public static function DELETE($route, $paramsUrl = null, $paramsData = null){
+		$token = RestAPI::getToken();
+		if($paramsUrl == null){
+			$paramsUrl = array();
+		}
+		$paramsUrl['token'] = $token;
+		return RestAPI::_DELETE($route, $paramsUrl, $paramsData);		
+	}
+
+
+	private static function _GET($route, $paramsUrl = null){
 
 		$stringParameters = '';
-		if(!empty($params)){
-			$stringParameters = '?'.http_build_query($params);
+		if(!empty($paramsUrl)){
+			$stringParameters = '?'.http_build_query($paramsUrl);
 		}
 
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
@@ -85,17 +110,20 @@ class RestAPI{
 		$request->send();
 		$status = $request->getStatus();
 		if($status !== 200){
-			throw new Exception("Error Processing Request on $restUrl\ncode returned = ".$status." \n ".print_r(RestAPI::getDump(),true), 1);
+			throw new Exception("Error Processing GET Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$status." 
+						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
 		return $request->getResponse();
 	}
 
-	private static function _POST($route, $params = null){
+	private static function _POST($route, $paramsUrl = null, $paramsData = null){
 
 		$stringParameters = '';
-		if(!empty($params)){
-			$stringParameters = '?'.http_build_query($params);
+		if(!empty($paramsUrl)){
+			$stringParameters = '?'.http_build_query($paramsUrl); 
 		}
 
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
@@ -103,15 +131,70 @@ class RestAPI{
 		//For future debug
 		RestAPI::$dump[] = $restUrl;
 
-		$request = new Curl\POST( $restUrl , ['data' => $params]);
+		$request = new Curl\POST( $restUrl , ['data' => $paramsData]);
 		$request->send();
 		$status = $request->getStatus();
 		if($status !== 200){
-			throw new Exception("Error Processing Request on $restUrl\ncode returned = ".$status." \n ".print_r(RestAPI::getDump(),true), 1);
+			throw new Exception("Error Processing POST Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$status." 
+						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
 		return $request->getResponse();
 	}
+
+	private static function _PUT($route, $paramsUrl = null, $paramsData = null){
+
+		$stringParameters = '';
+		if(!empty($paramsUrl)){
+			$stringParameters = '?'.http_build_query($paramsUrl); 
+		}
+
+		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
+
+		//For future debug
+		RestAPI::$dump[] = $restUrl;
+
+		$request = new Curl\PUT( $restUrl , ['data' => $paramsData]);
+		$request->send();
+		$status = $request->getStatus();
+		if($status !== 200){
+
+			throw new Exception("Error Processing PUT Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$status."  
+						\n ".print_r(RestAPI::getDump(),true), 1);
+		}
+
+		return $request->getResponse();
+	}
+
+	private static function _DELETE($route, $paramsUrl = null, $paramsData = null){
+
+		$stringParameters = '';
+		if(!empty($paramsUrl)){
+			$stringParameters = '?'.http_build_query($paramsUrl); 
+		}
+
+		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
+
+		//For future debug
+		RestAPI::$dump[] = $restUrl;
+
+		$request = new Curl\DELETE( $restUrl );
+		$request->send();
+		$status = $request->getStatus();
+		if($status !== 200){
+			throw new Exception("Error Processing DELETE Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$status." 
+						\n ".print_r(RestAPI::getDump(),true), 1);
+		}
+
+		return $request->getResponse();
+	}
+
 	public static function getDump(){
 		return RestAPI::$dump;
 	}
