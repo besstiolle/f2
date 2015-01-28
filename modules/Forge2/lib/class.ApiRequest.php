@@ -15,6 +15,12 @@ class ApiRequest {
 
 	public function __construct($paramsCmsms){
 		
+		//Check the method allowed. We work in paranoïd mode. 
+		if( !in_array(ApiRequest::$ALL, ApiRequest::$allowedMethod)
+				&& !in_array($_SERVER['REQUEST_METHOD'], ApiRequest::$allowedMethod) ){
+			throw new Exception("Error HTTP method ".$_SERVER['REQUEST_METHOD']." not supported ", 1);
+		}
+
 		$parametersGET = ApiRequest::sanitizeParameters($_GET);
 		//$parametersPOST = ApiRequest::sanitizeParameters($_POST);
 		if(ApiRequest::isPOST()){
@@ -23,12 +29,6 @@ class ApiRequest {
 		
 		if(ApiRequest::isPUT()){
 			parse_str(file_get_contents("php://input"),$parametersPUT);
-		}
-
-		//Check the method allowed. We work in paranoïd mode. 
-		if( !in_array(ApiRequest::$ALL, ApiRequest::$allowedMethod)
-				&& !in_array($_SERVER['REQUEST_METHOD'], ApiRequest::$allowedMethod) ){
-			throw new Exception("Error HTTP method ".$_SERVER['REQUEST_METHOD']." not supported ", 1);
 		}
 
 		if(ApiRequest::isGET() || ApiRequest::isDELETE()) {
@@ -41,6 +41,7 @@ class ApiRequest {
 			throw new Exception("Error HTTP method ".$_SERVER['REQUEST_METHOD']." not supported ", 1);
 		}
 	}
+
 
 	public static function sanitizeParameters($params){
 		$sanitized = array();
@@ -58,6 +59,21 @@ class ApiRequest {
 		$pattern = '#^[a-zA-Z0-9]+$#';
 		if(isset($params['token']) && preg_match($pattern, $params['token'])){
 			$sanitized['token'] = $params['token'];
+		}
+
+		$pattern = '#^[a-zA-Z0-9]$#';
+		if(isset($params['filterAlpha']) && preg_match($pattern, $params['filterAlpha'])){
+			$sanitized['filterAlpha'] = $params['filterAlpha'];
+		}
+
+		$pattern = '#^[0-9]+$#';
+		if(isset($params['p']) && preg_match($pattern, $params['p'])){
+			$sanitized['p'] = $params['p'];
+		}
+
+		$pattern = '#^[0-9]+$#';
+		if(isset($params['n']) && preg_match($pattern, $params['n'])){
+			$sanitized['n'] = $params['n'];
 		}
 
 	/*	$pattern = '#^[0-9]+$#';
