@@ -99,6 +99,9 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('description',CLEAN_STRING);
 		$this->SetParameterType('project_type',CLEAN_INT);
 		$this->SetParameterType('filterAlpha',CLEAN_STRING);
+
+		$this->SetParameterType('pagin_page',CLEAN_INT);
+		$this->SetParameterType('pagin_num',CLEAN_INT);
 	}
 
 	function CreateStaticRoutes() {

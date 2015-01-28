@@ -2,14 +2,29 @@
 
 if (!function_exists("cmsms")) exit;
 
-if(isset($params['filterAlpha'])){
-	$json = RestAPI::GET('rest/v1/projects', array('p'=>1, 'n'=>10, 'filterAlpha' => $params['filterAlpha']));
-	$response = json_decode($json, true);
-} else {
-	//Ask the last 10 modules
-	$json = RestAPI::GET('rest/v1/projects', array('p'=>1, 'n'=>10));
-	$response = json_decode($json, true);
+$restParameters = array();
+
+// Number of the page
+$restParameters['p'] = 1;
+if(!empty($params['pagin_page'])) {
+	$restParameters['p'] = $params['pagin_page'];
 }
+
+//Number of element by page
+$restParameters['n'] = 10;
+if(!empty($params['pagin_num'])) {
+	$restParameters['n'] = $params['pagin_num'];
+}
+
+//Filter on the first char
+if(isset($params['filterAlpha'])) {
+	$restParameters['filterAlpha'] = $params['filterAlpha'];
+} 
+
+//Ask the last 10 modules
+$json = RestAPI::GET('rest/v1/projects', $restParameters);
+$response = json_decode($json, true);
+
 
 
 //Get the projects in the response data
