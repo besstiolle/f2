@@ -12,6 +12,8 @@ $response = json_decode($json, true);
 //Get the projects in the response data
 $projects = $response['data']['projects'];
 
+//TODO : set info in session to avoid url-scam and requiring confirmation before deleting something
+
 if(empty($projects)){
 	$smarty->assign('error', 'The Project '.$projectName.' (#'.$projectId.') does not exist.');
 } else {

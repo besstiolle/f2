@@ -2,9 +2,15 @@
 
 if (!function_exists("cmsms")) exit;
 
-//Ask the last 10 modules
-$json = RestAPI::GET('rest/v1/projects');
-$response = json_decode($json, true);
+if(isset($params['filterAlpha'])){
+	$json = RestAPI::GET('rest/v1/projects', array('p'=>1, 'n'=>10, 'filterAlpha' => $params['filterAlpha']));
+	$response = json_decode($json, true);
+} else {
+	//Ask the last 10 modules
+	$json = RestAPI::GET('rest/v1/projects', array('p'=>1, 'n'=>10));
+	$response = json_decode($json, true);
+}
+
 
 //Get the projects in the response data
 $projects = $response['data']['projects'];

@@ -98,6 +98,7 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('unix_name',CLEAN_STRING);
 		$this->SetParameterType('description',CLEAN_STRING);
 		$this->SetParameterType('project_type',CLEAN_INT);
+		$this->SetParameterType('filterAlpha',CLEAN_STRING);
 	}
 
 	function CreateStaticRoutes() {
@@ -109,9 +110,15 @@ class Forge2FrontOffice extends Orm
 		$projectId = '(?P<projectId>[0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
+		$filterAlpha = '(?P<filterAlpha>[a-zA-Z0-9])';
+
 
 		//List of Projects
 		$route = $this->_generateRoute($prefixProject, 'list');
+		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
+
+		//List of Projects with filtre alpha numeric
+		$route = $this->_generateRoute($prefixProject, 'list', $filterAlpha);
 		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
 
 		//Page of project
