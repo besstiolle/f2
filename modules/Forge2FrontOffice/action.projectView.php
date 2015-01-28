@@ -3,6 +3,7 @@
 if (!function_exists("cmsms")) exit;
 
 $projectId = $params['projectId'];
+$projectName = $params['projectName'];
 
 //Ask the module/tag/...
 $json = RestAPI::GET('rest/v1/projects/'.$projectId.'/a');
@@ -12,8 +13,13 @@ $response = json_decode($json, true);
 $projects = $response['data']['projects'];
 $config = cmsms()->GetConfig();
 
+if(empty($projects)){
+	$smarty->assign('error', 'The Project '.$projectName.' (#'.$projectId.') does not exist.');
+} else {
+	$smarty->assign('project', $projects[0]);
+}
+
 $smarty->assign('root_url', $config['root_url']);
-$smarty->assign('project', $projects[0]);
 
 
 echo $this->processTemplate('projectView.tpl');

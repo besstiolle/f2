@@ -1,5 +1,6 @@
 {if isset($error)}
 	{$error}
+	<a href='{$root_url}/project/list'>Return</a>
 {else}
 	{$form}
 
