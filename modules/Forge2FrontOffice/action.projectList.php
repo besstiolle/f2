@@ -22,7 +22,7 @@ if(isset($params['filterAlpha'])) {
 } 
 
 //Ask the last 10 modules
-$json = RestAPI::GET('rest/v1/projects', $restParameters);
+$json = RestAPI::GET('rest/v1/project', $restParameters);
 $response = json_decode($json, true);
 
 

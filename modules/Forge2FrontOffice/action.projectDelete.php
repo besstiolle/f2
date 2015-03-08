@@ -6,7 +6,7 @@ $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 
 //Ask the module/tag/...
-$json = RestAPI::GET('rest/v1/projects/'.$projectId.'/a');
+$json = RestAPI::GET('rest/v1/project/'.$projectId);
 $response = json_decode($json, true);
 
 //Get the projects in the response data
@@ -24,7 +24,7 @@ if(empty($projects)){
 	$smarty->assign('link_next_success', $config['root_url'].'/project/list');
 	$smarty->assign('link_next_failed', $config['root_url'].'/project/'.$projectId.'/'.$project['unix_name']);
 	$smarty->assign('method', 'DELETE'); 
-	$smarty->assign('routing', '/rest/v1/projects/'.$project['id'].'/a');
+	$smarty->assign('routing', '/rest/v1/project/'.$project['id']);
 }
 
 echo $this->processTemplate('projectDelete.tpl');

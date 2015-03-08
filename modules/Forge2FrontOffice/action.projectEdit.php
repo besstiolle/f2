@@ -6,7 +6,7 @@ $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 
 //Ask the module/tag/...
-$json = RestAPI::GET('rest/v1/projects/'.$projectId.'/a');
+$json = RestAPI::GET('rest/v1/project/'.$projectId);
 $response = json_decode($json, true);
 
 //Get the projects in the response data
@@ -22,7 +22,7 @@ if(empty($projects)){
 	$smarty->assign('link_next_success', $config['root_url'].'/project/'.$projectId.'/'.$project['unix_name']);
 	$smarty->assign('link_next_failed', $config['root_url'].'/project/'.$projectId.'/'.$project['unix_name'].'/edit');
 	$smarty->assign('method', 'POST'); // = edit
-	$smarty->assign('routing', 'rest/v1/projects/'.$projectId.'/a');
+	$smarty->assign('routing', 'rest/v1/project/'.$projectId);
 }
 
 

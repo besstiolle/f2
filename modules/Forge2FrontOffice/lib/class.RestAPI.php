@@ -104,7 +104,7 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[] = $restUrl;
+		RestAPI::$dump['GET'] = $restUrl;
 
 		$request = new Curl\Get( $restUrl );
 		$request->send();
@@ -129,7 +129,7 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[] = $restUrl;
+		RestAPI::$dump['POST'] = $restUrl;
 
 		$request = new Curl\POST( $restUrl , ['data' => $paramsData]);
 		$request->send();
@@ -154,7 +154,7 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[] = $restUrl;
+		RestAPI::$dump['PUT'] = $restUrl;
 
 		$request = new Curl\PUT( $restUrl , ['data' => $paramsData]);
 		$request->send();
@@ -180,7 +180,7 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[] = $restUrl;
+		RestAPI::$dump['DELETE'] = $restUrl;
 
 		$request = new Curl\DELETE( $restUrl );
 		$request->send();

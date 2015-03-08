@@ -22,13 +22,16 @@ unset($params['link_next_failed']);
 
 $json = RestAPI::$method($route, array(), $params);
 $response = json_decode($json, true);
+$sid = '';
 
 if($response['server']['code'] == 200){
 	$link = $success;
 	if($method == 'POST') {
 		$message = 'the entity is updated with success';	
+		$sid = $response['data']['projects'][0]['id'];
 	} else if($method == 'PUT') {
 		$message = 'the entity is created with success';	
+		$sid = $response['data']['projects'][0]['id'];
 	}  else if($method == 'DELETE') {
 		$message = 'the entity is deleted with success';	
 	} else {
@@ -39,6 +42,8 @@ if($response['server']['code'] == 200){
 	$link = $failed;
 	$message = 'an error had occured';
 }
+
+$link = sprintf($link, $sid);
 
 $smarty->assign('message',$message);
 $smarty->assign('link',$link);
