@@ -24,7 +24,7 @@ class RestAPI{
 
 	private static $login = 'root';
 	private static $pass = 'pass';
-	private static $base_url = 'http://localhost/forge2/';
+	private static $base_url = 'http://localhost/f2hidden/';
 
 	private static $dump = array();
 
