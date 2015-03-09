@@ -6,19 +6,26 @@ $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 
 //Ask the module/tag/...
-$json = RestAPI::GET('rest/v1/project/'.$projectId);
-$response = json_decode($json, true);
+$request = RestAPI::GET('rest/v1/project/'.$projectId);
+if($request->getStatus() === 404){
+	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
+	echo $this->processTemplate('notFound.tpl');
+	return;
+} else if($request->getStatus() !== 200){
+	throw new Exception("Error Processing GET Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$response->getStatus()." 
+						\n ".print_r(RestAPI::getDump(),true), 1);
+} 
+
+$response = json_decode($request->getResponse(), true);
 
 //Get the projects in the response data
-$projects = $response['data']['projects'];
+$project = $response['data']['projects'][0];
 $config = cmsms()->GetConfig();
 
-if(empty($projects)){
-	$smarty->assign('error', 'The Project '.$projectName.' (#'.$projectId.') does not exist.');
-} else {
-	$smarty->assign('project', $projects[0]);
-}
 
+$smarty->assign('project', $project);
 $smarty->assign('root_url', $config['root_url']);
 
 

@@ -41,12 +41,16 @@ class RestAPI{
 		} 
 
 		// else we ask a new token
-		$json = RestAPI::_GET('rest/v1/token', array(
+		$response = RestAPI::_GET('rest/v1/token', array(
 							'user' => RestAPI::$login, 
 							'pass' => RestAPI::$pass 
 							));
+		if($response->getStatus() !== 200){
+			echo "Error during token retriving";
+			return;
+		}
 
-		$responseContent = json_decode($json, true);
+		$responseContent = json_decode($response->getResponse(), true);
 		//Todo : test responseContent (null or other)
 
 		RestAPI::$token = $responseContent['server']['token']['token'];
@@ -107,7 +111,7 @@ class RestAPI{
 		RestAPI::$dump['GET'] = $restUrl;
 
 		$request = new Curl\Get( $restUrl );
-		$request->send();
+		$request->send();/*
 		$status = $request->getStatus();
 		if($status !== 200){
 			throw new Exception("Error Processing GET Request on $restUrl with dataParams =
@@ -116,7 +120,8 @@ class RestAPI{
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
-		return $request->getResponse();
+		return $request->getResponse();*/
+		return $request;
 	}
 
 	private static function _POST($route, $paramsUrl = null, $paramsData = null){
@@ -132,7 +137,7 @@ class RestAPI{
 		RestAPI::$dump['POST'] = $restUrl;
 
 		$request = new Curl\POST( $restUrl , ['data' => $paramsData]);
-		$request->send();
+		$request->send();/*
 		$status = $request->getStatus();
 		if($status !== 200){
 			throw new Exception("Error Processing POST Request on $restUrl with dataParams =
@@ -141,7 +146,8 @@ class RestAPI{
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
-		return $request->getResponse();
+		return $request->getResponse();*/
+		return $request;
 	}
 
 	private static function _PUT($route, $paramsUrl = null, $paramsData = null){
@@ -157,7 +163,7 @@ class RestAPI{
 		RestAPI::$dump['PUT'] = $restUrl;
 
 		$request = new Curl\PUT( $restUrl , ['data' => $paramsData]);
-		$request->send();
+		$request->send();/*
 		$status = $request->getStatus();
 		if($status !== 200){
 
@@ -167,7 +173,8 @@ class RestAPI{
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
-		return $request->getResponse();
+		return $request->getResponse();*/
+		return $request;
 	}
 
 	private static function _DELETE($route, $paramsUrl = null, $paramsData = null){
@@ -183,7 +190,7 @@ class RestAPI{
 		RestAPI::$dump['DELETE'] = $restUrl;
 
 		$request = new Curl\DELETE( $restUrl );
-		$request->send();
+		$request->send();/*
 		$status = $request->getStatus();
 		if($status !== 200){
 			throw new Exception("Error Processing DELETE Request on $restUrl with dataParams =
@@ -192,7 +199,8 @@ class RestAPI{
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
-		return $request->getResponse();
+		return $request->getResponse();*/
+		return $request;
 	}
 
 	public static function getDump(){

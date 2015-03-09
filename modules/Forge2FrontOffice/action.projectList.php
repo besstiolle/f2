@@ -22,10 +22,19 @@ if(isset($params['filterAlpha'])) {
 } 
 
 //Ask the last 10 modules
-$json = RestAPI::GET('rest/v1/project', $restParameters);
-$response = json_decode($json, true);
+$request = RestAPI::GET('rest/v1/project', $restParameters);
+if($request->getStatus() === 404){
+	$smarty->assign('error', 'there is no project in the forge');
+	echo $this->processTemplate('notFound.tpl');
+	return;
+} else if($request->getStatus() !== 200){
+	throw new Exception("Error Processing GET Request on $restUrl with dataParams =
+						\n ".print_r($paramsData,true)."
+						\ncode returned = ".$response->getStatus()." 
+						\n ".print_r(RestAPI::getDump(),true), 1);
+} 
 
-
+$response = json_decode($request->getResponse(), true);
 
 //Get the projects in the response data
 $projects = $response['data']['projects'];
