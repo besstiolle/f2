@@ -25,13 +25,15 @@ $project = $response['data']['projects'][0];
 $config = cmsms()->GetConfig();
 
 
+$smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('root_url', $config['root_url']);
 
 
 echo $this->processTemplate('projectView.tpl');
 
+
 //Debug part
-var_dump($response['request']);
-var_dump($response['server']);
-var_dump(RestAPI::getDump());
+$smarty->assign('response', $response);
+$smarty->assign('dump', RestAPI::getDump());
+echo $this->processTemplate('vardump.tpl');

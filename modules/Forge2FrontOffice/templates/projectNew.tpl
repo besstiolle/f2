@@ -15,8 +15,8 @@
 			<option value='7'>documentation</option>
 		</select>
 
-		<input type='submit' value='send' />
-		<a href='{$link_back}'>cancel</a>
+		<input class='button tiny' type='submit' value='send' />
+		<a class='button tiny' href='{$link_back}'>cancel</a>
 
 
 	</form>

@@ -1,1 +1,2 @@
-<p>{$message}. <a href='{$link}'>Clic here to continue</a></p>
+<p>{$message}</p>
+<a href='{$link}' class='button tiny'>Clic here to continue</a>

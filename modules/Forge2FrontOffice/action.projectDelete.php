@@ -33,7 +33,8 @@ $smarty->assign('link_back', $config['root_url'].'/project/list');
 
 echo $this->processTemplate('projectDelete.tpl');
 
+
 //Debug part
-var_dump($response['request']);
-var_dump($response['server']);
-var_dump(RestAPI::getDump());
+$smarty->assign('response', $response);
+$smarty->assign('dump', RestAPI::getDump());
+echo $this->processTemplate('vardump.tpl');

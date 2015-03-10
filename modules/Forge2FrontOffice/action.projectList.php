@@ -47,6 +47,6 @@ $smarty->assign('link_create', $config['root_url'].'/project/new');
 echo $this->processTemplate('projects.tpl');
 
 //Debug part
-var_dump($response['request']);
-var_dump($response['server']);
-var_dump(RestAPI::getDump());
+$smarty->assign('response', $response);
+$smarty->assign('dump', RestAPI::getDump());
+echo $this->processTemplate('vardump.tpl');

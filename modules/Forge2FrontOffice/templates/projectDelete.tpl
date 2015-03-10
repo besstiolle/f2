@@ -4,7 +4,7 @@
 {else}
 	{$form}
 		<p>Are you sure ?</p>
-		<input type='submit' value='delete' />
-		<a href='{$link_back}'>cancel</a>
+		<input class='button tiny' type='submit' value='delete' />
+		<a class='button tiny' href='{$link_back}'>cancel</a>
 	</form>
 {/if}

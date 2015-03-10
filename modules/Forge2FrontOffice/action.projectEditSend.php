@@ -31,7 +31,6 @@ $smarty->assign('link',$link);
 echo $this->processTemplate('sended.tpl');
 
 //Debug part
-var_dump($response['request']);
-var_dump($response['server']);
-var_dump($response['data']);
-var_dump(RestAPI::getDump());
+$smarty->assign('response', $response);
+$smarty->assign('dump', RestAPI::getDump());
+echo $this->processTemplate('vardump.tpl');
