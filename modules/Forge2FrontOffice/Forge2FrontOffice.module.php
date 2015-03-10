@@ -85,6 +85,9 @@ class Forge2FrontOffice extends Orm
 		return true;
 	}
 
+	function InitializeAdmin(){
+		$this->_init();
+	}
 	function InitializeFrontend()
 	{
 		$this->RegisterModulePlugin(true, false);
@@ -104,6 +107,8 @@ class Forge2FrontOffice extends Orm
 
 		$this->SetParameterType('pagin_page',CLEAN_INT);
 		$this->SetParameterType('pagin_num',CLEAN_INT);
+
+		$this->_init();
 	}
 
 	function CreateStaticRoutes() {
@@ -151,9 +156,6 @@ class Forge2FrontOffice extends Orm
 		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), $params));
     }
 
-	function InitializeAdmin() {
-	}
-
 	function AllowSmartyCaching() {
 		return false;
 	}
@@ -187,6 +189,19 @@ class Forge2FrontOffice extends Orm
 	 **/
 	function securize($str){
 		return htmlentities($str, ENT_QUOTES, 'UTF-8');
+	}
+
+	private function _init(){
+
+		$user = $this->getPreference('user', '[TO DEFINED]');
+		$pass = $this->getPreference('pass', '[TO DEFINED]');
+		$rest_url = $this->getPreference('rest_url', '[TO DEFINED]');
+		$config = cmsms()->GetConfig();
+
+		//Init the RestAPI
+		require_once($config['root_path'].'/modules/Forge2FrontOffice/lib/class.RestAPI.php');
+
+		RestAPI::init($user, $pass, $rest_url);
 	}
 } 
 ?>

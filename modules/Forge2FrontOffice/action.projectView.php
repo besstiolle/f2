@@ -14,7 +14,7 @@ if($request->getStatus() === 404){
 } else if($request->getStatus() !== 200){
 	throw new Exception("Error Processing GET Request on $restUrl with dataParams =
 						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$response->getStatus()." 
+						\ncode returned = ".$request->getStatus()." 
 						\n ".print_r(RestAPI::getDump(),true), 1);
 } 
 

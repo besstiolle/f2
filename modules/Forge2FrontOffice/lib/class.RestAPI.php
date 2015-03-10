@@ -22,15 +22,21 @@ use sylouuu\Curl\Method as Curl;
 
 class RestAPI{
 
-	private static $login = 'root';
-	private static $pass = 'pass';
-	private static $base_url = 'http://localhost/forge2hidden/';
+	private static $login = '[RestAPI was not initialized]';
+	private static $pass = '[RestAPI was not initialized]';
+	private static $base_url = '[RestAPI was not initialized]';
 
 	private static $dump = array();
 
 	private static $token = null;
 	private static $tokenExpireOn = null;
 	private static $tokenIsUnique = null;
+
+	public static function init($login, $pass, $base_url){
+		RestAPI::$login = $login;
+		RestAPI::$pass = $pass;
+		RestAPI::$base_url = $base_url;
+	}
 
 	public static function getToken(){
 
@@ -41,21 +47,21 @@ class RestAPI{
 		} 
 
 		// else we ask a new token
-		$response = RestAPI::_GET('rest/v1/token', array(
+		$request = RestAPI::_GET('rest/v1/token', array(
 							'user' => RestAPI::$login, 
 							'pass' => RestAPI::$pass 
 							));
-		if($response->getStatus() !== 200){
+		if($request->getStatus() !== 200){
 			echo "Error during token retriving";
 			return;
 		}
 
-		$responseContent = json_decode($response->getResponse(), true);
+		$response = json_decode($request->getResponse(), true);
 		//Todo : test responseContent (null or other)
 
-		RestAPI::$token = $responseContent['server']['token']['token'];
-		RestAPI::$tokenExpireOn = $responseContent['server']['token']['expireOn'];
-		RestAPI::$tokenIsUnique = $responseContent['server']['token']['isUnique'];
+		RestAPI::$token = $response['server']['token']['token'];
+		RestAPI::$tokenExpireOn = $response['server']['token']['expireOn'];
+		RestAPI::$tokenIsUnique = $response['server']['token']['isUnique'];
 
 		return RestAPI::$token;
 

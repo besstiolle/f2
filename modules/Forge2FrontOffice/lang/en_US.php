@@ -10,4 +10,6 @@ $lang['changelog'] = 'xxx';
 $lang['help'] = '<h3>What Does This Do?</h3>
 <p>more informations on : <a href="#" target="_blank">#</a></p>
 ';
+
+$lang['admin_param_saved'] = 'The settings of the forge are saved with succes';
 ?>

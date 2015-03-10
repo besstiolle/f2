@@ -12,6 +12,10 @@ OrmCore::createTable(new License());
 OrmCore::createTable(new Ssh_key());
 OrmCore::createTable(new Project());
 
+$this->SetPreference('user', '[TO DEFINED]');
+$this->SetPreference('pass', '[TO DEFINED]');
+$this->SetPreference('rest_url', '[TO DEFINED]');
+
 // put mention into the admin log
 $this->Audit( 0, 
 	      $this->Lang('friendlyname'), 

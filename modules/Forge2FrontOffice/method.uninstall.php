@@ -8,6 +8,11 @@ foreach($entities as $anEntity) {
 	OrmCore::dropTable($anEntity);
 }*/
 
+
+$this->RemovePreference('user');
+$this->RemovePreference('pass');
+$this->RemovePreference('rest_url');
+
 // put mention into the admin log
 $this->Audit( 0, $this->Lang('friendlyname'), $this->Lang('uninstalled'));
 
