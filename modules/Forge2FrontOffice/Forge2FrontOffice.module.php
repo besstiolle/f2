@@ -108,6 +108,9 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('pagin_page',CLEAN_INT);
 		$this->SetParameterType('pagin_num',CLEAN_INT);
 
+		//section "my_modules"
+		$this->SetParameterType('user_id',CLEAN_INT);
+
 		$this->_init();
 	}
 
