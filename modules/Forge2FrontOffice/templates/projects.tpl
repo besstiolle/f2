@@ -21,4 +21,4 @@
 </table>
 <br/>
 <br/>
-<a href='{$link_create}' class='button tiny'>Create new project</a>
+{*<a href='{$link_create}' class='button tiny'>Create new project</a>*}

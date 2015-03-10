@@ -42,7 +42,7 @@ $config = cmsms()->GetConfig();
 
 $smarty->assign('root_url', $config['root_url']);
 $smarty->assign('projects', $projects);
-$smarty->assign('link_create', $config['root_url'].'/project/new');
+//$smarty->assign('link_create', $config['root_url'].'/project/new');
 
 echo $this->processTemplate('projects.tpl');
 
