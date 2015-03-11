@@ -7,4 +7,6 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectN
 				 	)));
 $smarty->assign('link_back', $config['root_url'].'/project/list');
 
+$smarty->assign('title', 'Create a new Project';
+
 echo $this->processTemplate('projectNew.tpl');

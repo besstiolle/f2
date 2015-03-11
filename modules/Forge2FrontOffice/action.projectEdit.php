@@ -26,6 +26,8 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectE
 				 	'sid' => $project['id'],
 					'_link_next_failed'=> $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name'].'/edit',
 								)));
+
+$smarty->assign('title', 'Edit project '.$project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('link_back', $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name']);
 

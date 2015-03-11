@@ -28,6 +28,8 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectD
 				 array(
 				 	'sid' => $project['id']
 				 	)));
+
+$smarty->assign('title', 'Delete project '.$project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('link_back', $config['root_url'].'/project/list');
 
