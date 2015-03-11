@@ -2,4 +2,4 @@
 
 if (!function_exists("cmsms")) exit;
 
-include_once("action.projectList.php");
+// IMPORTANT ! : MUST STAY EMPTY (bug with smarty plugin, calling silently the default action of the module ??)

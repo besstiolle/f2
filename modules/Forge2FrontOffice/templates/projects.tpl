@@ -6,15 +6,15 @@
 			<th></th>
 		</tr>
 	</thead>
-	{foreach $projects as $project}
+	{foreach $projects as $aproject}
 		<tr>
 			<td>
-				<a href='{root_url}/project/{$project.id}/{$project.unix_name}'>{$project.id}</a>
+				<a href='{root_url}/project/{$aproject.id}/{$aproject.unix_name}'>{$aproject.id}</a>
 			</td>
-			<td>{$project.name}</td>
+			<td>{$aproject.name}</td>
 			<td>
-				<a href='{root_url}/project/{$project.id}/{$project.unix_name}/delete'>Delete</a>
-				<a href='{root_url}/project/{$project.id}/{$project.unix_name}/edit'>Edit</a>
+				<a href='{root_url}/project/{$aproject.id}/{$aproject.unix_name}/delete'>Delete</a>
+				<a href='{root_url}/project/{$aproject.id}/{$aproject.unix_name}/edit'>Edit</a>
 			</td>
 		</tr>
 	{/foreach}

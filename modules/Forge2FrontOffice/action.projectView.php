@@ -31,7 +31,6 @@ $smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('root_url', $config['root_url']);
 
-
 echo $this->processTemplate('projectView.tpl');
 
 

@@ -32,7 +32,7 @@ final class forge_smarty_plugins
         foreach($project['assignments'] as $assignment){
             if($assignment['user_id'] == $user_id){
                 if(Enum::FromString('EnumAssignmentRole::Administrator') == $assignment['role']){
-                    $smarty->assign($assign, true);
+                   //$smarty->assign($assign, true);
                     return;
                 }
             }
