@@ -29,6 +29,7 @@ require_once($pathShared.'class.EnumTrackerItemType.php');
 
 class Forge2FrontOffice extends Orm
 {   
+
 	function GetName() {
 		return 'Forge2FrontOffice';
 	}
@@ -205,6 +206,13 @@ class Forge2FrontOffice extends Orm
 		require_once($config['root_path'].'/modules/Forge2FrontOffice/lib/class.RestAPI.php');
 
 		RestAPI::init($user, $pass, $rest_url);
+	}
+
+	static function smarty_is_project_admin($params, $smarty){
+		return forge_smarty_plugins::smarty_is_project_admin($params, $smarty);
+	}
+	static function fg_is_project_member($params, $smarty){
+		return forge_smarty_plugins::fg_is_project_member($params, $smarty);
 	}
 } 
 ?>

@@ -13,6 +13,10 @@ $this->RemovePreference('user');
 $this->RemovePreference('pass');
 $this->RemovePreference('rest_url');
 
+
+//Remove all the Smarty Plugin
+$this->RemoveSmartyPlugin();
+
 // put mention into the admin log
 $this->Audit( 0, $this->Lang('friendlyname'), $this->Lang('uninstalled'));
 

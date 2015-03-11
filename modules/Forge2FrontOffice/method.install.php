@@ -8,13 +8,13 @@ foreach($entities as $anEntity) {
 	OrmCore::createTable($anEntity);
 }*/
 
-OrmCore::createTable(new License());
-OrmCore::createTable(new Ssh_key());
-OrmCore::createTable(new Project());
-
 $this->SetPreference('user', '[TO DEFINED]');
 $this->SetPreference('pass', '[TO DEFINED]');
 $this->SetPreference('rest_url', '[TO DEFINED]');
+
+//Register Smarty Plugin
+$this->RegisterSmartyPlugin('fg_is_project_admin','function', 'smarty_is_project_admin', false, 0);
+$this->RegisterSmartyPlugin('fg_is_project_member','function', 'smarty_is_project_member', false, 0);
 
 // put mention into the admin log
 $this->Audit( 0, 
