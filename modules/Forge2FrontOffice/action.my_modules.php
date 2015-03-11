@@ -13,7 +13,7 @@ if($request->getStatus() === 404){
 	/*$smarty->assign('error', 'you don\'t have any project');
 	echo $this->processTemplate('notFound.tpl');
 	return;*/
-} else if($request->getStatus() === 200){
+} else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
 	$smarty->assign('request', $request);
