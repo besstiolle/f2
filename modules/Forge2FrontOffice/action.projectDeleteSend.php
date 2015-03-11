@@ -22,8 +22,12 @@ if($request->getStatus() == 200){
 	$link = $success;
 	$message = 'the project doesn\'t exists anymore. Maybe someone has already deleted it?';
 } else {
-	$link = $failed;
-	$message = 'an error had occured';
+	//Debug part
+	$smarty->assign('error', "Error processing the Rest request");
+	$smarty->assign('request', $request);
+	$smarty->assign('dump', RestAPI::getDump());
+	echo $this->processTemplate('rest_error.tpl');
+	return;
 }
 
 $smarty->assign('message',$message);

@@ -28,10 +28,12 @@ if($request->getStatus() === 404){
 	echo $this->processTemplate('notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
-	throw new Exception("Error Processing GET Request on $restUrl with dataParams =
-						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$request->getStatus()." 
-						\n ".print_r(RestAPI::getDump(),true), 1);
+	//Debug part
+	$smarty->assign('error', "Error processing the Rest request");
+	$smarty->assign('request', $request);
+	$smarty->assign('dump', RestAPI::getDump());
+	echo $this->processTemplate('rest_error.tpl');
+	return;
 } 
 
 $response = json_decode($request->getResponse(), true);

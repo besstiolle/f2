@@ -20,8 +20,12 @@ if($request->getStatus() === 200){
 	$message = 'the project '.$name.' is created with success';	
 	$link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
 } else {
-	$link = $failed;
-	$message = 'an error had occured';
+	//Debug part
+	$smarty->assign('error', "Error processing the Rest request");
+	$smarty->assign('request', $request);
+	$smarty->assign('dump', RestAPI::getDump());
+	echo $this->processTemplate('rest_error.tpl');
+	return;
 }
 
 $smarty->assign('message',$message);

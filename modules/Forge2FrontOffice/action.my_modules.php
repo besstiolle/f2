@@ -7,7 +7,7 @@ $restParameters = array(
 			'n' => 100);
 
 //Ask the last 10 modules
-$request = RestAPI::GET('rest/v1/project', $restParameters);
+$request = RestAPI::GET('rest/v1/assignment', $restParameters);
 
 if($request->getStatus() === 404){
 	/*$smarty->assign('error', 'you don\'t have any project');
@@ -24,18 +24,22 @@ if($request->getStatus() === 404){
 
 $response = json_decode($request->getResponse(), true);
 
-//Get the projects in the response data
-$projects = $response['data']['projects'];
+//Get the assignments in the response data
+$assignments = $response['data']['assignment'];
+
 $config = cmsms()->GetConfig();
 
 $smarty->assign('root_url', $config['root_url']);
-$smarty->assign('projects', $projects);
+$smarty->assign('assignments', $assignments);
 $smarty->assign('link_create', $config['root_url'].'/project/new');
+$smarty->assign('enumProjectState', Enum::ConstToArray('enumProjectState'));
+$smarty->assign('enumAssignmentRole', Enum::ConstToArray('EnumAssignmentRole'));
 
 echo $this->processTemplate('my_projects.tpl');
 
 //Debug part
 $smarty->assign('response', $response);
 $smarty->assign('dump', RestAPI::getDump());
+
 echo $this->processTemplate('vardump.tpl');
 ?>
