@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
 $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 
@@ -25,13 +30,14 @@ $response = json_decode($request->getResponse(), true);
 //Get the projects in the response data
 $project = $response['data']['projects'][0];
 
-if(forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())){
-	echo "oui";
-} else {
-	echo "non";
+//Access denied for any no-admin
+if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
+	$this->RedirectForFrontEnd($id, $returnid, 'access_denied');
 }
 
-//TODO : set info in session to avoid url-scam and requiring confirmation before deleting something
+//set cookie to avoid url-scam
+forge_utils::putCookie('delete', $projectId);
+
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectDeleteSend', 'post','', true, '', 
 				 array(
 				 	'sid' => $project['id']

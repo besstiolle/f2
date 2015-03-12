@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
 $route = 'rest/v1/project';
 $failed = $params['_link_next_failed'];
 $method = 'PUT';

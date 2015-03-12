@@ -44,6 +44,54 @@ final class forge_utils
         return false;
     }
 
+    function generateRandomString($length = 20) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    /**
+     * Will write a cookie before any confirmation of action to avoid scam-url abusing.
+     *
+     * @param $action : String the name of action (delete / edit / ...)
+     * @param $id : the id of the ressource, used to make each cookie unique.
+     */
+    public static function putCookie($action, $id){
+        $sha1Key = sha1($action . $id);
+        $salt = forge_utils::generateRandomString();
+        cms_cookies::set($sha1Key."_s", $salt);
+        cms_cookies::set($sha1Key."_h", sha1($salt.forge_utils::getConnectedUserId()));
+    }
+
+    /**
+     * Will test if the cookie of confirmation exist and if true will delete it to avoid double clicking
+     *
+     * @param $action : String the name of action (delete / edit / ...)
+     * @param $id : the id of the ressource, used to make each cookie unique.
+     */
+    public static function hasCookie($action, $id){
+        $sha1Key = sha1($action . $id);
+        if(!cms_cookies::exists($sha1Key."_s") || !cms_cookies::exists($sha1Key."_h")){
+            return false;
+        }
+        $salt = cms_cookies::get($sha1Key."_s");
+        $hash = cms_cookies::get($sha1Key."_h");
+
+        $sha1 = sha1($salt.forge_utils::getConnectedUserId());
+        if($hash !== $sha1){
+            return false;
+        }
+
+        $salt = cms_cookies::erase($sha1Key."_s");
+        $hash = cms_cookies::erase($sha1Key."_h");
+
+        return true;
+    }
+
     public static function getFEU(){
     	return cms_utils::get_module('FrontEndUsers');
     }
@@ -54,5 +102,29 @@ final class forge_utils
     		return null;
     	}
     	return $FEU->LoggedInId();
+    }
+
+    /**
+     * Will perform a basic redirection to a custom url without keeping any information about the
+     * current navigation
+     *
+     * @param url string the url
+     **/
+    public static function redirect($url){
+          header('Status: 302 Moved Temporarily', false, 302);      
+          header('Location: '.$url);   
+          exit(); 
+    }
+
+    /**
+     * Will perform a basic redirection to a custom url without keeping any information about the
+     * current navigation
+     *
+     * @param url the url relativ to cmsms
+     **/
+    public static function inner_redirect($url){
+        $config = cmsms()->GetConfig();
+        $url_cms = $config['root_url'].$url;
+        forge_utils::redirect($url_cms);
     }
 }

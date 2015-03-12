@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectNewSend', 'post','', true, '',  array(
 				 	'_link_next_failed' => $config['root_url'].'/project/new'
 				 	)));

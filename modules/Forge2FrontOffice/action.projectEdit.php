@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
 $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 

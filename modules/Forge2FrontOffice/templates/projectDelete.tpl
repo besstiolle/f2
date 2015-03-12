@@ -5,7 +5,7 @@
 {else}
 	{$form}
 		<p>Are you sure ?</p>
-		<input class='button tiny' type='submit' value='delete' />
+		<input class='button tiny' name='{$actionid}confirm' type='submit' value='delete' />
 		<a class='button tiny' href='{$link_back}'>cancel</a>
 	</form>
 {/if}

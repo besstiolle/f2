@@ -2,13 +2,60 @@
 
 if (!function_exists("cmsms")) exit;
 
-$route = '/rest/v1/project/'.$params['sid'];
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
+$projectId = $params['sid'];
 $returnid = $params['returnid'];
 $success = $config['root_url'].'/project/list';
-$failed = $config['root_url'].'/project/list';
-$method = 'DELETE';
 
-//TODO make some test about "do he have the right to use this route"
+
+//Ask the module/tag/...
+$request = RestAPI::GET('rest/v1/project/'.$projectId);
+if($request->getStatus() === 404){
+	$link = $success;
+	$message = 'the project doesn\'t exists anymore. Maybe someone has already deleted it?';
+
+	$smarty->assign('message',$message);
+	$smarty->assign('link',$link);
+
+	echo $this->processTemplate('sended.tpl');
+	return;
+} else if($request->getStatus() !== 200){
+	//Debug part
+	$smarty->assign('error', "Error processing the Rest request");
+	$smarty->assign('request', $request);
+	$smarty->assign('dump', RestAPI::getDump());
+	echo $this->processTemplate('rest_error.tpl');
+	return;
+} 
+
+$response = json_decode($request->getResponse(), true);
+
+//Get the projects in the response data
+$project = $response['data']['projects'][0];
+
+
+//get cookie to avoid url-scam
+if(!forge_utils::hasCookie('delete', $projectId)){
+	$smarty->assign('title', "Token expired");
+	$smarty->assign('error', "Your token is expired. You should retry one more time");
+	$smarty->assign('url', $config['root_url']."/project/".$projectId."/".$project['unix_name']."/delete");
+	echo $this->processTemplate('forge_error.tpl');
+	return;
+}
+
+die("delete stopped");
+
+//Access denied for any no-admin
+if( forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
+	$this->RedirectForFrontEnd($id, $returnid, 'access_denied');
+}
+
+$route = '/rest/v1/project/'.$projectId;
+$method = 'DELETE';
 
 $request = RestAPI::$method($route, array(), $params);
 

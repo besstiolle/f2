@@ -2,6 +2,11 @@
 
 if (!function_exists("cmsms")) exit;
 
+//Check the login
+if(!forge_utils::getConnectedUserId()){
+	forge_utils::inner_redirect('/account');
+}
+
 $restParameters = array(
 			'user_id' => $params['user_id'],
 			'n' => 100);

@@ -150,6 +150,14 @@ class Forge2FrontOffice extends Orm
 		//Page of new project
 		$route = $this->_generateRoute($prefixProject, $new);
 		$this->_add_static($route, array('action'=>'projectNew', 'returnid'=>$returnid));
+		
+		//Access Denied
+		$route = $this->_generateRoute('401');
+		$this->_add_static($route, array('action'=>'access_denied', 'returnid'=>$returnid));
+
+		//Page of new project
+		//$route = $this->_generateRoute('404');
+		//$this->_add_static($route, array('action'=>'not_found', 'returnid'=>$returnid));
 	}
 
 	private function _generateRoute(){
