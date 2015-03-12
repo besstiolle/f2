@@ -4,33 +4,45 @@ final class forge_utils
 {
     protected function __construct() {}
 
+    /**
+     * Will return true if the user is admin of the project
+     *
+     * @project the Entity project
+     * @user_id the id of the logged user
+     *
+     **/
     public static function is_project_admin($project, $user_id) {
 
-    	return forge_utils::has_role_on_project($project, $user_id, Enum::FromString('EnumAssignmentRole::Administrator'));
-        /*foreach($project['assignments'] as $assignment){
-            if($assignment['user_id'] == $user_id){
-                if(Enum::FromString('EnumAssignmentRole::Administrator') == $assignment['role']){
-                    return true;
-                }
-            }
-        }
-
-        return false;*/
+    	return forge_utils::has_role_on_project(
+          $project, 
+          $user_id, 
+          Enum::FromString('EnumAssignmentRole::Administrator'));
     }
 
+    /**
+     * Will return true if the user is member of the project
+     *
+     * @project the Entity project
+     * @user_id the id of the logged user
+     *
+     **/
     public static function is_project_member($project, $user_id) {
 
-        foreach($project['assignments'] as $assignment){
-            if($assignment['user_id'] == $user_id){
-                if(Enum::FromString('EnumAssignmentRole::Member') == $assignment['role']){
-                    return true;
-                }
-            }
-        }
-
-        return false;
+      return forge_utils::has_role_on_project(
+          $project, 
+          $user_id, 
+          Enum::FromString('EnumAssignmentRole::Member'));
     }
 
+
+    /**
+     * Will return true if the user has the role on the project
+     *
+     * @project the Entity project
+     * @user_id the id of the logged user
+     * @role string const of the Enum EnumAssignmentRole
+     *
+     **/
     protected static function has_role_on_project($project, $user_id, $role) {
 
         foreach($project['assignments'] as $assignment){
@@ -44,7 +56,13 @@ final class forge_utils
         return false;
     }
 
-    function generateRandomString($length = 20) {
+    /**
+     * Will return a random string of 20 car by default
+     *
+     * @length 20 by default
+     *
+     **/
+    public static function generateRandomString($length = 20) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -92,10 +110,18 @@ final class forge_utils
         return true;
     }
 
+    /**
+     * Will return the FEU module
+     *
+     **/
     public static function getFEU(){
     	return cms_utils::get_module('FrontEndUsers');
     }
 
+    /**
+     * Will return the id of the current FEU user connected or NULL
+     *
+     **/
     public static function getConnectedUserId(){
     	$FEU = cms_utils::get_module('FrontEndUsers');
     	if(!$FEU->LoggedIn()){

@@ -29,17 +29,7 @@ final class forge_smarty_plugins
             return;
         }
 
-        foreach($project['assignments'] as $assignment){
-            if($assignment['user_id'] == $user_id){
-                if(Enum::FromString('EnumAssignmentRole::Administrator') == $assignment['role']){
-                   $smarty->assign($assign, true);
-                   return;
-                }
-            }
-        }
-
-        $smarty->assign($assign, false);
-        return;
+        $smarty->assign($assign, forge_utils::is_project_admin($project, $user_id));
     }
     public static function smarty_is_project_member($params,$smarty) {
         $project = $params['project'];
@@ -50,16 +40,6 @@ final class forge_smarty_plugins
             return;
         }
 
-        foreach($project['assignments'] as $assignment){
-            if($assignment['user_id'] == $user_id){
-                if(Enum::FromString('EnumAssignmentRole::Member') == $assignment['role']){
-                    $smarty->assign($assign, true);
-                    return;
-                }
-            }
-        }
-
-        $smarty->assign($assign, false);
-        return;
+        $smarty->assign($assign, forge_utils::is_project_member($project, $user_id));
     }
 }
