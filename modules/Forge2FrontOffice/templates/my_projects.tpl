@@ -5,6 +5,8 @@
 	<ul style='font-size:0.8em;'>
 		{foreach $assignments as $assignment}
 			<li>
+
+			{if isset($assignment.project_id)}
 			
 				<a href='{root_url}/project/{$assignment.project_id.id}/{$assignment.project_id.unix_name}'>{$assignment.project_id.name}</a>
 					{*	<a href='{root_url}/project/{$assignment.project_id.id}/{$assignment.project_id.unix_name}/delete'>Delete</a>
@@ -21,6 +23,9 @@
 				{else if $assignment.project_id.state == $enumProjectState.pending}
 					<span class="label info">pending</span>
 				{/if}
+			{else}
+				Project deleted.
+			{/if}
 			</li>
 		{/foreach}
 	</ul>
