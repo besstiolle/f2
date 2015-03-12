@@ -37,6 +37,10 @@ $response = json_decode($request->getResponse(), true);
 //Get the projects in the response data
 $project = $response['data']['projects'][0];
 
+//Access denied for any no-admin
+if( forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
+	$this->RedirectForFrontEnd($id, $returnid, 'access_denied');
+}
 
 //get cookie to avoid url-scam
 if(!forge_utils::hasCookie('delete', $projectId)){
@@ -48,11 +52,6 @@ if(!forge_utils::hasCookie('delete', $projectId)){
 }
 
 die("delete stopped");
-
-//Access denied for any no-admin
-if( forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
-	$this->RedirectForFrontEnd($id, $returnid, 'access_denied');
-}
 
 $route = '/rest/v1/project/'.$projectId;
 $method = 'DELETE';

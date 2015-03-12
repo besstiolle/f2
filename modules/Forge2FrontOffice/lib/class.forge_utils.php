@@ -47,7 +47,9 @@ final class forge_utils
 
         foreach($project['assignments'] as $assignment){
             if($assignment['user_id'] == $user_id){
+         //     echo '#'.$assignment['role'].' '.$role.' '.Enum::FromString('EnumAssignmentRole::Member');
                 if($role == $assignment['role']){
+         //         die();
                     return true;
                 }
             }

@@ -35,7 +35,7 @@ final class forge_smarty_plugins
         $project = $params['project'];
         $user_id = $params['user_id'];
         $assign = $params['assign'];
-
+echo "åååååååååååååååå";
         if(empty($project) || empty($user_id) || empty($assign)){
             return;
         }
