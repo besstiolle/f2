@@ -153,10 +153,10 @@ class Forge2FrontOffice extends Orm
 		//Page of new project
 		$route = $this->_generateRoute($prefixProject, $new);
 		$this->_add_static($route, array('action'=>'projectNew', 'returnid'=>$returnid));
-		
-		//Page of bug of a project
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug);
-		$this->_add_static($route, array('action'=>'bugList', 'returnid'=>$returnid));
+
+		//Page of all bugs of a project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug, 'list');
+		$this->_add_static($route, array('action'=>'bugView', 'returnid'=>$returnid));
 
 		//Page of bug of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug, $tracker_itemId);

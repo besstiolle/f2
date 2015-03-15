@@ -155,4 +155,20 @@ final class forge_utils
         $url_cms = $config['root_url'].$url;
         forge_utils::redirect($url_cms);
     }
+
+    public static function getFilesInDir($directory, $pattern){
+        $files = array();
+        if(!is_dir($directory)){
+            return null;
+        }
+        if ($handle = opendir($directory)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != ".." && !is_dir($entry) && preg_match( $pattern , $entry)) {
+                   $files[] = $entry;
+                }
+            }
+            closedir($handle);
+        }
+        return $files;
+    }
 }
