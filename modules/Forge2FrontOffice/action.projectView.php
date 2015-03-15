@@ -29,7 +29,10 @@ $config = cmsms()->GetConfig();
 
 $smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
+$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
+$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 $smarty->assign('root_url', $config['root_url']);
+
 
 echo $this->processTemplate('projectView.tpl');
 

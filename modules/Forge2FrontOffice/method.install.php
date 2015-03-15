@@ -13,8 +13,11 @@ $this->SetPreference('pass', '[TO DEFINED]');
 $this->SetPreference('rest_url', '[TO DEFINED]');
 
 //Register Smarty Plugin
-$this->RegisterSmartyPlugin('fg_is_project_admin','function', 'smarty_is_project_admin', false, 0);
-$this->RegisterSmartyPlugin('fg_is_project_member','function', 'smarty_is_project_member', false, 0);
+//$this->RegisterSmartyPlugin('fg_is_project_admin','function', 'smarty_is_project_admin', false, 0);
+//$this->RegisterSmartyPlugin('fg_is_project_member','function', 'smarty_is_project_admin', false, 0);
+
+ // and routes...
+ $this->CreateStaticRoutes();
 
 // put mention into the admin log
 $this->Audit( 0, 

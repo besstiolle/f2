@@ -1,7 +1,7 @@
-{fg_is_project_admin project=$project user_id=ccUser::loggedin() assign=is_admin}
-{fg_is_project_member project=$project user_id=ccUser::loggedin() assign=is_member}
+{*fg_is_project_admin project=$project user_id=ccUser::loggedin() assign=is_admin}
+{fg_is_project_m project=1 user_id=ccUser::loggedin() assign=is_member*}
 
-{* [{$is_admin}-{$is_member}] *}
+ [{$is_admin}-{$is_member}] 
 {if isset($error)}
 	{$error}
 	<a href='{$root_url}/project/list'>Return</a>

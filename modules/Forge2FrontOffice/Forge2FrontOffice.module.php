@@ -111,6 +111,7 @@ class Forge2FrontOffice extends Orm
 
 		//section "my_modules"
 		$this->SetParameterType('user_id',CLEAN_INT);
+		$this->SetParameterType('project',CLEAN_NONE);
 
 		$this->_init();
 	}
@@ -118,13 +119,15 @@ class Forge2FrontOffice extends Orm
 	function CreateStaticRoutes() {
 		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
 		$prefixProject = 'project';
+		$prefixBug = 'bug';
 		$new = 'new';
 		$delete = 'delete';
 		$edit = 'edit';
 		$projectId = '(?P<projectId>[0-9]+)';
 		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
 		$packageId = '(?P<packageId>[0-9]+)';
-		$filterAlpha = '(?P<filterAlpha>[a-zA-Z0-9])';
+		$tracker_itemId = '(?P<tracker_itemId>[0-9]+)';
+		//$filterAlpha = '(?P<filterAlpha>[a-zA-Z0-9])';
 
 
 		//List of Projects
@@ -132,8 +135,8 @@ class Forge2FrontOffice extends Orm
 		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
 
 		//List of Projects with filtre alpha numeric
-		$route = $this->_generateRoute($prefixProject, 'list', $filterAlpha);
-		$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
+		//$route = $this->_generateRoute($prefixProject, 'list', $filterAlpha);
+		//$this->_add_static($route, array('action'=>'projectList', 'returnid'=>$returnid));
 
 		//Page of project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName);
@@ -151,6 +154,14 @@ class Forge2FrontOffice extends Orm
 		$route = $this->_generateRoute($prefixProject, $new);
 		$this->_add_static($route, array('action'=>'projectNew', 'returnid'=>$returnid));
 		
+		//Page of bug of a project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug);
+		$this->_add_static($route, array('action'=>'bugList', 'returnid'=>$returnid));
+
+		//Page of bug of a project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug, $tracker_itemId);
+		$this->_add_static($route, array('action'=>'bugView', 'returnid'=>$returnid));
+
 		//Access Denied
 		$route = $this->_generateRoute('401');
 		$this->_add_static($route, array('action'=>'access_denied', 'returnid'=>$returnid));

@@ -11,7 +11,7 @@ $restParameters = array(
 			'user_id' => $params['user_id'],
 			'n' => 100);
 
-//Ask the last 10 modules
+//Ask the 100 modules
 $request = RestAPI::GET('rest/v1/assignment', $restParameters);
 
 if($request->getStatus() === 404){

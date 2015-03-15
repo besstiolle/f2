@@ -26,17 +26,38 @@ final class forge_smarty_plugins
         $assign = $params['assign'];
 
         if(empty($project) || empty($user_id) || empty($assign)){
+            if(empty($project)){
+                echo '<p>PARAMETER $project was null in {fg_is_project_admin}</p>';
+            }
+           /* if(empty($user_id)){
+                echo '<p>PARAMETER $user_id was null in {fg_is_project_admin}</p>';
+            }*/
+            if(empty($assign)){
+                echo '<p>PARAMETER $assign was null in {fg_is_project_admin}</p>';
+            }
+            $smarty->assign($assign, false);
             return;
         }
 
         $smarty->assign($assign, forge_utils::is_project_admin($project, $user_id));
     }
-    public static function smarty_is_project_member($params,$smarty) {
+    public static function smarty_is_project_m($params,$smarty) {
+        return forge_smarty_plugins::smarty_is_project_admin($params,$smarty);
         $project = $params['project'];
         $user_id = $params['user_id'];
         $assign = $params['assign'];
-echo "åååååååååååååååå";
+
         if(empty($project) || empty($user_id) || empty($assign)){
+            if(empty($project)){
+                echo '<p>PARAMETER $project was null in {fg_is_project_admin}</p>';
+            }
+           /* if(empty($user_id)){
+                echo '<p>PARAMETER $user_id was null in {fg_is_project_admin}</p>';
+            }*/
+            if(empty($assign)){
+                echo '<p>PARAMETER $assign was null in {fg_is_project_admin}</p>';
+            }
+            $smarty->assign($assign, false);
             return;
         }
 

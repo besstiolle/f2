@@ -18,7 +18,7 @@
 {capture assign=baseurl_avatar}uploads/projects/{$project.id}/avatar/{/capture}
 {capture assign=baseurl_show}uploads/projects/{$project.id}/show/{/capture}
 
-	{JQueryFU number=1 accept_file_types='/\.(gif|jpe?g|png)$/i' dir_url=baseurl_avatar dir_path=$baseurl_avatar max_width='200' max_height='200' max_width='32' max_height='32'}
-	{*JQueryFU number=10 accept_file_types='/\.(gif|jpe?g|png)$/i' dir_url=baseurl_show dir_path=$baseurl_show max_width='1900' max_height='1024' max_width='150' max_height='150'*}
+	{JQueryFU number=1 accept_file_types='/\.(gif|jpe?g|png)$/i' dir_url=$baseurl_avatar dir_path=$baseurl_avatar max_width='500' max_height='500' min_width='32' min_height='32'}
+	{*JQueryFU number=10 accept_file_types='/\.(gif|jpe?g|png)$/i' dir_url=$baseurl_show dir_path=$baseurl_show max_width='1900' max_height='1024' min_width='150' min_height='150'*}
 
 {/if}
