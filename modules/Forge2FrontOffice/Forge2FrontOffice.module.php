@@ -112,7 +112,10 @@ class Forge2FrontOffice extends Orm
 		//section "my_modules"
 		$this->SetParameterType('user_id',CLEAN_INT);
 		$this->SetParameterType('project',CLEAN_NONE);
+
+		//tracker item
 		$this->SetParameterType('type',CLEAN_INT);
+		$this->SetParameterType('tracker_itemId',CLEAN_INT);
 
 		$this->_init();
 	}
@@ -158,19 +161,19 @@ class Forge2FrontOffice extends Orm
 
 		//Page of all bugs of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug, 'list');
-		$this->_add_static($route, array('action'=>'bugList', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::Bug));
+		$this->_add_static($route, array('action'=>'tracker_itemList', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::Bug));
 
 		//Page of bug of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixBug, $tracker_itemId);
-		$this->_add_static($route, array('action'=>'bugView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::Bug));
+		$this->_add_static($route, array('action'=>'tracker_itemView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::Bug));
 
 		//Page of all bugs of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRequest, 'list');
-		$this->_add_static($route, array('action'=>'bugList', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
+		$this->_add_static($route, array('action'=>'tracker_itemList', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
 
 		//Page of bug of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRequest, $tracker_itemId);
-		$this->_add_static($route, array('action'=>'bugView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
+		$this->_add_static($route, array('action'=>'tracker_itemView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
 
 		//Access Denied
 		$route = $this->_generateRoute('401');

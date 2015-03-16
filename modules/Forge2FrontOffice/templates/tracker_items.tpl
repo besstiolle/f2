@@ -1,16 +1,24 @@
 {* Navigation bar*}
-<a class='button tiny' href='{$root_url}/project/list'>Project List</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}'>Summary</a>
-<a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a>
-<a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a>
+<ul class="button-group">
+<li><a class='button tiny' href='{$root_url}/project/list'>Project List</a></li>
+<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}'>Summary</a></li>
+<li><a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a></li>
+<li><a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a></li>
+<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a></li>
+<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a></li>
+</ul>
+
+{if $tracker_type == 0}
+	{assign tracker_type_str 'bug'}
+{else}
+	{assign tracker_type_str 'request'}
+{/if}
 
 <table>
 	<thead>
 		<tr>
 			<th width="400px">Summary</th>
-			<th>Severity</th>
+			<th>{if $tracker_type == 0}Severity{/if}</th>
 			<th>Resolution</th>
 			<th title='Assigned To'></th>
 		</tr>
@@ -34,12 +42,12 @@
 
 		<tr>
 			<td>
-				{if $tracker_item.state == 1}<img src='{root_url}/uploads/forge/design/locked.png' alt='This bug is already closed.' width='16px' height='16px'/>{/if}<b><a href='{root_url}/project/{$project.id}/{$project.unix_name}/bug/{$tracker_item.id}'>{$tracker_item.summary}</a></b>
+				{if $tracker_item.state == 1}<img src='{root_url}/uploads/forge/design/locked.png' alt='This {$tracker_type_str} is already closed.' width='16px' height='16px'/>{/if}<b><span style='word-break: break-all;'><a href='{root_url}/project/{$project.id}/{$project.unix_name}/{$tracker_type_str}/{$tracker_item.id}'>{$tracker_item.summary}</a></span></b>
 				<br/>
 				#{$tracker_item.id} opened on {$tracker_item.created_at|cms_date_format} by {$feu_smarty->get_user_properties($tracker_item.created_by_id,'userprops')}{$userprops.pseudo}
 			</td>
-			<td style='background-color:{$tr_color};'>{$enumTrackerItemSeverity[$tracker_item.severity]}</td>
-			<td>{$enumTrackerItemResolution[$tracker_item.resolution]}</td>
+			{if $tracker_type == 0}<td style='background-color:{$tr_color};'>{$enumTrackerItemSeverity[$tracker_item.severity]}</td>{else}<td></td>{/if}
+			<td style='overflow: hidden;max-width: 50px;' >{$enumTrackerItemResolution[$tracker_item.resolution]}</td>
 			<td title='Assign to {$feu_smarty->get_user_properties($tracker_item.assigned_to_id,'userprops')}{$userprops.pseudo}'>{if isset($avatar)}<img src='{$avatar}' alt='Assign to {$feu_smarty->get_user_properties($tracker_item.assigned_to_id,'userprops')}{$userprops.pseudo}' width='32px' height='32px'/>{/if}</td>
 		</tr>
 	{/foreach}
