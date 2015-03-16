@@ -98,7 +98,6 @@ $response = json_decode($request->getResponse(), true);
 //Get the comments in the response data
 $histories = $response['data']['histories'];
 
-
 //Merge the 2 array
 $elements = array();
 foreach ($histories as $history) {
@@ -109,6 +108,7 @@ foreach ($comments as $comment) {
 	$comment['_type'] = 'comment';
 	$elements[$comment['created_at']] = $comment;
 }
+ksort($elements);
 
 $smarty->assign('comments', $comments);
 $smarty->assign('elements', $elements);

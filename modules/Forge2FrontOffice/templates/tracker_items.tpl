@@ -46,8 +46,8 @@
 				<br/>
 				#{$tracker_item.id} opened on {$tracker_item.created_at|cms_date_format} by {$feu_smarty->get_user_properties($tracker_item.created_by_id,'userprops')}{$userprops.pseudo}
 			</td>
-			{if $tracker_type == 0}<td style='background-color:{$tr_color};'>{$enumTrackerItemSeverity[$tracker_item.severity]}</td>{else}<td></td>{/if}
-			<td style='overflow: hidden;max-width: 50px;' >{$enumTrackerItemResolution[$tracker_item.resolution]}</td>
+			{if $tracker_type == 0}<td style='background-color:{$tr_color};'>{if isset($tracker_item.severity)}{$enumTrackerItemSeverity[$tracker_item.severity]}{/if}</td>{else}<td></td>{/if}
+			<td style='overflow: hidden;max-width: 50px;' >{if isset($tracker_item.resolution)}{$enumTrackerItemResolution[$tracker_item.resolution]}{/if}</td>
 			<td title='Assign to {$feu_smarty->get_user_properties($tracker_item.assigned_to_id,'userprops')}{$userprops.pseudo}'>{if isset($avatar)}<img src='{$avatar}' alt='Assign to {$feu_smarty->get_user_properties($tracker_item.assigned_to_id,'userprops')}{$userprops.pseudo}' width='32px' height='32px'/>{/if}</td>
 		</tr>
 	{/foreach}
