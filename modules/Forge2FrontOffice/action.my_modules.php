@@ -37,7 +37,7 @@ $config = cmsms()->GetConfig();
 $smarty->assign('root_url', $config['root_url']);
 $smarty->assign('assignments', $assignments);
 $smarty->assign('link_create', $config['root_url'].'/project/new');
-$smarty->assign('enumProjectState', Enum::ConstToArray('enumProjectState'));
+$smarty->assign('enumProjectState', Enum::ConstToArray('EnumProjectState'));
 $smarty->assign('enumAssignmentRole', Enum::ConstToArray('EnumAssignmentRole'));
 
 echo $this->processTemplate('my_projects.tpl');

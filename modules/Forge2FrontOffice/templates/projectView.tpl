@@ -1,10 +1,10 @@
 {* Navigation bar*}
 <a class='button tiny' href='{$root_url}/project/list'>Project List</a>
 <a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}'>Summary</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a>
+<a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a>
+<a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a>
 <a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a>
-<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/features/list'>Features Requests</a>
+<a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a>
 
 {*fg_is_project_admin project=$project user_id=ccUser::loggedin() assign=is_admin}
 {fg_is_project_m project=1 user_id=ccUser::loggedin() assign=is_member*}
