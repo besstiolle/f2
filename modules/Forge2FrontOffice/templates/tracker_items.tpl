@@ -17,7 +17,7 @@
 <table>
 	<thead>
 		<tr>
-			<th width="400px">Summary</th>
+			<th style='width:400px;'>Summary</th>
 			<th>{if $tracker_type == 0}Severity{/if}</th>
 			<th>Resolution</th>
 			<th title='Assigned To'></th>
@@ -41,7 +41,7 @@
 		{/if}
 
 		<tr>
-			<td>
+			<td {if $tracker_type == 0} style='width:400px;'{/if}>
 				{if $tracker_item.state == 1}<img src='{root_url}/uploads/forge/design/locked.png' alt='This {$tracker_type_str} is already closed.' width='16px' height='16px'/>{/if}<b><span style='word-break: break-all;'><a href='{root_url}/project/{$project.id}/{$project.unix_name}/{$tracker_type_str}/{$tracker_item.id}'>{$tracker_item.summary}</a></span></b>
 				<br/>
 				#{$tracker_item.id} opened on {$tracker_item.created_at|cms_date_format} by {$feu_smarty->get_user_properties($tracker_item.created_by_id,'userprops')}{$userprops.pseudo}
@@ -52,6 +52,6 @@
 		</tr>
 	{/foreach}
 </table>
-<br/>
-<br/>
 
+
+{include file='paginator.tpl'}

@@ -47,9 +47,7 @@ final class forge_utils
 
         foreach($project['assignments'] as $assignment){
             if($assignment['user_id'] == $user_id){
-         //     echo '#'.$assignment['role'].' '.$role.' '.Enum::FromString('EnumAssignmentRole::Member');
                 if($role == $assignment['role']){
-         //         die();
                     return true;
                 }
             }
@@ -156,6 +154,12 @@ final class forge_utils
         forge_utils::redirect($url_cms);
     }
 
+    /**
+     * Will return the list of file in the directory wich match the pattern.
+     *
+     * @param directory the directory
+     * @param pattern the pattern
+     **/
     public static function getFilesInDir($directory, $pattern){
         $files = array();
         if(!is_dir($directory)){

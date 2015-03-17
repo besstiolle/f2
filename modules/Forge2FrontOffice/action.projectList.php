@@ -40,13 +40,18 @@ $response = json_decode($request->getResponse(), true);
 
 //Get the projects in the response data
 $projects = $response['data']['projects'];
+$page_counter = $response['data']['count'];
+$page_url = $config['root_url'].'/project/list?';
 $config = cmsms()->GetConfig();
 
 $smarty->assign('root_url', $config['root_url']);
 $smarty->assign('projects', $projects);
-//$smarty->assign('link_create', $config['root_url'].'/project/new');
+
+//Include paginator
+include('lib/inc.paginator.php');
 
 echo $this->processTemplate('projects.tpl');
+
 
 //Debug part
 $smarty->assign('response', $response);

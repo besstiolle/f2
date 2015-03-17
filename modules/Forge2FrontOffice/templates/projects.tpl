@@ -11,6 +11,5 @@
 		</tr>
 	{/foreach}
 </table>
-<br/>
-<br/>
-{*<a href='{$link_create}' class='button tiny'>Create new project</a>*}
+
+{include file='paginator.tpl'}

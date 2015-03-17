@@ -54,6 +54,8 @@ $smarty->assign('project', $project);
 $smarty->assign('title', $project['name']);
 $smarty->assign('tracker_items', $tracker_items);
 $smarty->assign('tracker_type', $params['type']);
+$page_counter = $response['data']['count'];
+$page_url = $config['root_url']."/project/{$projectId}/{$project['name']}/xxx/list?";
 
 
 $smarty->assign('enumTrackerItemResolution', array_flip(Enum::ConstToArray('EnumTrackerItemResolution')));
@@ -64,7 +66,11 @@ $avatar = $config['root_url'].'/uploads/forge/design/user-64.png';
 
 $smarty->assign('avatar', $avatar);
 
+//Include paginator
+include('lib/inc.paginator.php');
+
 echo $this->processTemplate('tracker_items.tpl');
+
 
 //Debug part
 $smarty->assign('response', $response);
