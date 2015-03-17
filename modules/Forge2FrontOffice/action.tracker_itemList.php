@@ -4,6 +4,16 @@ if (!function_exists("cmsms")) exit;
 
 $projectId = $params['projectId'];
 $projectName = $params['projectName'];
+$state = EnumTrackerItemState::Open;
+if(isset($params['state'])){
+	if($params['state'] == '1'){
+		$state = EnumTrackerItemState::Closed;
+	} else if($params['state'] == '0|1'){
+		$state = NULL;
+	}
+}
+
+
 //Ask the module/tag/...
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
@@ -23,14 +33,31 @@ $response = json_decode($request->getResponse(), true);
 //Get the project in the response data
 $project = $response['data']['projects'][0];
 
+/**
+   GET THE ITEMS TRACKER
+**/
+$restParameters = array();
 
-//Ask the bugs of the module
-$parameters = array('project_id' => $projectId, 
-					'type' => $params['type'],
-					'state' => EnumTrackerItemState::Open
+// Number of the page
+$restParameters['p'] = 1;
+if(!empty($params['pagin_page'])) {
+	$restParameters['p'] = $params['pagin_page'];
+}
+
+//Number of element by page
+$restParameters['n'] = 10;
+if(!empty($params['pagin_num'])) {
+	$restParameters['n'] = $params['pagin_num'];
+}
+
+$restParameters['project_id'] = $projectId;
+$restParameters['type'] = $params['type'];
+
+if($state !== NULL){
+	$restParameters['state'] = $state;
+}
 					
-					);
-$request = RestAPI::GET('rest/v1/tracker_item/', $parameters);
+$request = RestAPI::GET('rest/v1/tracker_item/', $restParameters);
 if($request->getStatus() === 404){
 /*	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
 	echo $this->processTemplate('notFound.tpl');
@@ -55,8 +82,6 @@ $smarty->assign('title', $project['name']);
 $smarty->assign('tracker_items', $tracker_items);
 $smarty->assign('tracker_type', $params['type']);
 $page_counter = $response['data']['count'];
-$page_url = $config['root_url']."/project/{$projectId}/{$project['name']}/xxx/list?";
-
 
 $smarty->assign('enumTrackerItemResolution', array_flip(Enum::ConstToArray('EnumTrackerItemResolution')));
 $smarty->assign('enumTrackerItemSeverity', array_flip(Enum::ConstToArray('EnumTrackerItemSeverity')));
@@ -66,6 +91,46 @@ $avatar = $config['root_url'].'/uploads/forge/design/user-64.png';
 
 $smarty->assign('avatar', $avatar);
 
+
+/**
+	FILTER Part
+**/
+
+if($params['type'] == EnumTrackerItemType::Bug){
+	$filter_route = '/project/'.$project['id'].'/'.$project['unix_name'].'/bug/list';
+} else if($params['type'] == EnumTrackerItemType::FeatureRequest) {
+	$filter_route = '/project/'.$project['id'].'/'.$project['unix_name'].'/request/list';
+}
+
+
+$filters = array(
+	array('css' => ($state === EnumTrackerItemState::Open)?'active':'',
+			'text' => 'open', 
+			'url' => $filter_route),
+	array('css' => ($state === EnumTrackerItemState::Closed)?'active':'', 
+			'text' => 'closed', 
+			'url' => $filter_route.'?'.$id.'state=1'),
+	array('css' => ($state === null)?'active':'', 
+			'text' => 'all', 
+			'url' => $filter_route.'?'.$id.'state=0|1'),
+);
+
+$smarty->assign('filters', $filters);
+
+
+/**
+	Paginator
+**/
+
+$currentQueryParameter = '';
+if(isset($params['state'])){
+	$currentQueryParameter = '&amp;'.$id.'state='.$params['state'];
+}
+if($params['type'] == EnumTrackerItemType::Bug){
+	$page_url = $config['root_url']."/project/{$projectId}/{$project['unix_name']}/bug/list?{$currentQueryParameter}";
+} else if($params['type'] == EnumTrackerItemType::FeatureRequest) {
+	$page_url = $config['root_url']."/project/{$projectId}/{$project['unix_name']}/request/list?{$currentQueryParameter}";
+}
 //Include paginator
 include('lib/inc.paginator.php');
 

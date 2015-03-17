@@ -10,7 +10,6 @@ if(!isset($page_url)){
 	exit;
 }
 
-
 $smarty->addTemplateDir(dirname(__FILE__).'/../templates'); 
 
 // # current page

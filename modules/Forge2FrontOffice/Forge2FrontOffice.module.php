@@ -117,6 +117,9 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('type',CLEAN_INT);
 		$this->SetParameterType('tracker_itemId',CLEAN_INT);
 
+		//Fiters
+		$this->SetParameterType('state',CLEAN_STRING);
+
 		$this->_init();
 	}
 

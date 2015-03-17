@@ -14,6 +14,10 @@
 	{assign tracker_type_str 'request'}
 {/if}
 
+{include file='filter.tpl'}
+
+{include file='paginator.tpl'}
+
 <table>
 	<thead>
 		<tr>
@@ -52,6 +56,5 @@
 		</tr>
 	{/foreach}
 </table>
-
 
 {include file='paginator.tpl'}
