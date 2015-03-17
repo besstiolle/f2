@@ -30,7 +30,7 @@ if($request->getStatus() === 404){
 $response = json_decode($request->getResponse(), true);
 
 //Get the assignments in the response data
-$assignments = $response['data']['assignment'];
+$assignments = $response['data']['assignments'];
 
 $config = cmsms()->GetConfig();
 
