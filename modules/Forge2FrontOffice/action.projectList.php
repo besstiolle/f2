@@ -2,8 +2,8 @@
 
 if (!function_exists("cmsms")) exit;
 
-$type = array(EnumProjectType::module);
-if(isset($params['type']) && Enum::IsValidValue( EnumProjectType, $params['type']) ){
+$type = EnumProjectType::module;
+if(isset($params['type']) && Enum::IsValidValue( 'EnumProjectType', $params['type']) ){
 	$type = $params['type'];
 } else if(isset($params['type']) && $params['type']='all'){
 	$type = null;
@@ -63,7 +63,7 @@ $smarty->assign('projects', $projects);
 	FILTER Part
 **/
 
-$filter_route = '/project/list';
+$filter_route = $config['root_url'].'/project/list';
 $filters = array(
 	array('css' => ($type === EnumProjectType::module)?'active':'',
 			'text' => 'module', 

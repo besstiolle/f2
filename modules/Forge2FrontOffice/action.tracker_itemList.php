@@ -97,9 +97,9 @@ $smarty->assign('avatar', $avatar);
 **/
 
 if($params['type'] == EnumTrackerItemType::Bug){
-	$filter_route = '/project/'.$project['id'].'/'.$project['unix_name'].'/bug/list';
+	$filter_route = $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name'].'/bug/list';
 } else if($params['type'] == EnumTrackerItemType::FeatureRequest) {
-	$filter_route = '/project/'.$project['id'].'/'.$project['unix_name'].'/request/list';
+	$filter_route = $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name'].'/request/list';
 }
 
 
