@@ -2,6 +2,13 @@
 
 if (!function_exists("cmsms")) exit;
 
+$type = array(EnumProjectType::module);
+if(isset($params['type']) && Enum::IsValidValue( EnumProjectType, $params['type']) ){
+	$type = $params['type'];
+} else if(isset($params['type']) && $params['type']='all'){
+	$type = null;
+}
+
 $restParameters = array();
 
 // Number of the page
@@ -14,6 +21,11 @@ if(!empty($params['pagin_page'])) {
 $restParameters['n'] = 10;
 if(!empty($params['pagin_num'])) {
 	$restParameters['n'] = $params['pagin_num'];
+}
+
+//type of module
+if(!empty($type)) {
+	$restParameters['project_type'] = $type;
 }
 
 //Filter on the first char
@@ -41,11 +53,59 @@ $response = json_decode($request->getResponse(), true);
 //Get the projects in the response data
 $projects = $response['data']['projects'];
 $page_counter = $response['data']['count'];
-$page_url = $config['root_url'].'/project/list?';
 $config = cmsms()->GetConfig();
 
 $smarty->assign('root_url', $config['root_url']);
 $smarty->assign('projects', $projects);
+
+
+/**
+	FILTER Part
+**/
+
+$filter_route = '/project/list';
+$filters = array(
+	array('css' => ($type === EnumProjectType::module)?'active':'',
+			'text' => 'module', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::module),
+
+	array('css' => ($type === EnumProjectType::plugin)?'active':'', 
+			'text' => 'plugin', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::plugin),
+
+	array('css' => ($type === EnumProjectType::translation)?'active':'', 
+			'text' => 'translation', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::translation),
+
+	array('css' => ($type === EnumProjectType::core)?'active':'', 
+			'text' => 'core', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::core),
+
+	array('css' => ($type === EnumProjectType::documentation)?'active':'', 
+			'text' => 'documentation', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::documentation),
+
+	array('css' => ($type === EnumProjectType::other)?'active':'', 
+			'text' => 'other', 
+			'url' => $filter_route.'?'.$id.'type='.EnumProjectType::other),
+
+	array('css' => ($type === null)?'active':'', 
+			'text' => 'all', 
+			'url' => $filter_route.'?'.$id.'type=all'),
+);
+
+$smarty->assign('filters', $filters);
+
+
+/**
+	Paginator
+**/
+
+$currentQueryParameter = '';
+if(!empty($type)){
+	$currentQueryParameter = '&amp;'.$id.'type='.$type;
+}
+$page_url = $config['root_url'].'/project/list?'.$currentQueryParameter;
 
 //Include paginator
 include('lib/inc.paginator.php');

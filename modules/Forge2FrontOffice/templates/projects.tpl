@@ -1,3 +1,8 @@
+
+{include file='filter.tpl'}
+
+{include file='paginator.tpl'}
+
 <table>
 	<thead>
 		<tr>
