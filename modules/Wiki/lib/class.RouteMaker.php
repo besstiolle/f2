@@ -7,9 +7,18 @@ class RouteMaker{
 	private static $id;
 	private static $returnid;
 
+	private static $isInitiated = false;
+
 	public static function init($id, $returnid){
-		RouteMaker::$id = $id;
-		RouteMaker::$returnid = $returnid;
+		
+		if(self::$wiki == null){
+			$modops = cmsms()->GetModuleOperations(); 
+			self::$wiki = $modops->get_module_instance('Wiki');
+		}
+		
+		self::$id = $id;
+		self::$returnid = $returnid;
+		self::$isInitiated = true;
 	}
 
 	public static function getDeleteRoute($langPrefix = null, $title, $additionnalParameters = null){
@@ -40,18 +49,16 @@ class RouteMaker{
 		return RouteMaker::getRoute($langPrefix, null, null, null, $additionnalParameters);
 	}
 	
-	protected static function getRoute($id, $returnid, $langPrefix = null, $title = null, $action = null, $version_id = null, $additionnalParameters = null){
-		if(self::$wiki == null){
-			$modops = cmsms()->GetModuleOperations(); 
-			self::$wiki = $modops->get_module_instance('Wiki');
+	protected static function getRoute($langPrefix = null, $title = null, $action = null, $version_id = null, $additionnalParameters = null){
+		if(!self::$isInitiated) {
+			throw new Exception("Error RouteMaker is not initiated", 1);
 		}
-		
 		
 		$url = '';
 		
 		// "wiki"
 		$url .= self::$wiki->GetPreference('prefix');
-		
+
 		// "/en_US"
 		$url .= (self::$wiki->GetPreference('show_code_iso', true) && $langPrefix != null ?'/'.$langPrefix:"");
 		
@@ -75,7 +82,7 @@ class RouteMaker{
 		}
 
 		foreach ($additionnalParameters as $key => $value) {
-			$url .= '&'.$id.$key.'='.$value;
+			$url .= '&'.self::$id.$key.'='.$value;
 			$parameters = array_merge($parameters, $additionnalParameters);
 		}
 		$parameters['vlang'] = ($langPrefix != null ? $langPrefix : "");
@@ -85,13 +92,15 @@ class RouteMaker{
 			$parameters['version_id'] = $version_id;
 		}
 
-		$finalUrl = self::$wiki->CreateFrontendLink ((empty($action) || $action == 'view' ?'default':$action), '', 
+		$finalUrl = self::$wiki->CreateFrontendLink (self::$id, self::$returnid, 
+				(empty($action) || $action == 'view' ?'default':$action), 
+				'', 
 				$parameters
 				, '', true, true, '', '', 
 				$url
 		);
 
-		//echo "<a href='".$finalUrl."'>".$finalUrl.'</a><br/><br/>';
+		/*echo "<a href='".$finalUrl."'>".$finalUrl.'</a><br/><br/>';*/
 
 		return $finalUrl;
 

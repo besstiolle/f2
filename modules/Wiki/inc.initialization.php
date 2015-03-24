@@ -5,6 +5,7 @@
 if(!isset($langParam)){$langParam = null;}
 if(!isset($version_id)){$version_id = null;}*/
 
+RouteMaker::init($id, $returnid);
 
 //Array for errors and messages
 $errors = array();
@@ -45,7 +46,7 @@ $lang = LangsService::findOne($langParam);
 
 if($lang == null){
 	$errors[] = 'lang_mandatory';
-	$url = RouteMaker::getViewRoute($id, $returnid, $this->_getDefaultLang(), $this->_getDefaultAlias());
+	$url = RouteMaker::getViewRoute($this->_getDefaultLang(), $this->_getDefaultAlias());
 	$smarty->assign('errors',$errors);
 	$smarty->assign('url',$url);
 	echo $this->ProcessTemplate('message.tpl');

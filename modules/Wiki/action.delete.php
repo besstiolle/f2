@@ -28,7 +28,7 @@ $version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'),
  
 if($version == null){ //Go back to home
 	$errors[] = 'version_unknow';
-	$url = RouteMaker::getViewRoute($id, $returnid, $langParam, $this->_getDefaultAlias());
+	$url = RouteMaker::getViewRoute($langParam, $this->_getDefaultAlias());
 	$smarty->assign('errors',$errors);
 	$smarty->assign('url',$url);
 	echo $this->ProcessTemplate('message.tpl');
@@ -37,7 +37,7 @@ if($version == null){ //Go back to home
 
 if($isDefaultVersion){ //Don't allow that.
 	$errors[] = 'default_version_undeletable';
-	$url = RouteMaker::getViewRoute($id, $returnid, $langParam, $this->_getDefaultAlias());
+	$url = RouteMaker::getViewRoute($langParam, $this->_getDefaultAlias());
 	$smarty->assign('errors',$errors);
 	$smarty->assign('url',$url);
 	echo $this->ProcessTemplate('message.tpl');
@@ -52,7 +52,7 @@ OrmDb::execute($query);
 $smarty->assign('title', $version->get('title'));
 
 $messages[] = 'delete_success';
-$url = RouteMaker::getViewRoute($id, $returnid, $langParam, $aliasParam);
+$url = RouteMaker::getViewRoute($langParam, $aliasParam);
 $smarty->assign('messages',$messages);
 $smarty->assign('url',$url);
 echo $this->ProcessTemplate('message.tpl');

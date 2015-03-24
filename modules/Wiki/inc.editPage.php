@@ -18,8 +18,8 @@ $form = $this->CreateFrontendFormStart ($id, $returnid, 'save', 'get', '', true,
 					'vlang' => $lang->get('code'),
 					'palias' => $page->get('alias')
 							));
-$cancel = RouteMaker::getViewRoute($id, $returnid, $lang->get('code'), $page->get('alias'));
-$preview = RouteMaker::getPreviewRoute($id, $returnid, $lang->get('code'), $page->get('alias'));
+$cancel = RouteMaker::getViewRoute($lang->get('code'), $page->get('alias'));
+$preview = RouteMaker::getPreviewRoute($lang->get('code'), $page->get('alias'));
 
 $vals = $version->getValues();
 

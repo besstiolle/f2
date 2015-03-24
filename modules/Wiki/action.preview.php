@@ -38,7 +38,7 @@ if(!empty($errors)) {
 }
 
 $vals['title'] = $params['vtitle'];
-$vals['text'] = Engines::process($id, $returnid, $textParam, $prefix, $code_iso, $engine);
+$vals['text'] = Engines::process($textParam, $prefix, $code_iso, $engine);
 
 $smarty->assign('version', $vals);
 $smarty->assign('title', $params['vtitle']);

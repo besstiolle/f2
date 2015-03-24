@@ -8,9 +8,9 @@ foreach($oldversions as $oldversion){
 	$revisionval = $oldversion->getValues();
 
 	if($oldversion->get('status') == Version::$STATUS_CURRENT){
-		$prettyUrl = RouteMaker::getViewRoute($id, $returnid, $code_iso, $page->get('alias'));
+		$prettyUrl = RouteMaker::getViewRoute($code_iso, $page->get('alias'));
 	} else {
-		$prettyUrl = RouteMaker::getViewOldRoute($id, $returnid, $code_iso, $oldversion->get('page')->get('alias'), $revisionval['version_id']);
+		$prettyUrl = RouteMaker::getViewOldRoute($code_iso, $oldversion->get('page')->get('alias'), $revisionval['version_id']);
 	}
 	$revisionval['viewUrl'] = $prettyUrl;
 	$oldRevisions[] = $revisionval;

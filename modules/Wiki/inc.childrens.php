@@ -19,7 +19,7 @@ foreach ($childrensPages as $childrensPage) {
 	if($version_child != null){
 		$pos = strpos ( $version_child->get('title'), ':' , strlen($page->get('alias').':%'));
 		
-		$prettyUrl = RouteMaker::getViewRoute($id, $returnid, $langParam, $version_child->get('page')->get('alias'));
+		$prettyUrl = RouteMaker::getViewRoute($langParam, $version_child->get('page')->get('alias'));
 
 		$class = '';
 		if($pos === TRUE){

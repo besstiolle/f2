@@ -1,6 +1,9 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+
+RouteMaker::init($id, $returnid);
+
 //Default values
 $version_id = null;
 $smarty = cmsms()->GetSmarty();

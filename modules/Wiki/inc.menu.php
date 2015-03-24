@@ -8,7 +8,7 @@ $menu = array();
 foreach($allVersions as $a_version){
 	$elts = explode(':', $a_version->get('page')->get('alias'));
 	
-	$prettyUrl = RouteMaker::getViewRoute($id, $returnid, $langParam, $elts[0]);
+	$prettyUrl = RouteMaker::getViewRoute($langParam, $elts[0]);
 	
 	//Initiate a no-existing page
 	if(!isset($menu[$elts[0]])){

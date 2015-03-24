@@ -1,11 +1,11 @@
 <?php
 
-$vals['text'] = Engines::process($id, $returnid, $vals['text'], $prefix, $code_iso, $version->get('engine'));
+$vals['text'] = Engines::process($vals['text'], $prefix, $code_iso, $version->get('engine'));
 
-$edit = RouteMaker::getEditRoute($id, $returnid, $code_iso, $aliasParam);
-$delete = RouteMaker::getDeleteRoute($id, $returnid, $code_iso, $aliasParam);
-$raw = RouteMaker::getRawRoute($id, $returnid, $code_iso, $aliasParam, $vals['version_id']);
-$canonical = RouteMaker::getViewRoute($id, $returnid, $code_iso, $aliasParam);
+$edit = RouteMaker::getEditRoute($code_iso, $aliasParam);
+$delete = RouteMaker::getDeleteRoute($code_iso, $aliasParam);
+$raw = RouteMaker::getRawRoute($code_iso, $aliasParam, $vals['version_id']);
+$canonical = RouteMaker::getViewRoute($code_iso, $aliasParam);
 $goLast = '';
 if($vals['status'] != 1){
 	$goLast = $canonical;
@@ -22,7 +22,7 @@ if($version != null && !$isDefaultLang){
 	$example->addCriteria('version_id', OrmTypeCriteria::$GT, array($version->get('version_id')));
 	$cptNewerVersion = OrmCore::selectCountByExample(new Version(),$example);
 	$isUpToDate = ($cptNewerVersion == 0);
-	$defaultLangCanonical = RouteMaker::getViewRoute($id, $returnid, $this->_getDefaultLang(), $aliasParam);
+	$defaultLangCanonical = RouteMaker::getViewRoute($this->_getDefaultLang(), $aliasParam);
 }
 
 $smarty->assign('isUpToDate', $isUpToDate);

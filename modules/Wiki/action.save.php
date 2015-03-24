@@ -44,7 +44,7 @@ if(!empty($errors)) {
 	if($vtext != null){
 		$additionnalParameters['vtext'] = urlencode($vtext);
 	}
-	$url = RouteMaker::getEditRoute($id, $returnid, $this->_getDefaultLang(), $this->_getDefaultAlias(), $additionnalParameters);
+	$url = RouteMaker::getEditRoute($this->_getDefaultLang(), $this->_getDefaultAlias(), $additionnalParameters);
 
 	$smarty->assign('errors',$errors);
 	$smarty->assign('url',$url);
@@ -72,8 +72,8 @@ $version->set('title',$vtitle);
 $version->set('text',$vtext);
 $version = $version->save();
 
-//$url = RouteMaker::getViewRoute($id, $returnid, $lang->get('code'), $aliasParam);
-$url = RouteMaker::getViewRoute($id, $returnid, $lang->get('code'), $page->get('alias'));
+//$url = RouteMaker::getViewRoute($lang->get('code'), $aliasParam);
+$url = RouteMaker::getViewRoute($lang->get('code'), $page->get('alias'));
 $url = str_replace('&amp;', '&', $url);
 header("Location: {$url}");
 return;
