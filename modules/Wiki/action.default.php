@@ -67,6 +67,8 @@ if($version_id != null && $version == null){
 }	
 
 
+$smarty->assign('root_wiki_url', RouteMaker::getRootRoute($langParam));
+
 if($version == null){
 	//Menu
 	include_once('inc.menu.php');

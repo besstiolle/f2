@@ -1,3 +1,9 @@
+<style>
+	pre code{
+		display: block;
+	}
+</style>
+
 
 {if !empty($breadcrumbs)}<ul class="breadcrumbs">
 {foreach $breadcrumbs as $bread}
@@ -32,9 +38,9 @@
 			<i class="fi-check ico-bar ico-success"></i></span>
 	{/if}
 		<span data-tooltip aria-haspopup="true" class="has-tip" title="Go back home">
-			<a href='#'><i class="fi-home ico-bar ico-secondary"></i></a></span>
+			<a href='{$root_wiki_url}'><i class="fi-home ico-bar ico-secondary"></i></a></span>
 		<span data-tooltip aria-haspopup="true" class="has-tip" title="See the sitemap of the wiki.">
-			<a href='#'><i class="fi-map ico-bar ico-secondary"></i></a></span>
+			<a href='{$root_wiki_url}'><i class="fi-map ico-bar ico-secondary"></i></a></span>
 		
 	</div>
 <!-- 	.fi-results

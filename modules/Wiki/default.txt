@@ -1,4 +1,4 @@
-## WIKI For Cms Made Simple
+## WIKI For Cms Made Simple !
 
 Welcome on your first Wiki page. From here you will be able to create et edit a lot of page
 
@@ -18,17 +18,48 @@ And finally, here some advice by "Duky", the loyal Duck.
 
 > Quack, quack quack quack...  
 
+> sdf
+
 > > O' really ?
-    
+
 > > My God !
+
 
 > Quack, quack quack quack...  
  
+<script>alert('XSS 1');</script>
+<<script>alert('XSS 1b');</script>>
+<<script>>alert('XSS 1b');<</script>>
+&lt;<script>&gt;alert('XSS 1b');&lt;</script>&gt;
 
-<script>alert('');</script>
+[xss](http://"onmouseover="alert('XSS on load'))
 
-AT&T
+`<script>alert('XSS 2');</script>`
 
-http://www.furie.be
+``` javascript
+<script>
+ alert('XSS 3');
+</script>
+```
 
-<iframe src='http://www.furie.be'></iframe>
+[back to root url : ][root_url]
+
+<iframe src="http://furie.be"></iframe>
+<iframe src='http://furie.be'></iframe>
+<script src="http://f2.localhost/uploads/foundation/js/vendor/modernizr.js"></script>
+
+[root_url]: http://example.com/ 
+
+
+> Quack, quack quack quack...  
+
+> sdf
+
+> > O' really ?
+
+> > > > My God !
+
+> > > > > My God !
+
+
+> Quack, quack quack quack...  

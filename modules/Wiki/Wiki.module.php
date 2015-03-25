@@ -80,11 +80,8 @@ class Wiki extends Orm
 		
 		//save
 		$this->SetParameterType('save',CLEAN_STRING);
-	//	$this->SetParameterType('page_id',CLEAN_INT);
-	//	$this->SetParameterType('lang_id',CLEAN_INT);
 		$this->SetParameterType('version_id',CLEAN_INT); // raw action
 		$this->SetParameterType('werrors',CLEAN_NONE);
-	//	$this->SetParameterType('create_page_title',CLEAN_STRING);
 		
 	}
 
@@ -156,8 +153,7 @@ class Wiki extends Orm
 		
 		$route = $this->_generateRoute($prefix, $lang, $alias, 'raw', $version);
 		$this->_add_static($route, array('action'=>'raw','returnid'=>$returnid));
-		
-		
+
    }
 
     private function _generateRoute(){
@@ -166,7 +162,16 @@ class Wiki extends Orm
     	if($ext !== ''){
     		$ext = str_replace('.', '\.', $ext);
     	}
-   		return '/'.implode('\/', func_get_args()).$ext.'$/';
+
+    	//Avoid null parameter, possible id "no prefix" or "no lang" is set in Wiki
+    	$func_params = func_get_args();
+    	$func_params_cleaned  = array();
+    	foreach($func_params as $p) {
+    		if(!empty($p)){
+    			$func_params_cleaned[] = $p;
+    		}
+    	}
+   		return '/'.implode('\/', $func_params_cleaned).$ext.'$/';
     }
 
     private function _add_static($route, $params){
