@@ -21,7 +21,6 @@ if($has_error){return;}
  * $isDefaultLang $isDefaultPage $isDefaultVersion
  *
  **/
-
 if(!empty($params['vtext'])){
 	$textParam = $this->js_urldecode($params['vtext']);
 } else {

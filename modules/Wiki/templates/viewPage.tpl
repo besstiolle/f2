@@ -17,16 +17,34 @@
 	<section class="middle tab-bar-section"> 
 		
 		
+	<div class="right">
+	{if $version.status!=1}
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="The page is an old version. See the last version of this page">
+			<i class="fi-clock ico-bar ico-warning goLast"></i></span>
+	{elseif !$isUpToDate}
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="The page is a translation and may be outdated. See the original here">
+			<i class="fi-comments ico-bar ico-alert goLastDefaultLang"></i></span>
+	{elseif !$isDefaultLang}
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="The page is a translation. See the original here.">
+			<i class="fi-comment ico-bar ico-success goLastDefaultLang"></i></span>
+	{else}
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="You're looking the last version.">
+			<i class="fi-check ico-bar ico-success"></i></span>
+	{/if}
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="Go back home">
+			<a href='#'><i class="fi-home ico-bar ico-secondary"></i></a></span>
+		<span data-tooltip aria-haspopup="true" class="has-tip" title="See the sitemap of the wiki.">
+			<a href='#'><i class="fi-map ico-bar ico-secondary"></i></a></span>
+		
+	</div>
+<!-- 	.fi-results
+	.fi-thumbnails
+	.fi-map
+	.fi-list-bullet
+	.fi-foundation
 
-	<ul class="button-group in-off-bar right">
-		{if $version.status!=1}
-			<li><input class='tiny button in-off-bar goLast' type='button' value='See the last version of this page'></li>
-		{elseif !$isUpToDate}
-			<li><input class='tiny button in-off-bar goLastDefaultLang' type='button' value='The page is a translation and may be outdated. See the original here'></li>
-		{elseif !$isDefaultLang}
-			<li><input class='tiny button in-off-bar goLastDefaultLang' type='button' value='The page is a translation. See the original here.'></li>
-		{/if}
-	</ul>
+	.fi-arrows-in
+	.fi-arrows-out -->
 
 	<ul class="button-group in-off-bar">
 		<li><input class='tiny button in-off-bar raw' type='button' value='Show Raw Code'></li>

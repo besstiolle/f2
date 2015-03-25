@@ -13,11 +13,11 @@
 	  
 	  $(document).ready(function () {
 		  $("input.preview").click(function () { 
-				query = "{$actionid}vtitle=" + escape($("#{$actionid}vtitle").val()) + "&" 
-					+ "{$actionid}vtext=" + escape($("#{$actionid}vtext").val()) + "&" 
-					+ "{$actionid}palias=" + escape($("#{$actionid}palias").val()) + "&" 
-					+ "{$actionid}vlang=" + $("#{$actionid}vlang").val();
-		
+				query = "{$actionid}vtitle=" + encodeURI($("#{$actionid}vtitle").val()) + "&" 
+					+ "{$actionid}vtext=" + encodeURI($("#{$actionid}vtext").val());
+
+					console.debug(url);
+					console.debug(query); 
 				$.post( url, query).done(function( data ) {
 					$("#preview_result").html(data);
 					
