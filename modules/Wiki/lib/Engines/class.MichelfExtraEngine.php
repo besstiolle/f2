@@ -3,50 +3,7 @@
 
 class Engines{
 
-
-	public static $michelf = 1;
-	public static $michelfExtra = 1;
-	public static $parsedown = 3;
-
-	private static $engine;
-	private $prefix;
-	private $lang;
-	private $config;
-
-	public static function getInstance($engineType, $prefix, $lang){
-		if(self::$engine != null){
-			return self::$engine;
-		}
-
-		if(MichelfEngines::$michelf == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Michelf/Markdown.inc.php');
-			self::$engine = new MarkdownEngine($prefix, $lang);
-		
-		} else if(MichelfEngines::$michelfExtra == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Michelf/MarkdownExtra.inc.php');
-			self::$engine = new MarkdownExtraEngine($prefix, $lang);
-		
-		} else if(MichelfEngines::$parsedown == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Parsedown/Parsedown.php');
-			self::$engine = new ParsedownEngine($prefix, $lang);
-		} 
-
-		return self::$engine;
-	}
-
-	protected function __construct($prefix, $lang){
-		$this->prefix = $prefix;
-		$this->lang = $lang;
-		$this->config = $config = cmsms()->GetConfig();
-	}
-
-	public function pre_process($text){
-		return $text;
-	}
-
-	public function post_process($text){
-		return $text;
-	}
+	public static $MARKDOWN = 1;
 
 	public static function process($text, $prefix, $lang, $engine = 1){
 

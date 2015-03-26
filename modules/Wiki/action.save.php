@@ -61,7 +61,6 @@ OrmDb::execute($query);
 $version = new Version();
 
 list($currentUS, $currentTS) = explode(" ", microtime());
-$version->set('engine',Engines::$MARKDOWN);
 $version->set('dt_creation',$currentTS);
 $version->set('author_name','admin');
 $version->set('author_id',0);

@@ -225,7 +225,7 @@ class Wiki extends Orm
 	}
 	
 	function _getDefaultEngine(){
-		return Engines::$MARKDOWN;
+		return Engines::$parsedown;
 	}
 
 	function _getDefaultPrefix(){

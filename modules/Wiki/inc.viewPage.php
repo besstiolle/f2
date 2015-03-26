@@ -1,6 +1,6 @@
 <?php
 
-$vals['text'] = Engines::process($vals['text'], $prefix, $lang, $version->get('engine'));
+$vals['text'] = Engines::process($vals['text'], $prefix, $lang);
 
 $edit = RouteMaker::getEditRoute($code_iso, $aliasParam);
 $delete = RouteMaker::getDeleteRoute($code_iso, $aliasParam);
