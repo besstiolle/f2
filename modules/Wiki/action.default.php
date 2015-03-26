@@ -51,13 +51,6 @@ if($version !== null){
 	$vals = $version->getValues();
 }
 
-
-/*//Avoid delete default page/default lang
-$isDefaultPage = false;
-if($page != null && $page->get('alias') == $this->_getDefaultAlias() && $isDefaultLang){
-	$isDefaultPage = true;
-}*/
-
 // Case wiki/en_US/home/view/999999
 if($version_id != null && $version == null){
 	$errors[] = array('revision_unknow', $version_id);

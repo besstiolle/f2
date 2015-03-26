@@ -21,13 +21,22 @@ class Page extends OrmEntity {
 			, OrmCAST::$STRING
 			, 100
 		));
+
+		$this->add(new OrmField('lvl'
+			, OrmCAST::$INTEGER 
+			, 3
+		));
 			
 		$this->garnishAutoincrement();
 
+		$this->addIndexes(array('lvl'));
 		$this->addIndexes(array('prefix', 'alias'));
 		
 		
-		$this->garnishDefaultOrderBy(new OrmOrderBy(array('alias'=>OrmOrderBy::$ASC)));
+		$this->garnishDefaultOrderBy(new OrmOrderBy(array(
+				'lvl'=>OrmOrderBy::$ASC,
+				'alias'=>OrmOrderBy::$ASC
+				)));
 	}	
 }
 ?>

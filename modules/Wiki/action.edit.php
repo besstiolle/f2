@@ -37,11 +37,6 @@ if($version == null){
 							null, Version::$STATUS_CURRENT);
 }
 
-/*if($version != null){
-	$vals = $version->getValues();
-}
-*/
-
 if($version == null){
 	//Menu
 	include_once('inc.menu.php');

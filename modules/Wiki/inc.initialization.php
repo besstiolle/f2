@@ -12,6 +12,8 @@ $errors = array();
 $messages[] = array();
 $has_error = false;
 
+// var_dump($params);die();
+
 //Smarty vars.
 $smarty = cmsms()->GetSmarty();
 $smarty->assign('mod', $this);
@@ -56,12 +58,18 @@ if($lang == null){
 $smarty->assign('lang', $lang->getValues());
 
 /************** PAGE *****************/
+//echo $aliasParam;die();
+
 $page = PagesService::getOneByAlias($aliasParam);
 if($page == null){
 	$page = new Page();
 	$page->set('prefix', $this->_getDefaultPrefix());
 	$page->set('alias', $aliasParam);
-	$page = $page->save();
+	$page->set('lvl', PagesService::getLvl($aliasParam));
+	//We don't create new page in preview mode
+	if($params['action'] !== 'preview'){
+		$page = $page->save();
+	}
 }
 
 //Is this the default Lang ? Page & Version
@@ -78,6 +86,11 @@ $smarty->assign('isDefaultVersion', $isDefaultVersion);
 $prefix = $this->_getDefaultPrefix();
 $code_iso = ($this->GetPreference('show_code_iso', true)?$lang->get('code'):"");
 $engine = $this->_getDefaultEngine();
+// $engine = Engines::$MICHELF;
+// $engine = Engines::$MICHELF_EXTRA;
+// $engine = $this->_getDefaultEngine();
 
+//Initiate the Engine
+Engines::initInstance($engine, $prefix, $lang);
 
 ?>

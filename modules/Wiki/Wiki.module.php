@@ -225,11 +225,11 @@ class Wiki extends Orm
 	}
 	
 	function _getDefaultEngine(){
-		return Engines::$parsedown;
+		return $this->GetPreference('default_engine', Engines::$PARSDOWN);
 	}
 
 	function _getDefaultPrefix(){
-		return $this->SetPreference('prefix','wiki');
+		return $this->GetPreference('prefix','wiki');
 	}
 } 
 ?>

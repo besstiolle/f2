@@ -4,79 +4,108 @@
 class Engines{
 
 
-	public static $michelf = 1;
-	public static $michelfExtra = 1;
-	public static $parsedown = 3;
+	public static $MICHELF = 1;
+	public static $MICHELF_EXTRA = 2;
+	public static $PARSDOWN = 3;
 
-	private static $engine;
-	private $prefix;
-	private $lang;
-	private $config;
+	protected static $engine;
+	protected static $prefix;
+	protected static $lang;
+	protected static $config;
 
-	public static function getInstance($engineType, $prefix, $lang){
+	public static function initInstance($engineType, $prefix, $lang){
+
 		if(self::$engine != null){
-			return self::$engine;
+			return;
 		}
 
-		if(MichelfEngines::$michelf == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Michelf/Markdown.inc.php');
-			self::$engine = new MarkdownEngine($prefix, $lang);
+		if(Engines::$MICHELF == $engineType) {
+			include_once(dirname(__FILE__).'/Engines/class.MichelfEngine.php');
+			self::$engine = new MichelfEngine($prefix, $lang);
 		
-		} else if(MichelfEngines::$michelfExtra == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Michelf/MarkdownExtra.inc.php');
-			self::$engine = new MarkdownExtraEngine($prefix, $lang);
+		} else if(Engines::$MICHELF_EXTRA == $engineType) {
+			include_once(dirname(__FILE__).'/Engines/class.MichelfExtraEngine.php');
+			self::$engine = new MichelfExtraEngine($prefix, $lang);
 		
-		} else if(MichelfEngines::$parsedown == $engineType) {
-			include_once($config['root_path'].'/modules/Wiki/lib/Engines/Parsedown/Parsedown.php');
+		} else if(Engines::$PARSDOWN == $engineType) {
+			include_once(dirname(__FILE__).'/Engines/class.ParsedownEngine.php');
 			self::$engine = new ParsedownEngine($prefix, $lang);
 		} 
 
-		return self::$engine;
 	}
 
 	protected function __construct($prefix, $lang){
-		$this->prefix = $prefix;
-		$this->lang = $lang;
-		$this->config = $config = cmsms()->GetConfig();
+		self::$prefix = $prefix;
+		self::$lang = $lang;
+		self::$config = cmsms()->GetConfig();
 	}
 
-	public function pre_process($text){
+	public function process($text){
+		// $micro = microtime(true);
+		// $text = htmlentities(file_get_contents(dirname(__FILE__).'/../default.txt'));
+		$text = self::$engine->pre_parsing($text);
+		// $micro = microtime(true);
+		// for($i = 0; $i < 1000; $i++){
+		// 	self::$engine->parsing($text);
+		// }
+		// echo "<h1>".((microtime(true)-$micro)*1)."</h1>";
+
+		$text = self::$engine->parsing($text);
+		$text = self::$engine->post_parsing($text);
+		
+
 		return $text;
 	}
 
-	public function post_process($text){
+	protected function pre_parsing($text){
+		$text = self::fixBlocQuote($text);
+		$text = self::fixSmarty($text);
+		$text = self::fixImageUrl($text);
+
 		return $text;
 	}
 
-	public static function process($text, $prefix, $lang, $engine = 1){
+	protected function post_parsing($text){
 
-		//Prepare configuration
-		$config = cmsms()->GetConfig();
-		$text = htmlentities(file_get_contents($config['root_path'].'/modules/Wiki/default.txt'));
+		$text = self::fixUrlColor($text);
+		$text = self::fixCodeBloc($text);
 
+		return $text;
+	}
 
+	protected static function fixBlocQuote($text){
 		// blocquote
-		// $search = array('`\n ?&gt; &gt; &gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; `','`\n ?&gt; &gt; `','`\n ?&gt; `');
-		// $replace = array('> > > > > >', '> > > > > ','> > > > ','> > > ','> > ','> ');
-		// $text = preg_replace($search, $replace, $text);
-		// $search = array('`^ ?&gt; &gt; &gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; `','`^ ?&gt; &gt; `','`^ ?&gt; `');
-		// $text = preg_replace($search, $replace, $text);
-
-		//$search = array("# ?(&gt; )?(&gt; )?(&gt; )?(&gt; )?(&gt; )?#msi");  // #2 -> 5 level of quote
-		$search = array("# ?(&gt; )?(&gt; )?(&gt; )?(&gt; )?(&gt; )?#msi");  // #2 -> 5 level of quote
-		$replace = array('>');
+		$search = array('`\n ?&gt; &gt; &gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; &gt; `','`\n ?&gt; &gt; &gt; `','`\n ?&gt; &gt; `','`\n ?&gt; `');
+		$replace = array('> > > > > >', '> > > > > ','> > > > ','> > > ','> > ','> ');
+		$text = preg_replace($search, $replace, $text);
+		$search = array('`^ ?&gt; &gt; &gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; &gt; `','`^ ?&gt; &gt; &gt; `','`^ ?&gt; &gt; `','`^ ?&gt; `');
 		$text = preg_replace($search, $replace, $text);
 
-		// Process the text : 
-		require_once($config['root_path'].'/modules/Wiki/lib/Parsedown/Parsedown.php');
-		$parsedown = new Parsedown;
-		$text = $parsedown->text($text);
+		//$search = array("# ?(&gt; )?(&gt; )?(&gt; )?(&gt; )?(&gt; )?#msi");  // #2 -> 5 level of quote
+		// $search = array("# ?(&gt; )?(&gt; )?(&gt; )?(&gt; )?(&gt; )?#msi");  // #2 -> 5 level of quote
+		// $replace = array('>');
+		// $text = preg_replace($search, $replace, $text);
+		return $text;
+	}
 
+	protected static function fixSmarty($text){
 		//Transform smarty tags
 		$search = array('{root_url}'); 
-		$replace = array($config['root_url']); 
+		$replace = array(self::$config['root_url']); 
 		$text = str_replace($search, $replace, $text);
+		return $text;
+	}
 
+	protected static function fixImageUrl($text){
+		//Transform specific tags
+		$search = array('&#33;'); 
+		$replace = array('!'); 
+		$text = str_replace($search, $replace, $text);
+		return $text;
+	}
+
+
+	protected static function fixUrlColor($text){
 		$patternS = '`<a ([^<]*)href=[\'\"]([^<]*)[\'\"]>([^<]*)</a>`si';
 		preg_match_all( $patternS, $text, $matches, PREG_SET_ORDER);
 		$search = array();
@@ -94,7 +123,7 @@ class Engines{
 				//Internal link
 				$page = PagesService::getOneByAlias($match[2]);
 				if($page != null){
-					$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), 
+					$version = VersionsService::getOne($page->get('page_id'), self::$lang->get('lang_id'), 
 							null , Version::$STATUS_CURRENT);
 				}
 
@@ -105,7 +134,7 @@ class Engines{
 					$cssClass = 'follow';
 					$title = "";
 				}
-				$url = RouteMaker::getViewRoute($lang->get('code'), $match[2]);
+				$url = RouteMaker::getViewRoute(self::$lang->get('code'), $match[2]);
 
 			}
 			//Replace plain text without regex anymore
@@ -113,8 +142,12 @@ class Engines{
 			$replace[] = "<a class='wikilinks {$cssClass}' title='{$title}' href='{$url}'>{$match[3]}</a>";
 		}
 		$text = str_replace($search,$replace,$text);
-		
-		// //Fix inline/bloc <code></code> and <code class='xxx'></code> by decoding HTML entity
+		return $text;
+	}
+
+
+	protected static function fixCodeBloc($text){
+		//Fix inline/bloc <code></code> and <code class='xxx'></code> by decoding HTML entity
 		$patternS = '`<code(?:[^>]*)>([^<]*)<\/code>`i';
 		preg_match_all( $patternS, $text, $matches, PREG_SET_ORDER);
 		$search = array();
@@ -124,8 +157,6 @@ class Engines{
 			$replace[] = html_entity_decode($match[0]);
 		}
 		$text = str_replace($search,$replace,$text);
-		
-
 		return $text;
 	}
 }

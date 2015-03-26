@@ -18,12 +18,9 @@ And finally, here some advice by "Duky", the loyal Duck.
 
 > Quack, quack quack quack...  
 
-> sdf
-
 > > O' really ?
 
 > > My God !
-
 
 > Quack, quack quack quack...  
  
@@ -36,7 +33,7 @@ And finally, here some advice by "Duky", the loyal Duck.
 
 `<script>alert('XSS 2');</script>`
 
-``` javascript
+```javascript
 <script>
  alert('XSS 3');
 </script>
@@ -60,6 +57,5 @@ And finally, here some advice by "Duky", the loyal Duck.
 > > > > My God !
 
 > > > > > My God !
-
 
 > Quack, quack quack quack...  

@@ -9,9 +9,9 @@
 
 <nav class="tab-bar">
 
-	<section class="left-small">
+{*	<section class="left-small">
 		<a class="left-off-canvas-toggle menu-icon" ><span></span></a>
-	</section> 
+	</section> *}
 
 	<section class="middle tab-bar-section"> 
 		
@@ -24,6 +24,8 @@
 			
 	</section>
 </nav>
+
+{*
 <aside class="left-off-canvas-menu">
 	<ul class="off-canvas-list">
 		<li><label>Menu</label></li>
@@ -32,13 +34,13 @@
 			<li><a href="{$elt.viewUrl}" {if !empty($elt.class)}class='{$elt.class}'{/if}>{$elt.label|capitalize}</a></li>
 		{/foreach}
 		
-		{*
+		
 		<li><label>Options</label></li>
 		<li><a href="#">Some options</a></li>
 		<li><a href="#">Other options</a></li>
-		*}
+		
 	</ul>
-</aside>
+</aside>*}
 
 
 <section class="main-section">
@@ -48,9 +50,7 @@
 	<div class='fancybox' id='preview_result'></div>
 
 	{$form}
-		{*{if !empty($page)}<input type='hidden' name='{$actionid}page_id' id='{$actionid}page_id' value='{$page.page_id}'/>{/if}
-		{if !empty($lang.code)}<input type='hidden' name='{$actionid}vlang' id='{$actionid}vlang' value='{$lang.code}'/>{/if}*}
-
+	
 		<div class="name-field">
 			<label>Title : </label>
 			<input type='text' value='{$version.title}' name='{$actionid}vtitle' id='{$actionid}vtitle' />

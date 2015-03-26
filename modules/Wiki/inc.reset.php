@@ -15,12 +15,14 @@ $config = cmsms()->GetConfig();
 $this->SetPreference('prefix','wiki');
 $this->SetPreference('default_alias','home');
 $this->SetPreference('default_lang','en_US');
+$this->SetPreference('default_engine',Engines::$PARSDOWN);
 $this->SetPreference('show_code_iso',TRUE);
 
 //Create first undeletable-page
 $page = new Page();
 $page->set('prefix','');
 $page->set('alias','home');
+$page->set('lvl',0);
 $page = $page->save();
 
 //Create first indeletable-lang
