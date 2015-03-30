@@ -123,6 +123,7 @@ class Wiki extends Orm
 		$lang = '(?P<vlang>[a-zA-Z0-9\-\_]*?)';
 		$alias = '(?P<palias>[a-zA-Z0-9\-\_\:]+)';
 		$version = '(?P<version_id>[0-9]+)';
+		$sitemap = '[sS]itemap';
 
 		//With nothing
 		$route = $this->_generateRoute($prefix);
@@ -131,7 +132,8 @@ class Wiki extends Orm
 		//With Lang
 		$route = $this->_generateRoute($prefix, $lang);
 		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid, 'palias' => 'home'));
-		
+			
+
 		//With Lang & alias
 		$route = $this->_generateRoute($prefix, $lang, $alias);
 		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid));
@@ -153,6 +155,12 @@ class Wiki extends Orm
 		
 		$route = $this->_generateRoute($prefix, $lang, $alias, 'raw', $version);
 		$this->_add_static($route, array('action'=>'raw','returnid'=>$returnid));
+
+		//Sitemap
+		$route = $this->_generateRoute($prefix, $lang, $sitemap);
+		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
+		$route = $this->_generateRoute($prefix, $sitemap);
+		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 
    }
 

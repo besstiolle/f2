@@ -1,31 +1,34 @@
 <?php
 
+$pagesSiblings = PagesService::getSiblings($aliasParam);
 
 //Get All active Versions
-$allVersions = VersionsService::getAll(null, $lang->get('lang_id'), 
+$allVersions = array();
+foreach ($pagesSiblings as $pageSiblings) {
+	
+	$vSibling = VersionsService::getOne($pageSiblings->get('page_id'), $lang->get('lang_id'), 
 							null, Version::$STATUS_CURRENT);
-$menu = array();
-foreach($allVersions as $a_version){
-	$elts = explode(':', $a_version->get('page')->get('alias'));
-	
-	$prettyUrl = RouteMaker::getViewRoute($langParam, $elts[0]);
-	
-	//Initiate a no-existing page
-	if(!isset($menu[$elts[0]])){
-	
-		$menu[$elts[0]] = array(
-				'label' => $elts[0],
-				'viewUrl' => $prettyUrl,
-				'class' => 'new'
-				);
-	}
-	
-	if(isset($menu[$a_version->get('page')->get('alias')])){
-		$menu[$a_version->get('page')->get('alias')]['class'] = '';
-		$menu[$a_version->get('page')->get('alias')]['label'] = $a_version->get('title');
+
+	if($vSibling != null){
+		$allVersions[] = $vSibling;
 	}
 }
 
-$smarty->assign('wiki_menu', $menu);
+
+$menu = array();
+foreach($allVersions as $a_version){
+
+	$_alias = $a_version->get('page')->get('alias');
+	$_title = $a_version->get('title');
+	
+	$prettyUrl = RouteMaker::getViewRoute($langParam, $_alias);
+	
+	$menu[$_alias] = array(
+			'label' => $_title,
+			'viewUrl' => $prettyUrl
+			);
+}
+
+$smarty->assign('wiki_menu_siblings', $menu);
 
 ?>

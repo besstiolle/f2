@@ -40,7 +40,7 @@
 		<span data-tooltip aria-haspopup="true" class="has-tip" title="Go back home">
 			<a href='{$root_wiki_url}'><i class="fi-home ico-bar ico-secondary"></i></a></span>
 		<span data-tooltip aria-haspopup="true" class="has-tip" title="See the sitemap of the wiki.">
-			<a href='{$root_wiki_url}'><i class="fi-map ico-bar ico-secondary"></i></a></span>
+			<a href='{$root_wiki_url}/sitemap'><i class="fi-map ico-bar ico-secondary"></i></a></span>
 		
 	</div>
 <!-- 	.fi-results
@@ -74,12 +74,16 @@
 	
 		{foreach $wiki_menu as $elt}
 			<li><a href="{$elt.viewUrl}" {if !empty($elt.class)}class='{$elt.class}'{/if}>{$elt.label|capitalize}</a></li>
+		{foreachelse}
+			<li>There is no entry in this wiki</li>
 		{/foreach}
-		{*
-		<li><label>Options</label></li>
-		<li><a href="#">Some options</a></li>
-		<li><a href="#">Other options</a></li>
-		*}
+		<li><label>Siblings Entries</label></li>
+	
+		{foreach $wiki_menu_siblings as $elt}
+			<li><a href="{$elt.viewUrl}" {if !empty($elt.class)}class='{$elt.class}'{/if}>{$elt.label|capitalize}</a></li>
+		{foreachelse}
+			<li>There is no siblings entry in this wiki</li>
+		{/foreach}
 	</ul>
 </aside>
 <aside class="right-off-canvas-menu">

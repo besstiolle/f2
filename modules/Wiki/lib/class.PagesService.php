@@ -41,12 +41,14 @@ class PagesService{
 			$lvl = substr_count($alias, ':');
 		}
 
+
 		$example = new OrmExample();
 		if($aliasParent != null){
-			$example->addCriteria('alias', OrmTypeCriteria::$LIKE, array($aliasParent));
+			$example->addCriteria('alias', OrmTypeCriteria::$LIKE, array($aliasParent.'%'));
 		}
 		$example->addCriteria('lvl', OrmTypeCriteria::$EQ, array($lvl));
 		$pages = OrmCore::findByExample(new Page(),$example);
+
 		return $pages;
 
 	}

@@ -70,6 +70,8 @@ if($version == null){
 } else {
 	//Menu
 	include_once('inc.menu.php');
+	//Menu siblings
+	include_once('inc.menuSiblings.php');
 	//SubPage
 	include_once('inc.childrens.php');
 	//Include langs
