@@ -38,54 +38,55 @@ $entries = VersionsService::getAll(
 		Version::$STATUS_CURRENT);
 
 $sitemap = array();
+
+//echo count($entries);
 foreach ($entries as $entry) {
 	$alias = $entry->get('page')->get('alias');
 	$exploded = explode(':', $alias);
 
+	$sitemap = parseEntry($sitemap, $exploded, $entry, '');
 
-	$sub = &$sitemap;
-	for ($i = 0; $i < count($exploded); $i++) {
+//	echo "\n----- ".$alias." ------\n";
+//	echo print_r($sitemap, true);
 
-		$part = $exploded[$i];
-
-		if(!isset($sub[$part])) {
-			$sub[$part] = array(
-				'label' => $part,
-				'children' => array(),
-				);
-
-			if($i+1 == count($exploded)){
-				//$sub[$exploded[$i]]['label'] = $entry->get('title');
-			}
-
-		} else {
-			//$sub[$exploded[$i]]['label'] = $entry->get('title');
-		}
-		$sub = &$sitemap[$exploded[$i]]['children'];
-
-	}
+	
 }
 
-print_r($sitemap);
+function parseEntry($sub, $exploded, $entry, $currentalias){
 
+
+	$part = array_shift($exploded);
+
+	if(!empty($currentalias)){
+		$currentalias.= ':';	
+	}
+	$currentalias.= $part;
+
+	if(!isset($sub[$part])){
+		$sub[$part] = array(
+			'label' => $part,
+			'url' => RouteMaker::getViewRoute($entry->get('lang')->get('code'), $currentalias),
+			'css' => 'new',
+			'children' => array(),
+			);
+	}
+	
+	if(!empty($exploded)){
+		$sub[$part]['children'] = parseEntry($sub[$part]['children'], $exploded, $entry, $currentalias);
+	} else {
+		$sub[$part]['label'] = $entry->get('title');
+		$sub[$part]['css'] = 'follow';
+		$sub[$part]['url'] = RouteMaker::getViewRoute($entry->get('lang')->get('code'), $entry->get('page')->get('alias'));
+	}
+
+	return $sub;
+}
+
+array_multisort($sitemap);
 
 $smarty->assign('root_wiki_url', RouteMaker::getRootRoute($langParam));
+$smarty->assign('sitemap', $sitemap);
 
-
-//Menu
-//include_once('inc.menu.php');
-//Menu siblings
-//include_once('inc.menuSiblings.php');
-//SubPage
-//include_once('inc.childrens.php');
-//Include langs
-//include_once('inc.langs.php');
-//Include last 10 versions
-//include_once('inc.last10versions.php');
-//Breadcrumbs
-//include_once('inc.breadcrumbs.php');
-//Display
-//include_once('inc.sitemap.php');
-
+echo $this->ProcessTemplate('sitemap.tpl');
 
 ?>

@@ -21,35 +21,35 @@ class RouteMaker{
 		self::$isInitiated = true;
 	}
 
-	public static function getDeleteRoute($langPrefix = null, $title, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, 'delete', null, $additionnalParameters);
+	public static function getDeleteRoute($langPrefix = null, $alias, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, 'delete', null, $additionnalParameters);
 	}
 	
-	public static function getEditRoute($langPrefix = null, $title, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, 'edit', null, $additionnalParameters);
+	public static function getEditRoute($langPrefix = null, $alias, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, 'edit', null, $additionnalParameters);
 	}
 	
-	public static function getPreviewRoute($langPrefix = null, $title, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, 'preview', null, $additionnalParameters);
+	public static function getPreviewRoute($langPrefix = null, $alias, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, 'preview', null, $additionnalParameters);
 	}
 	
-	public static function getRawRoute($langPrefix = null, $title, $version_id, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, 'raw', $version_id, $additionnalParameters);
+	public static function getRawRoute($langPrefix = null, $alias, $version_id, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, 'raw', $version_id, $additionnalParameters);
 	}
 	
-	public static function getViewOldRoute($langPrefix = null, $title, $version_id, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, 'view', $version_id, $additionnalParameters);
+	public static function getViewOldRoute($langPrefix = null, $alias, $version_id, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, 'view', $version_id, $additionnalParameters);
 	}
 	
-	public static function getViewRoute($langPrefix = null, $title, $additionnalParameters = null){
-		return RouteMaker::getRoute($langPrefix, $title, null, null, $additionnalParameters);
+	public static function getViewRoute($langPrefix = null, $alias, $additionnalParameters = null){
+		return RouteMaker::getRoute($langPrefix, $alias, null, null, $additionnalParameters);
 	}
 
 	public static function getRootRoute($langPrefix = null, $additionnalParameters = null){
 		return RouteMaker::getRoute($langPrefix, null, null, null, $additionnalParameters);
 	}
 	
-	protected static function getRoute($langPrefix = null, $title = null, $action = null, $version_id = null, $additionnalParameters = null){
+	protected static function getRoute($langPrefix = null, $alias = null, $action = null, $version_id = null, $additionnalParameters = null){
 		if(!self::$isInitiated) {
 			throw new Exception("Error RouteMaker is not initiated", 1);
 		}
@@ -63,7 +63,7 @@ class RouteMaker{
 		$url .= (self::$wiki->GetPreference('show_code_iso', true) && $langPrefix != null ?'/'.$langPrefix:"");
 		
 		// "/title"
-		$url .= ($title==null?'':'/'.$title);
+		$url .= ($alias==null?'':'/'.$alias);
 		
 		// "/action"
 		$url .= ($action==null?'':'/'.$action);
@@ -86,7 +86,7 @@ class RouteMaker{
 			$parameters = array_merge($parameters, $additionnalParameters);
 		}
 		$parameters['vlang'] = ($langPrefix != null ? $langPrefix : "");
-		$parameters['vtitle'] = $title;
+		$parameters['vtitle'] = $alias;
 		$parameters['prefix'] = self::$wiki->GetPreference('prefix');
 		if ($version_id != null){
 			$parameters['version_id'] = $version_id;

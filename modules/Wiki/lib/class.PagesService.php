@@ -32,13 +32,14 @@ class PagesService{
 	}
 
 	public static function getSiblings($alias){
+
+		$lvl = PagesService::getLvl($alias);
+
 		$pos = strrpos($alias, ':');
 		if($pos === false){
-			$lvl = 0;
 			$aliasParent = null;
 		} else {
 			$aliasParent = substr($alias, 0, $pos);
-			$lvl = substr_count($alias, ':');
 		}
 
 
