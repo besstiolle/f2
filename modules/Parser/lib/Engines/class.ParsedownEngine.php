@@ -2,7 +2,7 @@
 
 include_once(dirname(__FILE__).'/Parsedown/Parsedown.php');
 
-class ParsedownEngine extends Engines{
+class ParsedownEngine extends Engine{
 
 	public function parsing($text){
 		$parser = new Parsedown;

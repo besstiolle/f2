@@ -2,7 +2,7 @@
 
 require_once(dirname(__FILE__).'/Michelf/Markdown.inc.php');
 
-class MichelfEngine extends Engines{
+class MichelfEngine extends Engine{
 
 	public function parsing($text){
 		$parser = new Michelf\Markdown();
