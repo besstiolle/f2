@@ -21,6 +21,7 @@ if($has_error){return;}
  * $isDefaultLang $isDefaultPage $isDefaultVersion
  *
  **/
+
 if(!empty($params['vtext'])){
 	$textParam = $this->js_urldecode($params['vtext']);
 } else {
@@ -37,7 +38,7 @@ if(!empty($errors)) {
 }
 
 $vals['title'] = $params['vtitle'];
-$vals['text'] = Engines::process($textParam);
+$vals['text'] = WikiUtils::parseText($textParam, $langParam);
 
 $smarty->assign('version', $vals);
 $smarty->assign('title', $params['vtitle']);

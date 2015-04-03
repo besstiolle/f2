@@ -119,9 +119,10 @@ class Wiki extends Orm {
 	/**
 	 * a inner function for factorize some recurrent code
 	 **/
-	function securize($str){
+	/*function securize($str){
 		return htmlentities($str, ENT_QUOTES, 'UTF-8');
-	}
+	}*/
+	
 	/**
 	* @param string $str unicode and ulrencoded string
 	* @return string decoded string
@@ -159,10 +160,6 @@ class Wiki extends Orm {
 	
 	function _getDefaultAlias(){
 		return  $this->GetPreference('default_alias','home');
-	}
-	
-	function _getDefaultEngine(){
-		return $this->GetPreference('default_engine', Engines::$PARSDOWN);
 	}
 
 	function _getDefaultPrefix(){

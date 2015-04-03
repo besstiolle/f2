@@ -1,7 +1,5 @@
 <?php
 
-include_once(dirname(__FILE__).'/lib/class.Engines.php');
-
 //Create all the tables automatically 
 $entities = MyAutoload::getAllInstances($this->GetName());
 foreach($entities as $anEntity) {
@@ -15,7 +13,6 @@ $config = cmsms()->GetConfig();
 $this->SetPreference('prefix','wiki');
 $this->SetPreference('default_alias','home');
 $this->SetPreference('default_lang','en_US');
-$this->SetPreference('default_engine',Engines::$PARSDOWN);
 $this->SetPreference('show_code_iso',TRUE);
 
 //Create first undeletable-page
@@ -40,7 +37,7 @@ $fr_FR = $fr_FR->save();
 // Create first version of text
 $version = new Version();
 $version->set('title',$page->get('alias'));
-$version->set('text',htmlentities(file_get_contents($config['root_path'].'/modules/Wiki/default.txt')));
+$version->set('text',htmlentities(file_get_contents($config['root_path'].'/modules/Wiki/default.md')));
 $version->set('dt_creation',$currentTS);
 $version->set('author_name','admin');
 $version->set('author_id',0);

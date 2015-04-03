@@ -85,12 +85,6 @@ $smarty->assign('isDefaultVersion', $isDefaultVersion);
 // Get preferences
 $prefix = $this->_getDefaultPrefix();
 $code_iso = ($this->GetPreference('show_code_iso', true)?$lang->get('code'):"");
-$engine = $this->_getDefaultEngine();
-// $engine = Engines::$MICHELF;
-// $engine = Engines::$MICHELF_EXTRA;
-// $engine = $this->_getDefaultEngine();
 
-//Initiate the Engine
-Engines::initInstance($engine, $prefix, $lang);
 
 ?>

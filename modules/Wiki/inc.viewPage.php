@@ -1,6 +1,7 @@
 <?php
 
-$vals['text'] = Engines::process($vals['text']);
+$vals['text'] = WikiUtils::parseText($vals['text'], $code_iso);
+
 
 $edit = RouteMaker::getEditRoute($code_iso, $aliasParam);
 $delete = RouteMaker::getDeleteRoute($code_iso, $aliasParam);
