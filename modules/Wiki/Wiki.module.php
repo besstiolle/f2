@@ -1,71 +1,22 @@
 <?php
 
-/* Force the loading of Orm Framework BEFORE this module */
-$config = cmsms()->GetConfig();
-$Orm = $config['root_path'].'/modules/Orm/Orm.module.php';
-if( !is_readable( $Orm ) ) {
-  echo '<h1><font color="red">ERROR: The Orm Framework could not be found [<a href="https://github.com/besstiolle/orm-ms/wiki">help</a>].</font></h1>';
-  return;
-}
-require_once($Orm);
 
-class Wiki extends Orm
-{   
-	function GetName() {
-		return 'Wiki';
-	}
+class Wiki extends Orm {   
 
-	function GetFriendlyName() {
-		return $this->Lang('friendlyname');
-	}
-
-	function GetVersion() {
-		return '1.0.0';
-	}
-
-	function GetDependencies() {
-		return array('Orm'=>'0.3.2');
-	}
-
-	function GetHelp() {
-		return $this->Lang('help');
-	}
-
-	function GetAuthor() {
-		return 'Kevin Danezis (aka Bess)';
-	}
-
-	function GetAuthorEmail() {
-		return 'contact at furie point be';
-	}
-
-	function GetChangeLog() {
-		return $this->Lang('changelog');
-	}
-
-	function GetAdminDescription() {
-		return $this->Lang('moddescription');
-	}
-
-	function MinimumCMSVersion() {
-		return "1.11.0";
-	}
-
-	function IsPluginModule() {
-		return true;
-	}
-
-	function HasAdmin() {
-		return true;
-	}
-
-	function GetAdminSection() {
-		return 'content';
-	}
-
-	function VisibleToAdminUser() {
-		return true;
-	}
+	function GetName() { return 'Wiki'; }
+	function GetFriendlyName() { return $this->Lang('friendlyname'); }
+	function GetVersion() { return '1.0.0'; }
+	function GetDependencies() { return array('Orm'=>'0.3.3', 'Parser'=>'1.0.0'); }
+	function GetHelp() { return $this->Lang('help'); }
+	function GetAuthor() { return 'Kevin Danezis (aka Bess)'; }
+	function GetAuthorEmail() { return 'contact at furie point be'; }
+	function GetChangeLog() { return $this->Lang('changelog'); }
+	function GetAdminDescription() { return $this->Lang('moddescription'); }
+	function MinimumCMSVersion() { return "1.11.0"; }
+	function IsPluginModule() { return true; }
+	function HasAdmin() { return true; }
+	function GetAdminSection() { return 'content'; }
+	function VisibleToAdminUser() { return true; }
 
 	function InitializeFrontend() {
 		$this->RegisterModulePlugin(true, false);
@@ -85,36 +36,14 @@ class Wiki extends Orm
 		
 	}
 
-	function InitializeAdmin() {
-	}
-
-	function AllowSmartyCaching() {
-		return true;
-	}
-
-	function LazyLoadFrontend() {
-		return false;
-	}
-
-	function LazyLoadAdmin() {
-		return false;
-	}
-
-	function InstallPostMessage() {
-		return $this->Lang('postinstall');
-	}
-
-	function UninstallPostMessage() {
-		return $this->Lang('postuninstall');
-	}
-
-	function UninstallPreMessage() {
-		return $this->Lang('really_uninstall');
-	}
-
-	function DisplayErrorPage($msg) {
-		echo "<h3>".$msg."</h3>";
-	}  
+	function InitializeAdmin() { }
+	function AllowSmartyCaching() { return true; }
+	function LazyLoadFrontend() { return false; }
+	function LazyLoadAdmin() { return false; }
+	function InstallPostMessage() { return $this->Lang('postinstall'); }
+	function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+	function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
+	function DisplayErrorPage($msg) { echo "<h3>".$msg."</h3>"; }  
 	
 	public function CreateStaticRoutes() {
 		
