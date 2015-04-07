@@ -1,5 +1,7 @@
 <?php
 
+
+
 //Create all the tables automatically 
 $entities = MyAutoload::getAllInstances($this->GetName());
 foreach($entities as $anEntity) {
@@ -14,6 +16,7 @@ $this->SetPreference('prefix','wiki');
 $this->SetPreference('default_alias','home');
 $this->SetPreference('default_lang','en_US');
 $this->SetPreference('show_code_iso',TRUE);
+$this->SetPreference('multiInstances',FALSE);
 
 //Create first undeletable-page
 $page = new Page();
@@ -46,7 +49,7 @@ $version->set('lang',$en_US->get('lang_id'));
 $version->set('status',$version::$STATUS_CURRENT);
 $version = $version->save();
 
-// Add some routes
+//Refresh Routes
 $this->CreateStaticRoutes();
 
 ?>

@@ -1,10 +1,13 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
-
+//echo $this->GetPreference('multiInstances','µEEE');
+//die();
 
 $smarty->assign('prefix', $this->GetPreference('prefix','wiki'));
 $smarty->assign('show_code_iso', $this->GetPreference('show_code_iso',TRUE));
+$smarty->assign('multiInstances', $this->GetPreference('multiInstances',FALSE));
+$smarty->assign('default_alias', $this->GetPreference('default_alias','home'));
 $smarty->assign('form_save',$this->CreateFormStart($id,'admin_save'));
 
 

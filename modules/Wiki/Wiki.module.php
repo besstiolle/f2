@@ -48,16 +48,19 @@ class Wiki extends Orm {
 	public function CreateStaticRoutes() {
 		
 		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
+		cms_route_manager::del_static('',$this->GetName());
 
-
+		$mi = $this->_getMultiInstances();
 		$prefix = $this->_getDefaultPrefix();
-		$prefix = 'wiki';
-
-		$route = '#(.)*'.$prefix.'#';
-		$this->_add_static($route, array('action'=>'dispatch','returnid'=>$returnid));
+		if($mi){
+			$route = '#(.)*'.$prefix.'#';
+		} else {
+			$route = '#^'.$prefix.'#';
+		}
+		$this->_add_static($route, array('action'=>'dispatcher','returnid'=>$returnid));
 
 		return;				
-
+/*
 		$prefix = '[wW]iki';
 		$lang = '(?P<vlang>[a-zA-Z0-9\-\_]*?)';
 		$alias = '(?P<palias>[a-zA-Z0-9\-\_\:]+)';
@@ -100,10 +103,10 @@ class Wiki extends Orm {
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 		$route = $this->_generateRoute($prefix, $sitemap);
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
-
+*/
 
    }
-
+/*
     private function _generateRoute(){
     	$config = cmsms()->GetConfig();
     	$ext = $config["page_extension"]; 
@@ -120,7 +123,7 @@ class Wiki extends Orm {
     		}
     	}
    		return '/'.implode('\/', $func_params_cleaned).$ext.'$/';
-    }
+    }*/
 
     private function _add_static($route, $params){
 		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), $params));
@@ -174,11 +177,15 @@ class Wiki extends Orm {
 	}
 
 	function _getDefaultPrefix(){
-		return $this->GetPreference('prefix','(.)*\/wiki');
+		return $this->GetPreference('prefix','wiki');
 	}
 
 	function _getShowCodeIso(){
-		return $this->GetPreference('show_code_iso', true);
+		return $this->GetPreference('show_code_iso', TRUE);
+	}
+
+	function _getMultiInstances(){
+		return $this->GetPreference('multiInstances',FALSE);
 	}
 } 
 ?>

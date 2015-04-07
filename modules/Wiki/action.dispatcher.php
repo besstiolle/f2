@@ -1,5 +1,7 @@
 <?php
 
+
+
 	$url = $SERVER['REQUEST_URI'];
 
 

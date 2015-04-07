@@ -1,4 +1,7 @@
 <?php
+
+die("ACTION.DEFAULT");
+
 if (!function_exists('cmsms')) exit;
 
 define('_JS_ACTION_',FALSE);
