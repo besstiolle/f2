@@ -1,10 +1,11 @@
 <?php
 
-die("ACTION.DEFAULT");
-
 if (!function_exists('cmsms')) exit;
 
 define('_JS_ACTION_',FALSE);
+
+// print_r($params);
+// die();
 
 //Default values in view class in case of {Wiki} 
 if(empty($params['palias'])) {

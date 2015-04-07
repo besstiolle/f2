@@ -30,7 +30,7 @@ class Page extends OrmEntity {
 		$this->garnishAutoincrement();
 
 		$this->addIndexes(array('lvl'));
-		$this->addIndexes(array('prefix', 'alias'));
+		$this->addIndexes(array('prefix', 'alias'), true);
 		
 		
 		$this->garnishDefaultOrderBy(new OrmOrderBy(array(

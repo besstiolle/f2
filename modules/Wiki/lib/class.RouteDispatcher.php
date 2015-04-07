@@ -6,7 +6,7 @@ class RouteDispatcher{
 	private static $id;
 	private static $returnid;
 
-	public static init($id, $returnid){
+	public static function init($id, $returnid){
 		self::$wiki = ModuleOperations::get_instance()->get_module_instance('Wiki');
 		self::$id = $id;
 		self::$returnid = $returnid;
@@ -20,13 +20,21 @@ class RouteDispatcher{
     		$url = str_replace($ext, '', $url);
     	}
 
-		$delim = '/'
+		$delim = '/';
 		$parts = explode($delim, $url);
 		$prefix = '';
 		$prefixReady = false;
 		$code_iso = null;
 		$aliasOrVersion = null;
 		$action = null;
+
+		$pattern = self::$wiki->_getDefaultPrefix();
+		if(self::$wiki->_getMultiInstances()){
+			$pattern = '#(.)*'.$pattern.'#';
+		} else {
+			$pattern = '#^'.$pattern.'#';
+		}
+
 		foreach ($parts as $section) {
 			if(!$prefixReady){
 				$prefix.=$delim;
@@ -58,7 +66,7 @@ class RouteDispatcher{
 			$aliasOrVersion = self::$wiki->_getDefaultAlias();
 		}
 		if($action == null){
-			$action = 'default'
+			$action = 'default';
 		}
 
 		//Specific for sitemap
@@ -78,6 +86,7 @@ class RouteDispatcher{
 		
 		//Run dispatcher
 		self::$wiki->RedirectForFrontEnd(self::$id, self::$returnid, $action, $params);
+		self::$wiki->DoAction($action, self::$id, $params, self::$returnid);
 	}
 }
 

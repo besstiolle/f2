@@ -1,11 +1,11 @@
 <?php
+if (!function_exists('cmsms')) exit;
 
+$url = $_SERVER['REQUEST_URI'];
+RouteDispatcher::init($id, $returnid);
+RouteDispatcher::getDispatcher();
 
-
-	$url = $SERVER['REQUEST_URI'];
-
-
-	$indicesServer = array('PHP_SELF',
+/*	$indicesServer = array('PHP_SELF',
 'argv',
 'argc',
 'GATEWAY_INTERFACE',
@@ -56,5 +56,5 @@ foreach ($indicesServer as $arg) {
     }
 }
 echo '</table>' ; 
-
+*/
 ?>

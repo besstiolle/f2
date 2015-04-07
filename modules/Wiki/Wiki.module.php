@@ -53,19 +53,21 @@ class Wiki extends Orm {
 		$mi = $this->_getMultiInstances();
 		$prefix = $this->_getDefaultPrefix();
 		if($mi){
-			$route = '#(.)*'.$prefix.'#';
+			$pattern = '(.)*'.$prefix;
 		} else {
-			$route = '#^'.$prefix.'#';
+			$pattern = $prefix;
 		}
-		$this->_add_static($route, array('action'=>'dispatcher','returnid'=>$returnid));
+		/*$this->_add_static($pattern, array('action'=>'dispatcher','returnid'=>$returnid));
 
-		return;				
-/*
-		$prefix = '[wW]iki';
+		return;	*/			
+
+		$prefix = '(?P<pprefix>'.$pattern.')';
 		$lang = '(?P<vlang>[a-zA-Z0-9\-\_]*?)';
 		$alias = '(?P<palias>[a-zA-Z0-9\-\_\:]+)';
 		$version = '(?P<version_id>[0-9]+)';
 		$sitemap = '[sS]itemap';
+
+		//die($prefix);
 
 		//With nothing
 		$route = $this->_generateRoute($prefix);
@@ -103,10 +105,10 @@ class Wiki extends Orm {
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 		$route = $this->_generateRoute($prefix, $sitemap);
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
-*/
+
 
    }
-/*
+
     private function _generateRoute(){
     	$config = cmsms()->GetConfig();
     	$ext = $config["page_extension"]; 
@@ -122,8 +124,8 @@ class Wiki extends Orm {
     			$func_params_cleaned[] = $p;
     		}
     	}
-   		return '/'.implode('\/', $func_params_cleaned).$ext.'$/';
-    }*/
+   		return '#^'.implode('\/', $func_params_cleaned).$ext.'$#';
+    }
 
     private function _add_static($route, $params){
 		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), $params));
