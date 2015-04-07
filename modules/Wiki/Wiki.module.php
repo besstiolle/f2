@@ -48,6 +48,16 @@ class Wiki extends Orm {
 	public function CreateStaticRoutes() {
 		
 		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
+
+
+		$prefix = $this->_getDefaultPrefix();
+		$prefix = 'wiki';
+
+		$route = '#(.)*'.$prefix.'#';
+		$this->_add_static($route, array('action'=>'dispatch','returnid'=>$returnid));
+
+		return;				
+
 		$prefix = '[wW]iki';
 		$lang = '(?P<vlang>[a-zA-Z0-9\-\_]*?)';
 		$alias = '(?P<palias>[a-zA-Z0-9\-\_\:]+)';
@@ -90,6 +100,7 @@ class Wiki extends Orm {
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 		$route = $this->_generateRoute($prefix, $sitemap);
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
+
 
    }
 
@@ -163,7 +174,11 @@ class Wiki extends Orm {
 	}
 
 	function _getDefaultPrefix(){
-		return $this->GetPreference('prefix','wiki');
+		return $this->GetPreference('prefix','(.)*\/wiki');
+	}
+
+	function _getShowCodeIso(){
+		return $this->GetPreference('show_code_iso', true);
 	}
 } 
 ?>
