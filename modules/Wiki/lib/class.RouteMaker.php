@@ -57,10 +57,10 @@ class RouteMaker{
 		$url = '';
 		
 		// "wiki"
-		$url .= self::$wiki->GetPreference('prefix');
+		$url .= self::$wiki->_getDefaultPrefix();
 
 		// "/en_US"
-		$url .= (self::$wiki->GetPreference('show_code_iso', true) && $langPrefix != null ?'/'.$langPrefix:"");
+		$url .= (self::$wiki->_getShowCodeIso() && $langPrefix != null ?'/'.$langPrefix:"");
 		
 		// "/title"
 		$url .= ($alias==null?'':'/'.$alias);
