@@ -41,6 +41,7 @@ for($i = 0; $i<count($langs_values); $i++) {
 $smarty->assign('langs', $langs_values);
 
 $smarty->assign('reset', $this->create_url($id,'admin_reset', '', array()));
+$smarty->assign('addLang', $this->create_url($id,'admin_lang', '', array('act'=>'edit')));
 
 echo $this->ProcessTemplate('admin.tpl');
 ?>

@@ -85,7 +85,7 @@
 			<th>Label</th>
 			<th>Actives Pages</th>
 			<th>&nbsp;</th>
-			<th>&nbsp;</th>
+			<th><a href='{$addLang}'>[+] Add new Lang</a></th>
 		</tr>
 	</thead>
 	<tbody>

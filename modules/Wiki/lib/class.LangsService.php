@@ -11,4 +11,14 @@ class LangsService{
 		}
 		return null;
 	}
+
+	public static function getOneById($id){
+		$example = new OrmExample();
+		$example->addCriteria('lang_id', OrmTypeCriteria::$EQ, array($id));
+		$langs = OrmCore::findByExample(new Lang(),$example);
+		if(!empty($langs)){
+			return $langs[0];
+		}
+		return null;
+	}
 }

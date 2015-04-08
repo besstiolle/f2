@@ -4,11 +4,17 @@ if (!function_exists('cmsms')) exit;
 if(empty($params['act'])) {
 	throw new Exception("act parameter not found", 1);
 }
-if(empty($params['lang_id'])) {
+$action = $params['act'];
+
+
+if($action != 'edit' && empty($params['lang_id'])) {
 	throw new Exception("lang_id parameter not found", 1);
 }
-$action = $params['act'];
-$lang_id = $params['lang_id'];
+
+
+if($action != 'edit'){
+	$lang_id = $params['lang_id'];
+}
 
 if($action == 'delete') {
 	//delete all page with this lang_id
@@ -22,6 +28,7 @@ if($action == 'delete') {
 	$example->addCriteria('isdefault', OrmTypeCriteria::$NEQ, array(1));
 	OrmCore::deleteByExample(new Lang(), $example);
 
+	$this->Redirect($id, 'defaultadmin');
 } else if($action == 'default') {
 	$lang = new Lang();
 	$query1 = "UPDATE {$lang->getDbname()} SET isdefault=0 WHERE 1";
@@ -34,9 +41,51 @@ if($action == 'delete') {
 	$defaultLang = $langs[0];
 	$this->SetPreference('default_lang',$defaultLang->get('code'));
 
-} else {
-	die('paf');	
+	$this->Redirect($id, 'defaultadmin');
+} else if($action == 'edit') {
+
+	$lang_id = null;
+	if(!empty($params['lang_id'])){
+		$lang_id = $params['lang_id'];
+	}
+
+	$lang = null;
+	if($lang_id != null){
+		$lang = LangsService::getOneById($lang_id);
+	}
+
+	if($lang == null){
+		$lang_id = null;
+		$lang = new Lang();
+	}
+
+	if(!empty($params['code'])){
+		$lang->set('code', $params['code']);
+	}
+	if(!empty($params['label'])){
+		$lang->set('label', $params['label']);
+	}
+
+	$smarty->assign('lang', $lang);
+	$smarty->assign('form_save',$this->CreateFormStart($id,'admin_lang_save', '', 'post', '', false, '', array('lang_id'=>$lang_id)));
+
+	if($lang_id == null){
+		$smarty->assign('title', 'Creation');
+	} else {	
+		$smarty->assign('title', 'Edition');
+	}
+
+	if(!empty($params['werrors'])){
+		$errs = unserialize($params['werrors']);
+		$fullErrors = array();
+		foreach ($errs as $err) {
+			$fullErrors[] = $this->Lang($err);
+		}
+		$smarty->assign('errors', $fullErrors);
+	}
+
+	echo $this->ProcessTemplate('admin_lang.tpl');
 }
-$this->Redirect($id, 'defaultadmin');
+
 
 ?>
