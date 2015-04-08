@@ -2,7 +2,7 @@
 
 class LangsService{
 
-	public static function findOne($code){
+	public static function getOne($code){
 		$example = new OrmExample();
 		$example->addCriteria('code', OrmTypeCriteria::$EQ, array($code));
 		$langs = OrmCore::findByExample(new Lang(),$example);

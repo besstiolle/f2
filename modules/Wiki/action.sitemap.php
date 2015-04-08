@@ -34,7 +34,6 @@ if($has_error){return;}
 $entries = VersionsService::getAll(
 		null, 
 		$lang->get('lang_id'),
-		null,
 		Version::$STATUS_CURRENT);
 
 $sitemap = array();

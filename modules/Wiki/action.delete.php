@@ -22,8 +22,7 @@ if($has_error){return;}
  *
  **/
 
-$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), 
-							 null, Version::$STATUS_CURRENT);
+$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
 
  
 if($version == null){ //Go back to home

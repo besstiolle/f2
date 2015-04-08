@@ -1,8 +1,7 @@
 <?php
 
 //Get 10 Lasts Versions
-$oldversions = VersionsService::getAll($page->get('page_id'), $lang->get('lang_id'), 
-							null, null, new OrmLimit(0,10));
+$oldversions = VersionsService::getAll($page->get('page_id'), $lang->get('lang_id'), null, new OrmLimit(0,10));
 $oldRevisions = array();
 foreach($oldversions as $oldversion){
 	$revisionval = $oldversion->getValues();

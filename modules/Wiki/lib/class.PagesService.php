@@ -3,7 +3,7 @@
 if (!function_exists("cmsms")) exit;
 
 class PagesService{
-
+/*
 	public static function getOneById($id){
 		$example = new OrmExample();
 		$example->addCriteria('page_id', OrmTypeCriteria::$EQ, array($id));
@@ -12,7 +12,7 @@ class PagesService{
 			return $pages[0];
 		}
 		return null;
-	}
+	}*/
 
 	public static function getOneByAlias($alias){
 		$example = new OrmExample();

@@ -1,8 +1,7 @@
 <?php
 
 //Get active Versions of each langs
-$version_by_langs = VersionsService::getAll($page->get('page_id'), null, 
-							null, Version::$STATUS_CURRENT);
+$version_by_langs = VersionsService::getAll($page->get('page_id'), null, Version::$STATUS_CURRENT);
 $other_langs = array();
 
 //initiate all langs

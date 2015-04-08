@@ -2,8 +2,7 @@
 
 
 //Get All active Versions
-$allVersions = VersionsService::getAll(null, $lang->get('lang_id'), 
-							null, Version::$STATUS_CURRENT);
+$allVersions = VersionsService::getAll(null, $lang->get('lang_id'), Version::$STATUS_CURRENT);
 $menu = array();
 foreach($allVersions as $a_version){
 	$elts = explode(':', $a_version->get('page')->get('alias'));

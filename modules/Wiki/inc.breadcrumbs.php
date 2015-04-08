@@ -17,8 +17,7 @@ foreach($elts as $elt){
 		$b_class = 'new'; 
 		$b_title = "Clic to create the page {$previous}{$elt}";
 	} else {
-		$versionOfChildren = VersionsService::getOne($pageOfChild->get('page_id'), null, 
-							null, Version::$STATUS_CURRENT);
+		$versionOfChildren = VersionsService::getOne($pageOfChild->get('page_id'), null, Version::$STATUS_CURRENT);
 		if($versionOfChildren == null){
 			$b_class = 'new'; 
 			$b_title = "Clic to create the page {$previous}{$elt}";

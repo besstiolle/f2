@@ -28,13 +28,11 @@ if($has_error){return;}
 $version = null;
 $vals = null;
 
-$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), 
-							null, Version::$STATUS_CURRENT);
+$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
 if($version == null){
 
 	//Ok, we try to find a link to a page with another lang
-	$version = VersionsService::getOne($page->get('page_id'), null, 
-							null, Version::$STATUS_CURRENT);
+	$version = VersionsService::getOne($page->get('page_id'), null, Version::$STATUS_CURRENT);
 }
 
 if($version == null){

@@ -40,16 +40,20 @@ $statusToCheck = null;
 $version_id = null;
 if(!empty($params['version_id'])){ // Case wiki/en_US/home/view/2
 	$version_id = $params['version_id'];
-} else {
-	$statusToCheck = Version::$STATUS_CURRENT;
-}
 
-$version = VersionsService::getOne(
+	$version = VersionsService::getOneByVersionId(
 		$page->get('page_id'), 
 		$lang->get('lang_id'),
-		$version_id,
-		$statusToCheck);
+		$version_id);
 
+} else {
+	$statusToCheck = Version::$STATUS_CURRENT;
+
+	$version = VersionsService::getOne(
+		$page->get('page_id'), 
+		$lang->get('lang_id'),
+		$statusToCheck);
+}
 
 if($version !== null){
 	$vals = $version->getValues();

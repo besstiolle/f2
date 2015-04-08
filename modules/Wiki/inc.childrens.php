@@ -13,8 +13,7 @@ foreach ($childrensPages as $childrensPage) {
 		continue;
 	}
 
-	$version_child = VersionsService::getOne($childrensPage->get('page_id'), $lang->get('lang_id'), 
-							null, Version::$STATUS_CURRENT);
+	$version_child = VersionsService::getOne($childrensPage->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
 
 	if($version_child != null){
 		$pos = strpos ( $version_child->get('title'), ':' , strlen($page->get('alias').':%'));

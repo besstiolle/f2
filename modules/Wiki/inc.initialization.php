@@ -44,7 +44,7 @@ foreach($langs as $lang){
 //Get lang db entity, panic only if there is no lang.
 
 /************* LANG ****************/
-$lang = LangsService::findOne($langParam);
+$lang = LangsService::getOne($langParam);
 
 if($lang == null){
 	$errors[] = 'lang_mandatory';
@@ -58,7 +58,6 @@ if($lang == null){
 $smarty->assign('lang', $lang->getValues());
 
 /************** PAGE *****************/
-//echo $aliasParam;die();
 
 $page = PagesService::getOneByAlias($aliasParam);
 if($page == null){
