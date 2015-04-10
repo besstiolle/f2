@@ -16,7 +16,8 @@ if(!empty($params['vtext'])){
 }
 $form = $this->CreateFrontendFormStart ($id, $returnid, 'save', 'post', '', true, '', array(
 					'vlang' => $lang->get('code'),
-					'palias' => $page->get('alias')
+					'palias' => $page->get('alias'),
+					'pprefix' => $prefix
 					));
 $cancel = RouteMaker::getRootRoute($langParam);
 $preview = RouteMaker::getPreviewRoute($langParam, $aliasParam);

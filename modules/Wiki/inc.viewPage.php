@@ -1,6 +1,6 @@
 <?php
 
-$vals['text'] = WikiUtils::parseText($vals['text'], $code_iso);
+$vals['text'] = WikiUtils::parseText($vals['text'], $prefix, $code_iso);
 
 
 $edit = RouteMaker::getEditRoute($code_iso, $aliasParam);
@@ -17,12 +17,13 @@ if($vals['status'] != 1){
 $isUpToDate = true;
 $defaultLangCanonical = '';
 if($version != null && !$isDefaultLang){
-	$example = new OrmExample();
+	/*$example = new OrmExample();
 	$example->addCriteria('page', OrmTypeCriteria::$EQ, array($page->get('page_id')));
 	$example->addCriteria('lang', OrmTypeCriteria::$NEQ, array($lang->get('lang_id')));
 	$example->addCriteria('version_id', OrmTypeCriteria::$GT, array($version->get('version_id')));
 	$cptNewerVersion = OrmCore::selectCountByExample(new Version(),$example);
-	$isUpToDate = ($cptNewerVersion == 0);
+	$isUpToDate = ($cptNewerVersion == 0);*/
+	$isUpToDate = (VersionsService::countNewerVersion($page, $lang, $version) == 0);
 	$defaultLangCanonical = RouteMaker::getViewRoute($this->_getDefaultLang(), $aliasParam);
 }
 

@@ -1,12 +1,12 @@
 <?php
 
-$pagesSiblings = PagesService::getSiblings($aliasParam);
+$pagesSiblings = PagesService::getSiblings($prefix, $aliasParam);
 
 //Get All active Versions
 $allVersions = array();
 foreach ($pagesSiblings as $pageSiblings) {
 	
-	$vSibling = VersionsService::getOne($pageSiblings->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
+	$vSibling = VersionsService::getOne($prefix, $pageSiblings->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
 
 	if($vSibling != null){
 		$allVersions[] = $vSibling;

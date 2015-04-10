@@ -38,7 +38,7 @@ if(!empty($errors)) {
 }
 
 $vals['title'] = $params['vtitle'];
-$vals['text'] = WikiUtils::parseText($textParam, $langParam);
+$vals['text'] = WikiUtils::parseText($textParam, $prefix, $langParam);
 
 $smarty->assign('version', $vals);
 $smarty->assign('title', $params['vtitle']);

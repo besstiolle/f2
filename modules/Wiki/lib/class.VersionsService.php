@@ -11,6 +11,7 @@ class VersionsService{
 		}
 		return null;
 	}
+	
 	public static function getAll($page_id = null, $lang_id = null, $status = null, $ormLimit = null){
 
 		$example = new OrmExample();
@@ -51,5 +52,14 @@ class VersionsService{
 			return $versions[0];
 		}
 		return null;
+	}
+
+	public static function countNewerVersion(OrmEntity $page, OrmEntity $lang, OrmEntity $version){
+		$example = new OrmExample();
+		$example->addCriteria('page', OrmTypeCriteria::$EQ, array($page->get('page_id')));
+		$example->addCriteria('lang', OrmTypeCriteria::$NEQ, array($lang->get('lang_id')));
+		$example->addCriteria('version_id', OrmTypeCriteria::$GT, array($version->get('version_id')));
+		$cptNewerVersion = OrmCore::selectCountByExample(new Version(),$example);
+		return $cptNewerVersion;
 	}
 }

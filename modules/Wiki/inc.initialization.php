@@ -1,37 +1,50 @@
 <?php 
-
-//Default values
-/*if(!isset($aliasParam)){$aliasParam = null;}
-if(!isset($langParam)){$langParam = null;}
-if(!isset($version_id)){$version_id = null;}*/
-
-RouteMaker::init($id, $returnid);
+/*
+print_r($params);
+die();*/
 
 //Array for errors and messages
 $errors = array();
 $messages[] = array();
 $has_error = false;
 
-// var_dump($params);die();
+
+//Test basic parameters
+if(empty($params['pprefix'])){
+	echo ("parameter pprefix not found for initialisation");
+	exit;
+}
+if(empty($params['vlang'])){
+	echo ("parameter vlang not found for initialisation");
+	exit;
+}
+if(empty($params['palias'])){
+	echo ("parameter palias not found for initialisation");
+	exit;
+}
 
 //Smarty vars.
 $smarty = cmsms()->GetSmarty();
 $smarty->assign('mod', $this);
 
-//Get commons parameters
-//if(!empty($params['palias'])){
-	$aliasParam = $params['palias'];
-	if(_JS_ACTION_){
-		$aliasParam = $this->js_urldecode($aliasParam);
-	}
-	$aliasParam = $this->clean_title($aliasParam);
-//}
-if(!empty($params['vlang'])){
-	$langParam = $params['vlang'];
+/**
+  Get commons parameters
+**/
+
+//Prefix
+$prefix  = $params['pprefix'];
+RouteMaker::init($id, $returnid, $prefix);
+
+//Page Alias
+if(_JS_ACTION_){
+	$aliasParam = $this->js_urldecode($params['palias']);
 } else {
-//	$langParam = $this->_getDefaultLang();
-	die("DIEEEE");
+	$aliasParam = $this->clean_title($params['palias']);
 }
+
+//Lang
+$langParam = $params['vlang'];
+
 
 $langs = OrmCore::findAll(new Lang());
 $all_langs_by_code = array();
@@ -59,10 +72,10 @@ $smarty->assign('lang', $lang->getValues());
 
 /************** PAGE *****************/
 
-$page = PagesService::getOneByAlias($aliasParam);
+$page = PagesService::getOneByAlias($prefix, $aliasParam);
 if($page == null){
 	$page = new Page();
-	$page->set('prefix', $this->_getDefaultPrefix());
+	$page->set('prefix', $prefix);
 	$page->set('alias', $aliasParam);
 	$page->set('lvl', PagesService::getLvl($aliasParam));
 	//We don't create new page in preview mode
@@ -82,7 +95,6 @@ $smarty->assign('isDefaultVersion', $isDefaultVersion);
  
 
 // Get preferences
-$prefix = $this->_getDefaultPrefix();
 $code_iso = ($this->GetPreference('show_code_iso', true)?$lang->get('code'):"");
 
 

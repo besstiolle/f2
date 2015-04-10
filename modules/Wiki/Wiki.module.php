@@ -106,7 +106,6 @@ class Wiki extends Orm {
 		$route = $this->_generateRoute($prefix, $sitemap);
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 
-
    }
 
     private function _generateRoute(){
@@ -124,7 +123,9 @@ class Wiki extends Orm {
     			$func_params_cleaned[] = $p;
     		}
     	}
-   		return '#^'.implode('\/', $func_params_cleaned).$ext.'$#';
+   		$route = '#^'.implode('\/', $func_params_cleaned).$ext.'$#';
+   	//	echo '<div>'.$route.'</div>';
+   		return $route;
     }
 
     private function _add_static($route, $params){

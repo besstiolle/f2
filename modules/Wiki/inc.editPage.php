@@ -16,7 +16,8 @@
 
 $form = $this->CreateFrontendFormStart ($id, $returnid, 'save', 'get', '', true, '', array(
 					'vlang' => $lang->get('code'),
-					'palias' => $page->get('alias')
+					'palias' => $page->get('alias'),
+					'pprefix' => $prefix
 							));
 $cancel = RouteMaker::getViewRoute($lang->get('code'), $page->get('alias'));
 $preview = RouteMaker::getPreviewRoute($lang->get('code'), $page->get('alias'));

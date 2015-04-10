@@ -11,12 +11,11 @@ class WikiUtils{
 	 *
 	 * @return string with link colorized
 	 **/
-	static function colorizeLinks($text, $code_iso){
+	static function colorizeLinks($text, $prefix, $code_iso){
 		$patternS = '`<a ([^<]*)href=[\'\"]([^<]*)[\'\"]>([^<]*)</a>`si';
 		preg_match_all( $patternS, $text, $matches, PREG_SET_ORDER);
 		$search = array();
 		$replace = array();
-		//print_r($matches);
 		foreach($matches as $match) {
 			// External link
 			if(substr($match[2], 0, 7)== 'http://' 
@@ -27,10 +26,14 @@ class WikiUtils{
 			}else {
 				//Internal link
 				$example = new OrmExample();
-				$example->addCriteria('title', OrmTypeCriteria::$EQ, array($match[2]));
-				$example->addCriteria('status', OrmTypeCriteria::$EQ, array(Version::$STATUS_CURRENT));
-				$versions = OrmCore::findByExample(new Version(),$example);
-				if(count($versions) == 0){
+				$page = PagesService::getOneByAlias($prefix, $match[2]);
+				$lang = LangsService::getOne($code_iso);
+				$version = null;
+				if($page != null && $lang != null) {
+					$version = VersionsService::getOne($page->get('page_id'), $lang->get('lang_id'), Version::$STATUS_CURRENT);
+				}
+
+				if($version == null){
 					$cssClass = 'new';
 					$title = "Clic to create the page {$match[2]}";
 				} else {
@@ -56,14 +59,14 @@ class WikiUtils{
 	 *
 	 * @return string the text ready for the wiki
 	 **/
-	static function parseText($text, $code_iso){
+	static function parseText($text, $prefix, $code_iso){
 		$markdown = ModuleOperations::get_instance()->get_module_instance('Parser')->GetParserInstance();
 		
 		$text = html_entity_decode($text, ENT_QUOTES);
 
 		$text = $markdown->process($text);
 
-		$text = WikiUtils::colorizeLinks($text, $code_iso);
+		$text = WikiUtils::colorizeLinks($text, $prefix, $code_iso);
 
 		return $text;
 	}

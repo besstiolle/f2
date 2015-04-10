@@ -6,10 +6,11 @@ class RouteMaker{
 
 	private static $id;
 	private static $returnid;
+	private static $prefix;
 
 	private static $isInitiated = false;
 
-	public static function init($id, $returnid){
+	public static function init($id, $returnid, $prefix){
 		
 		if(self::$wiki == null){
 			$modops = cmsms()->GetModuleOperations(); 
@@ -18,6 +19,7 @@ class RouteMaker{
 		
 		self::$id = $id;
 		self::$returnid = $returnid;
+		self::$prefix = $prefix;
 		self::$isInitiated = true;
 	}
 
@@ -57,7 +59,7 @@ class RouteMaker{
 		$url = '';
 		
 		// "wiki"
-		$url .= self::$wiki->_getDefaultPrefix();
+		$url .= self::$prefix;
 
 		// "/en_US"
 		$url .= (self::$wiki->_getShowCodeIso() && $langPrefix != null ?'/'.$langPrefix:"");
@@ -87,7 +89,7 @@ class RouteMaker{
 		}
 		$parameters['vlang'] = ($langPrefix != null ? $langPrefix : "");
 		$parameters['vtitle'] = $alias;
-		$parameters['prefix'] = self::$wiki->GetPreference('prefix');
+		$parameters['prefix'] = self::$prefix;
 		if ($version_id != null){
 			$parameters['version_id'] = $version_id;
 		}

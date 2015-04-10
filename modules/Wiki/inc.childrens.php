@@ -1,7 +1,7 @@
 <?php
 
 //Get active Versions of each langs
-$childrensPages = PagesService::getByAliasLike($page->get('alias').':%');
+$childrensPages = PagesService::getByAliasLike($prefix, $page->get('alias').':%');
 $childrens = array();
 $sub_entries = array();
 

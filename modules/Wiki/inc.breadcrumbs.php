@@ -12,7 +12,7 @@ foreach($elts as $elt){
 	$b_title  = '';
 
 	//Test existance of Internal link
-	$pageOfChild = PagesService::getOneByAlias($previous.$elt);
+	$pageOfChild = PagesService::getOneByAlias($prefix, $previous.$elt);
 	if($pageOfChild == null){
 		$b_class = 'new'; 
 		$b_title = "Clic to create the page {$previous}{$elt}";

@@ -20,14 +20,14 @@ $this->SetPreference('multiInstances',FALSE);
 
 //Create first undeletable-page
 $page = new Page();
-$page->set('prefix','');
-$page->set('alias','home');
+$page->set('prefix',$this->_getDefaultPrefix());
+$page->set('alias', $this->_getDefaultAlias());
 $page->set('lvl',0);
 $page = $page->save();
 
 //Create first indeletable-lang
 $en_US = new Lang();
-$en_US->set('code','en_US');
+$en_US->set('code',$this->_getDefaultLang());
 $en_US->set('label','English');
 $en_US->set('isdefault',1);
 $en_US = $en_US->save();

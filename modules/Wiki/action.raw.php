@@ -2,7 +2,7 @@
 if (!function_exists('cmsms')) exit;
 
 
-RouteMaker::init($id, $returnid);
+//RouteMaker::init($id, $returnid, $prefix);
 
 //Default values
 $version_id = null;
@@ -17,7 +17,7 @@ if($version_id == null){
 	return;
 }
 
-$version = OrmCore::findById(new Version(),$version_id);
+$version = VersionsService::getOneByVersionId($version_id);
 $smarty->assign('version',$version->getValues());
 
 echo $this->ProcessTemplate('rawCode.tpl');
