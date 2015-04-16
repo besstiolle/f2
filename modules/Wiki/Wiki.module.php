@@ -56,19 +56,13 @@ class Wiki extends Orm {
 			$pattern = '(.)*'.$prefix;
 		} else {
 			$pattern = $prefix;
-		}
-		/*$this->_add_static($pattern, array('action'=>'dispatcher','returnid'=>$returnid));
-
-		return;	*/			
+		}	
 
 		$prefix = '(?P<pprefix>'.$pattern.')';
 		$lang = '(?P<vlang>[\w\d\-]*)';
 		$alias = '(?P<palias>[\w\d\-\:]*)';//(?P<palias>[\w\d\-]*(?s)^((?!sitemap).)*)
 		$version = '(?P<version_id>[0-9]+)';
 		$sitemap = '[sS]itemap';
-
-		//die($prefix);
-
 
 		//With nothing
 		$route = $this->_generateRoute($prefix);
@@ -77,7 +71,6 @@ class Wiki extends Orm {
 		//With Lang
 		$route = $this->_generateRoute($prefix, $lang);
 		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid, 'palias' => 'home'));
-			
 
 		//With Lang & alias
 		$route = $this->_generateRoute($prefix, $lang, $alias);
