@@ -63,7 +63,7 @@ class Wiki extends Orm {
 
 		$prefix = '(?P<pprefix>'.$pattern.')';
 		$lang = '(?P<vlang>[\w\d\-]*)';
-		$alias = '(?P<palias>[\w\d\-]*)';//(?P<palias>[\w\d\-]*(?s)^((?!sitemap).)*)
+		$alias = '(?P<palias>[\w\d\-\:]*)';//(?P<palias>[\w\d\-]*(?s)^((?!sitemap).)*)
 		$version = '(?P<version_id>[0-9]+)';
 		$sitemap = '[sS]itemap';
 

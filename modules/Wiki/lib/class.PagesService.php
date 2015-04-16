@@ -51,4 +51,12 @@ class PagesService{
 	public static function getLvl($alias){
 		return substr_count($alias, ':');
 	}
+
+	public static function getByPrefix($prefix){
+
+		$example = new OrmExample();
+		$example->addCriteria('prefix', OrmTypeCriteria::$EQ, array($prefix));
+		$pages = OrmCore::findByExample(new Page(),$example);
+		return $pages;
+	}
 }

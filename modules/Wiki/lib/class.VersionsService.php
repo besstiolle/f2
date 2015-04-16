@@ -2,7 +2,7 @@
 
 class VersionsService{
 
-	public static function getOne($page_id = null, $lang_id = null, $status = null){
+	public static function getOne($page_id, $lang_id = null, $status = null){
 
 		$versions = VersionsService::getAll($page_id, $lang_id, $status);
 
@@ -12,7 +12,7 @@ class VersionsService{
 		return null;
 	}
 	
-	public static function getAll($page_id = null, $lang_id = null, $status = null, $ormLimit = null){
+	public static function getAll($page_id, $lang_id = null, $status = null, $ormLimit = null){
 
 		$example = new OrmExample();
 
@@ -31,7 +31,29 @@ class VersionsService{
 		return OrmCore::findByExample(new Version(),$example, null, $ormLimit);
 	}
 
-	public static function getOneByVersionId($page_id = null, $lang_id = null, $version_id = null){
+	public static function getAllCurrentByPrefixAndLang($prefix, $lang_id = null){
+		$page_ids = array();
+		$pages = PagesService::getByPrefix($prefix);
+		foreach ($pages as $page) {
+			$page_ids[] = $page->get('page_id');
+		}
+
+		$example = new OrmExample();
+		$example->addCriteria('page', OrmTypeCriteria::$IN, $page_ids);
+		$example->addCriteria('status', OrmTypeCriteria::$EQ, array(Version::$STATUS_CURRENT));
+		
+
+		if($lang_id != null){
+			$example->addCriteria('lang', OrmTypeCriteria::$EQ, array($lang_id));
+		}
+
+
+		return OrmCore::findByExample(new Version(),$example);
+
+		
+	}
+
+	public static function getOneByVersionId($page_id, $lang_id = null, $version_id = null){
 
 		$example = new OrmExample();
 
