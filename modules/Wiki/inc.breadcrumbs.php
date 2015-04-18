@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 $glue = ':';
 $elts = explode($glue,$aliasParam);
 $previous = '';

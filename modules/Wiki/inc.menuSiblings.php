@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 $pagesSiblings = PagesService::getSiblings($prefix, $aliasParam);
 

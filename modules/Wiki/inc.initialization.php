@@ -1,4 +1,6 @@
-<?php 
+<?php
+if (!function_exists('cmsms')) exit;
+
 /*
 print_r($params);
 die();*/
@@ -97,5 +99,7 @@ $smarty->assign('isDefaultVersion', $isDefaultVersion);
 // Get preferences
 $code_iso = ($this->GetPreference('show_code_iso', true)?$lang->get('code'):"");
 
+//Reset actionid to avoid problems later in templates
+$smarty->assign('wiki_action_id', $id);
 
 ?>

@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 $vals = array();
 $vals['lang'] = $lang->get('lang_id');

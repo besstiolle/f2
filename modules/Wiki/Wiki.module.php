@@ -33,10 +33,23 @@ class Wiki extends Orm {
 		$this->SetParameterType('save',CLEAN_STRING);
 		$this->SetParameterType('version_id',CLEAN_INT); // raw action
 		$this->SetParameterType('werrors',CLEAN_NONE);
+
+
+		$this->SetParameterType('is_readable',CLEAN_STRING);
+		$this->SetParameterType('is_writable',CLEAN_STRING); 
+		$this->SetParameterType('is_deletable',CLEAN_STRING);
+		$this->SetParameterType('author_name',CLEAN_STRING); 
+		$this->SetParameterType('author_id',CLEAN_STRING);
 		
 	}
 
-	function InitializeAdmin() { }
+	function InitializeAdmin() {
+	    $this->CreateParameter('is_readable','false',$this->Lang('help_is_readable'), true);
+	    $this->CreateParameter('is_writable','false',$this->Lang('help_is_writable'), true);
+	    $this->CreateParameter('is_deletable','false',$this->Lang('help_is_deletable'), true);
+	    $this->CreateParameter('author_name','',$this->Lang('help_author_name'), true);
+	    $this->CreateParameter('author_id','',$this->Lang('help_author_id'), true);
+	}
 	function AllowSmartyCaching() { return true; }
 	function LazyLoadFrontend() { return false; }
 	function LazyLoadAdmin() { return false; }

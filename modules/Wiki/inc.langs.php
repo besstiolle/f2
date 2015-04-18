@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 //Get active Versions of each langs
 $version_by_langs = VersionsService::getAll($page->get('page_id'), null, Version::$STATUS_CURRENT);

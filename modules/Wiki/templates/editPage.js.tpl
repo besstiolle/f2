@@ -13,11 +13,11 @@
 	  
 	  $(document).ready(function () {
 		  $("input.preview").click(function () { 
-				query = "{$actionid}vtitle=" + encodeURI($("#{$actionid}vtitle").val()) + "&" 
-					+ "{$actionid}vtext=" + encodeURI($("#{$actionid}vtext").val());
+				query = "{$wiki_action_id}vtitle=" + encodeURI($("#{$wiki_action_id}vtitle").val()) + "&" 
+					+ "{$wiki_action_id}vtext=" + encodeURI($("#{$wiki_action_id}vtext").val());
 
-					console.debug(url);
-					console.debug(query); 
+				/*	console.debug(url);
+					console.debug(query); */
 				$.post( url, query).done(function( data ) {
 					$("#preview_result").html(data);
 					
@@ -57,7 +57,7 @@
 		});
 		
 		$("input.save").click(function () { 
-			$( "#{$actionid}moduleform_1" ).submit();
+			$( "#{$wiki_action_id}moduleform_1" ).submit();
 		});
 		
 		function count(fieldId) {

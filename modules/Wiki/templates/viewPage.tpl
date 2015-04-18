@@ -54,10 +54,13 @@
 
 	<ul class="button-group in-off-bar">
 		<li><input class='tiny button in-off-bar raw' type='button' value='Show Raw Code'></li>
+		{if $wiki_access.is_writable}
 		<li><input class='tiny button in-off-bar edit' type='button' value='Edit'{if $version.status!=1} disabled='disabled' title='you can not edit an old version'{/if}></li>
+		{/if}
+		{if $wiki_access.is_deletable}
 		<li><input class='tiny button in-off-bar deletePre' type='button' value='Delete'{if $version.status!=1} disabled='disabled' title='you can not delete an old version'{elseif $isDefaultPage} disabled='disabled' title='you can not delete the default page'{/if}></li>
 		<li><input class='tiny button in-off-bar deletePost alert' type='button' value='Delete (Are You Sure?)'></li>
-
+		{/if}
 	</ul>	
 
 	</section>
@@ -127,6 +130,11 @@
 
 	<div class='fancybox' id='raw_result'></div>
 	<div class='wikiContent'>{$version.text}</div>
+	<div><small>
+		Last edition 
+			{if !empty($version.author_name)}by <b><span title="{if !empty($version.author_id)}#{$version.author_id} : {/if}{$version.author_name}">{$version.author_name}</span></b>{/if}
+			the <b>{$version.dt_creation|cms_date_format}</b>
+		</small></div>
 
 </div>
 

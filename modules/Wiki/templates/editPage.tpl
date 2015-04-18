@@ -19,7 +19,7 @@
 			<li><input class='tiny button in-off-bar preview' type='button' value='Preview'></li>
 			<li><input class='tiny button in-off-bar cancelPre' type='button' value='Cancel'></li>
 			<li><input class='tiny button in-off-bar cancelPost alert' type='button' value='Cancel (Are You Sure?)'></li>
-			<li><input class='tiny button in-off-bar save' type='submit' value='Save' name='{$actionid}save' /></li>
+			<li><input class='tiny button in-off-bar save' type='submit' value='Save' name='{$wiki_action_id}save' /></li>
 		</ul>
 			
 	</section>
@@ -53,10 +53,10 @@
 	
 		<div class="name-field">
 			<label>Title : </label>
-			<input type='text' value='{$version.title}' name='{$actionid}vtitle' id='{$actionid}vtitle' />
+			<input type='text' value='{$version.title}' name='{$wiki_action_id}vtitle' id='{$wiki_action_id}vtitle' />
 		</div>
 		<div class="name-field">
-			<textarea name='{$actionid}vtext' id='{$actionid}vtext' rows='10' cols='20' class='wikiarea' required>{$version.text}</textarea>
+			<textarea name='{$wiki_action_id}vtext' id='{$wiki_action_id}vtext' rows='10' cols='20' class='wikiarea' required>{$version.text}</textarea>
 		</div>
 		
 	</form>

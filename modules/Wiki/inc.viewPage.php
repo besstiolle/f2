@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 $vals['text'] = WikiUtils::parseText($vals['text'], $prefix, $code_iso);
 

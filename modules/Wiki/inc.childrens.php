@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 //Get active Versions of each langs
 $childrensPages = PagesService::getByAliasLike($prefix, $page->get('alias').':%');

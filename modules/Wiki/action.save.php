@@ -1,7 +1,15 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+$this->ProcessTemplate('setAccess.tpl');
 define('_JS_ACTION_',TRUE);
+
+if(!Authentification::is_writable()){
+	$errors = array("wiki_not_writable");
+	$smarty->assign('errors', $errors);
+	echo $this->ProcessTemplate('message.tpl');
+	return;
+}
 
 //Common initialization
 include_once('inc.initialization.php');
@@ -62,8 +70,8 @@ $version = new Version();
 
 list($currentUS, $currentTS) = explode(" ", microtime());
 $version->set('dt_creation',$currentTS);
-$version->set('author_name','admin');
-$version->set('author_id',0);
+$version->set('author_name',Authentification::get_author_name());
+$version->set('author_id',Authentification::get_author_id());
 $version->set('page',$page->get('page_id'));
 $version->set('lang',$lang->get('lang_id'));
 $version->set('status',$version::$STATUS_CURRENT);

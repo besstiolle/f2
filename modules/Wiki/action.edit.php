@@ -1,8 +1,15 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+$this->ProcessTemplate('setAccess.tpl');
 define('_JS_ACTION_',FALSE);
 
+if(!Authentification::is_writable()){
+	$errors = array("wiki_not_writable");
+	$smarty->assign('errors', $errors);
+	echo $this->ProcessTemplate('message.tpl');
+	return;
+}
 
 //Common initialization
 include_once('inc.initialization.php');
@@ -22,6 +29,7 @@ if($has_error){return;}
  * $isDefaultLang $isDefaultPage $isDefaultVersion
  *
  **/
+
 
 
 //Get Version

@@ -1,7 +1,15 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+$this->ProcessTemplate('setAccess.tpl');
 define('_JS_ACTION_',TRUE);
+
+if(!Authentification::is_readable()){
+	$errors = array("wiki_not_readable");
+	$smarty->assign('errors', $errors);
+	echo $this->ProcessTemplate('message.tpl');
+	return;
+}
 
 //Common initialization
 include_once('inc.initialization.php');
@@ -21,6 +29,7 @@ if($has_error){return;}
  * $isDefaultLang $isDefaultPage $isDefaultVersion
  *
  **/
+
 
 if(!empty($params['vtext'])){
 	$textParam = $this->js_urldecode($params['vtext']);

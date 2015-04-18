@@ -2,7 +2,16 @@
 
 if (!function_exists('cmsms')) exit;
 
+$this->ProcessTemplate('setAccess.tpl');
 define('_JS_ACTION_',FALSE);
+
+
+if(!Authentification::is_readable()){
+	$errors = array("wiki_not_readable");
+	$smarty->assign('errors', $errors);
+	echo $this->ProcessTemplate('message.tpl');
+	return;
+}
 
 // print_r($params);
 // die();
@@ -71,6 +80,19 @@ if($version_id != null && $version == null){
 $smarty->assign('root_wiki_url', RouteMaker::getRootRoute($langParam));
 
 if($version == null){
+
+	if(!Authentification::is_writable()){
+		$messages = array("wiki_page_not_exists");
+		$smarty->assign('messages', $messages);
+		echo $this->ProcessTemplate('message.tpl');
+		/*
+		$errors = array("wiki_not_writable");
+		$smarty->assign('errors', $errors);
+		echo $this->ProcessTemplate('message.tpl');*/
+
+		return;
+	}
+
 	//Menu
 	include_once('inc.menu.php');
 	//Creation

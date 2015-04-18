@@ -1,4 +1,6 @@
 <?php
+if (!function_exists('cmsms')) exit;
+
 
 //Get 10 Lasts Versions
 $oldversions = VersionsService::getAll($page->get('page_id'), $lang->get('lang_id'), null, new OrmLimit(0,10));
