@@ -16,9 +16,9 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: version.php 9646 2014-07-19 17:52:52Z calguy1000 $
+#$Id: version.php 9800 2015-01-10 21:47:17Z calguy1000 $
 
-$CMS_VERSION = "2.0-beta2";
+$CMS_VERSION = "2.0-beta3";
 $CMS_VERSION_NAME = "NO NAME SET";
 $CMS_SCHEMA_VERSION = '200';
 

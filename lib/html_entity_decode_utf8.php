@@ -18,7 +18,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: html_entity_decode_utf8.php 9376 2014-03-19 03:41:54Z calguy1000 $
+#$Id: html_entity_decode_utf8.php 9793 2015-01-05 14:25:36Z calguy1000 $
 
 /**
  * @package CMS
@@ -27,16 +27,24 @@
 /**
  * A function to decode utf8 entities in a string
  *
- * @param string The input string
- * @param boolean Should single quotes be converted
+ * @deprecated
+ * @param string $string The input string
+ * @param boolean $convert_single_quotes Should single quotes be converted
  * @return string The converted string
  */
 function cms_html_entity_decode_utf8( $string, $convert_single_quotes = false )
 {
 	static $trans_tbl;
 	//replace numeric entities
-	$string = preg_replace('~&#x0*([0-9a-f]+);~ei', '_code2utf8(hexdec("\\1"))', $string);
-	$string = preg_replace('~&#0*([0-9]+);~e', '_code2utf8(\\1)', $string);
+	$string = preg_replace_callback('~&#x0*([0-9a-f]+);~i',
+                           function($matches) {
+                               _code2utf8(hexdec($matches[1]));
+                           }, $string);
+	$string = preg_replace_callback('~&#0*([0-9]+);~',
+                           function($matches) {
+                               _code2utf8(hexdec($matches[1]));
+                           }, $string);
+
 	//replace literal entities
 	if (!isset($trans_tbl))
 	{
@@ -55,7 +63,7 @@ function cms_html_entity_decode_utf8( $string, $convert_single_quotes = false )
  *
  * @ignore
  * @access private
- * @param int The unicode value
+ * @param int $num The unicode value
  * @return string UTF string
  */
 function _code2utf8( $num )
