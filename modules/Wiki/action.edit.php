@@ -1,6 +1,7 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+$smarty->assign('gatewayParams', $params);
 $this->ProcessTemplate('setAccess.tpl');
 define('_JS_ACTION_',FALSE);
 

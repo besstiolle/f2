@@ -1,5 +1,12 @@
-{if $ccuser->loggedin()}
-  {Wiki action="setAccess" is_readable="TRUE" is_writable="TRUE" is_deletable="FALSE" author_name=ccUser::property('pseudo') author_id=$ccuser->loggedin() }
+{if isset($gatewayParams) && isset($gatewayParams.pprefix)}
+{Forge2FrontOffice action='wikigateway' wiki_prefix=$gatewayParams.pprefix}
 {else}
-  {Wiki action="setAccess" is_readable="TRUE"}
+{Forge2FrontOffice action='wikigateway'}
+{/if}
+
+{if $ccuser->loggedin()}
+  {Wiki action="setAccess" is_readable=$is_readable is_writable=$is_writable is_deletable=$is_deletable author_name=ccUser::property('pseudo') author_id=$ccuser->loggedin() }
+  }
+{else}
+  {Wiki action="setAccess" is_readable=$is_readable}
 {/if}
