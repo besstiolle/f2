@@ -20,15 +20,9 @@ $c_tpl2 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/t
 
 try {
 
-  // CREATE TYPE
-  $wiki_type = new CmsLayoutTemplateType();
-  $wiki_type->set_originator($this->GetName());
-  $wiki_type->set_name('Page');
-  $wiki_type->set_dflt_flag(TRUE);
-  $wiki_type->set_lang_callback('Wiki::page_type_lang_callback');
-  $wiki_type->set_content_callback('Wiki::reset_page_type_defaults');
-  $wiki_type->reset_content_to_factory();
-  $wiki_type->save();
+  //Using core::page type
+  $wiki_type = CmsLayoutTemplateType::load("Core::page");
+
 
   // CREATE TEMPLATE 1 COL
   $tpl1 = new CmsLayoutTemplate();
@@ -92,6 +86,7 @@ try {
 catch( CmsException $e ) {
   audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
   echo $this->GetName(),'Installation Error: '.$e->GetMessage();
+  die();
 }
 
 ?>

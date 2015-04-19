@@ -71,7 +71,7 @@
 		<p>Unless you manage differents langs, you can ask to remove the lang information from the URL (eg : /wiki/FR_fr/home => /wiki/home) .</p>
 		<label for='{$actionid}show_code_iso1'>Show langs in URL</label>
 		<input type='radio' name='{$actionid}show_code_iso' id='{$actionid}show_code_iso1' value='1' {if $show_code_iso}checked{/if}>
-		<label for='{$actionid}show_code_iso0'>Nope</label>
+		<label for='{$actionid}show_code_iso0'>Hide information</label>
 		<input type='radio' name='{$actionid}show_code_iso' id='{$actionid}show_code_iso0' value='0' {if !$show_code_iso}checked{/if}>
 	</div>
 </div>

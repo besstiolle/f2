@@ -206,7 +206,7 @@ class Wiki extends Orm {
 	}
 
 
-
+/*
 	public static function page_type_lang_callback($str)
 	{
 		$mod = cms_utils::get_module('Wiki');
@@ -221,12 +221,12 @@ class Wiki extends Orm {
 		
 		if( !is_object($mod) ) return;
 		
-		/*switch( $type->get_name() ) {
-			case 'searchform':
-		return "";//$mod->GetSearchHtmlTemplate();
-			case 'searchresults':*/
+		//switch( $type->get_name() ) {
+			//case 'searchform':
+		//return "";//$mod->GetSearchHtmlTemplate();
+			//case 'searchresults':
 		return "";//$mod->GetResultsHtmlTemplate();
 
-	}
+	}*/
 } 
 ?>
