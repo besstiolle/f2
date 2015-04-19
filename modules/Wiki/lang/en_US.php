@@ -45,11 +45,11 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <h4>{Wiki}</h4>
 <p>add the tag {Wiki} in your template to implement the wiki. It won\'t be readable by default</p>
 <h4>{Wiki action="setAccess"}</h4>
-<p>add the tag {Wiki action="setAccess"} in your template before the tag {Wiki} to set the authorization. There is some options : </p>
+<p>To customize the access you can modify the options in the admin panel. Into the access template you can add/customize the tag {Wiki action="setAccess"} to set the authorization. There is some options : </p>
 <ul>
 <li>is_readable (FALSE by default)</li>
 <li>is_writable (FALSE by default)</li>
-<li>is_deletable (empty by default)</li>
+<li>is_deletable (FALSE by default)</li>
 <li>author_name (empty by default)</li>
 <li>author_id (empty by default)</li>
 </ul>
@@ -72,8 +72,33 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 {Wiki}
 </pre>
 
-<p>finally you can customize your own test with a custom UDT.</p>
-<p style="color:#F00;">! Remember, you must always define the access <b>BEFORE</b> your tag {Wiki} and before the tag {content} or the settings won\'t be actives ! </p>
+<p>finally you can customize your own test with a custom UDT or with another module and the array {$gatewayParams}.For example : </p>
+<pre>
+{MyModule action="myCustomAction" wiki_prefix=$gatewayParams.pprefix}{* will set result into $myCustomResult *}
+
+{if $myCustomResult}
+  {Wiki action="setAccess" is_readable=TRUE is_writable=TRUE is_deletable=TRUE}
+{else}
+  {Wiki action="setAccess" is_readable=TRUE}
+{/if}
+</pre>
+<p>the array {$gatewayParams} is always available and contains the current $params values of the wiki</p>
+
+<p style="color:#F00;">! Remember, don\'t use this action into your own template or the settings won\'t be actives all the time ! </p>
+<h4>{Wiki action="doesPageExists"}</h4>
+<p>add the tag {Wiki action="doesPageExists"} in your template and you will know ... if a page exists (it does not test old page deleted). You can test the result like this</p>
+<pre>
+{Wiki action="doesPageExists" pprefix="wiki" palias="home" vlang="en_US"}
+[...]
+{if $doesPageExists}yes{/if}
+</pre>
+<p>there is 3 possible parameters</p>
+<ul>
+<li>pprefix </li>
+<li>palias (optionnal, will use the default alias of the wiki if not defined)</li>
+<li>vlang (optionnal, will use the default lang code of the wiki if not defined)</li>
+</ul>
+</h4>
 ';
 $lang['xxx'] = 'xxx';
 
