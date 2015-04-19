@@ -40,7 +40,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 forge_utils::putCookie('edit', $projectId);
 
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectEditSend', 'post','', true, '',  array(
+$smarty->assign('fo<rm', $this->CreateFrontendFormStart($id, $returnid, 'projectEditSend', 'post','', false, '',  array(
 				 	'sid' => $project['id'],
 					'_link_next_failed'=> $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name'].'/edit',
 								)));

@@ -120,6 +120,9 @@ class Forge2FrontOffice extends Orm
 		//Fiters
 		$this->SetParameterType('state',CLEAN_STRING);
 
+		//Various parameters
+		$this->SetParameterType('wiki_prefix',CLEAN_NONE);
+
 		$this->_init();
 	}
 
@@ -131,11 +134,11 @@ class Forge2FrontOffice extends Orm
 		$new = 'new';
 		$delete = 'delete';
 		$edit = 'edit';
-		$projectId = '(?P<projectId>[0-9]+)';
-		$projectName = '(?P<projectName>[a-zA-Z0-9\-\_\:]+)';
-		$packageId = '(?P<packageId>[0-9]+)';
-		$tracker_itemId = '(?P<tracker_itemId>[0-9]+)';
-		//$filterAlpha = '(?P<filterAlpha>[a-zA-Z0-9])';
+		$projectId = '(?P<projectId>[\w]+)';
+		$projectName = '(?P<projectName>[\d\w\-\:]+)';
+		$packageId = '(?P<packageId>[\w]+)';
+		$tracker_itemId = '(?P<tracker_itemId>[\w]+)';
+		//$filterAlpha = '(?P<filterAlpha>[\d\w])';
 
 
 		//List of Projects
