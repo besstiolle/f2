@@ -2,6 +2,7 @@
 
 if (!function_exists("cmsms")) exit;
 
+if(!$this->_VisibleToUser()) exit;
 
 if(isset($params['show_code_iso'])){
 	$this->SetPreference('show_code_iso',$params['show_code_iso']);

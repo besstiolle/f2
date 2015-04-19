@@ -16,7 +16,10 @@ class Wiki extends Orm {
 	function IsPluginModule() { return true; }
 	function HasAdmin() { return true; }
 	function GetAdminSection() { return 'content'; }
-	function VisibleToAdminUser() { return true; }
+	
+  	function VisibleToAdminUser() { return $this->CheckPermission('Manage Wiki') || $this->CheckPermission('Advance Manage Wiki'); }
+  	function _VisibleToUser() { return $this->CheckPermission('Manage Wiki'); }
+  	function _VisibleToAdmin() { return $this->CheckPermission('Advance Manage Wiki'); }
 
 	function InitializeFrontend() {
 		$this->RegisterModulePlugin(true, false);
@@ -196,6 +199,30 @@ class Wiki extends Orm {
 
 	function _getMultiInstances(){
 		return $this->GetPreference('multiInstances',FALSE);
+	}
+
+
+
+	public static function page_type_lang_callback($str)
+	{
+		$mod = cms_utils::get_module('Wiki');
+		if( is_object($mod) ) return $mod->Lang('type_'.$str);
+	}
+
+	public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
+	{
+		if( $type->get_originator() != 'Wiki' ) {throw new CmsLogicException('Cannot reset contents for this template type');}
+
+		$mod = cms_utils::get_module('Wiki');
+		
+		if( !is_object($mod) ) return;
+		
+		/*switch( $type->get_name() ) {
+			case 'searchform':
+		return "";//$mod->GetSearchHtmlTemplate();
+			case 'searchresults':*/
+		return "";//$mod->GetResultsHtmlTemplate();
+
 	}
 } 
 ?>

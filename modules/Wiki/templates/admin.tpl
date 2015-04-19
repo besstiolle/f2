@@ -31,11 +31,17 @@
 
 </style>
 
+{if $_VisibleToUser}
 {tab_header name='tab1' label='Customize your wiki'}
 {tab_header name='tab2' label='Customize the langs'}
 {tab_header name='tab3' label='Set the Access'}
+{/if}
+{if $_VisibleToAdmin}
 {tab_header name='tab4' label='Reset the Wiki'}
+{/if}
 
+
+{if $_VisibleToUser}
 {tab_start name='tab1'}
 
 {form_start action="admin_save"}
@@ -136,9 +142,12 @@
 	</div>
 </form>
 
+{/if}
+{if $_VisibleToAdmin}
+
 {tab_start name='tab4'}
 <div><p>Clic <span onclick='$("#resetme").show();' style='color:#F00;cursor: no-drop;'>here</span> if you really <b>really</b> want to reset the wiki</p>
 	<p id='resetme' style='display:none;'><a href='{$reset}' >Reset the entire Wiki (trust me, you certainly don't want to clic on this link...)</a></p>
 </div>
-
+{/if}
 {tab_end}

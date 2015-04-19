@@ -2,6 +2,7 @@
 
 if (!function_exists("cmsms")) exit;
 
+if(!$this->_VisibleToUser()) exit;
 
 $errors = array();
 if(!empty($params['code'])){

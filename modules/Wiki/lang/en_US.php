@@ -39,6 +39,9 @@ $lang['help_author_name'] = 'Set to the name (username, login, whatever) of the 
 $lang['help_author_id'] = 'Set to the ID (integer) of the current user. Will be stored into the database for every modifications';
 
 
+$lang['type_Wiki'] = 'Wiki';
+$lang['type_Page'] = 'Page';
+
 $lang['help'] = '<h3>What Does This Do?</h3>
 <p>more informations on : <a href="https://github.com/besstiolle/wiki-ms" target="_blank">https://github.com/besstiolle/wiki-ms</a></p>
 <h3>How use it</h3>

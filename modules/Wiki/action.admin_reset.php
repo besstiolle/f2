@@ -1,6 +1,8 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+if(!$this->_VisibleToAdmin()) exit;
+
 include_once(dirname(__FILE__).'/inc.reset.php');
 
 // put mention into the admin log

@@ -1,6 +1,8 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
+if(!$this->_VisibleToUser()) exit;
+
 if(empty($params['act'])) {
 	throw new Exception("act parameter not found", 1);
 }
