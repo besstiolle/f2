@@ -72,10 +72,13 @@ class Wiki extends Orm {
 			$pattern = '(.)*'.$prefix;
 		} else {
 			$pattern = $prefix;
-		}	
+		}
+		$lang = null;
+		if($this->_getShowCodeIso()){
+ 			$lang = '(?P<vlang>[\w\d\-]*)';
+		} 
 
 		$prefix = '(?P<pprefix>'.$pattern.')';
-		$lang = '(?P<vlang>[\w\d\-]*)';
 		$alias = '(?P<palias>[\w\d\-\:]*)';//(?P<palias>[\w\d\-]*(?s)^((?!sitemap).)*)
 		$version = '(?P<version_id>[0-9]+)';
 		$sitemap = '[sS]itemap';
@@ -84,10 +87,11 @@ class Wiki extends Orm {
 		$route = $this->_generateRoute($prefix);
 		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid));
 				
-		//With Lang
-		$route = $this->_generateRoute($prefix, $lang);
-		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid, 'palias' => 'home'));
-
+		if($this->_getShowCodeIso()){
+			//With Lang
+			$route = $this->_generateRoute($prefix, $lang);
+			$this->_add_static($route, array('action'=>'default','returnid'=>$returnid, 'palias' => 'home'));
+		}
 		//With Lang & alias
 		$route = $this->_generateRoute($prefix, $lang, $alias);
 		$this->_add_static($route, array('action'=>'default','returnid'=>$returnid));
@@ -115,7 +119,7 @@ class Wiki extends Orm {
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
 		$route = $this->_generateRoute($prefix, $sitemap);
 		$this->_add_static($route, array('action'=>'sitemap','returnid'=>$returnid));	
-
+//die();
    }
 
     private function _generateRoute(){
@@ -134,7 +138,7 @@ class Wiki extends Orm {
     		}
     	}
    		$route = '#^'.implode('\/', $func_params_cleaned).$ext.'$#';
-   	//	echo '<div>'.$route.'</div>';
+   		//echo '<div>'.htmlentities($route).'</div>';
    		return $route;
     }
 

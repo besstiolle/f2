@@ -91,12 +91,13 @@
 </aside>
 <aside class="right-off-canvas-menu">
 	<ul class="off-canvas-list">
+{if $showLangs}
 		<li><label>Lang</label></li>
 		
 		{foreach $other_langs as $elt}
 			<li><a href="{$elt.viewUrl}" {if !empty($elt.class)}class='{$elt.class}'{/if}>{$elt.label|capitalize}</a></li>
 		{/foreach}
-		
+{/if}		
 		<li><label>Revisions</label></li>
 		
 		{foreach $oldRevisions as $elt}
@@ -105,6 +106,7 @@
 		
 	</ul>
 </aside> 
+
 
 
 <section class="main-section">

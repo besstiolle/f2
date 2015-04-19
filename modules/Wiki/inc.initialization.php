@@ -1,9 +1,8 @@
 <?php
 if (!function_exists('cmsms')) exit;
 
-/*
-print_r($params);
-die();*/
+
+
 
 //Array for errors and messages
 $errors = array();
@@ -13,15 +12,25 @@ $has_error = false;
 
 //Test basic parameters
 if(empty($params['pprefix'])){
-	echo ("parameter pprefix not found for initialisation");
+	$errors[] = 'prefix_mandatory';
+	$has_error = true;
+	echo "parameter pprefix not found for initialisation";
 	exit;
 }
 if(empty($params['vlang'])){
-	echo ("parameter vlang not found for initialisation");
-	exit;
+	if($this->_getShowCodeIso()){
+		$errors[] = 'lang_mandatory';
+		$has_error = true;
+		echo "parameter vlang not found for initialisation";
+		exit;
+	} else {
+		$params['vlang'] = $this->_getDefaultLang();
+	}
 }
 if(empty($params['palias'])){
-	echo ("parameter palias not found for initialisation");
+	$errors[] = 'alias_mandatory';
+	$has_error = true;
+	echo "parameter palias not found for initialisation";
 	exit;
 }
 
@@ -94,6 +103,7 @@ $isDefaultVersion = $isDefaultLang && $isDefaultPage;
 $smarty->assign('isDefaultLang', $isDefaultLang);
 $smarty->assign('isDefaultPage', $isDefaultPage);
 $smarty->assign('isDefaultVersion', $isDefaultVersion);
+$smarty->assign('showLangs', $this->_getShowCodeIso());
  
 
 // Get preferences

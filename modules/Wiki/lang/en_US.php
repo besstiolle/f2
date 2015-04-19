@@ -25,6 +25,8 @@ $lang['delete_success'] = 'Page deleted with success.';
 $lang['dupplicate_code'] = 'Another Lang already exists with this code';
 $lang['code_is_mandatory'] = 'The code is mandatory';
 $lang['label_is_mandatory'] = 'The label is mandatory';
+$lang['prefix_mandatory'] = 'The prefix is mandatory';
+$lang['alias_mandatory'] = 'The alias is mandatory';
 
 
 $lang['wiki_not_readable'] = 'You cannot read this wiki';
