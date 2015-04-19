@@ -51,6 +51,10 @@ $version->set('lang',$en_US->get('lang_id'));
 $version->set('status',$version::$STATUS_CURRENT);
 $version = $version->save();
 
+$config = cmsms()->GetConfig();
+$content = file_get_contents($config['root_path'].'/modules/Wiki/templates/setAccess.tpl');
+$this->SetTemplate('access', $content);
+
 //Refresh Routes
 $this->CreateStaticRoutes();
 

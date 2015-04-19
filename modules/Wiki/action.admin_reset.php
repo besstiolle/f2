@@ -9,6 +9,6 @@ $this->Audit( 0,
 	      $this->Lang('reseted', $this->GetVersion()) );
 
 
-$this->Redirect($id, 'defaultadmin');
+$this->RedirectToAdminTab('tab4');
 
 ?>

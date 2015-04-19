@@ -1,7 +1,5 @@
 <?php
 
-/*print_r($params);*/
-
 $palias = $this->_getDefaultAlias();
 $pprefix = $this->_getDefaultPrefix();
 $vlang = $this->_getDefaultLang();

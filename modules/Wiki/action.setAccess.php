@@ -2,7 +2,7 @@
 if (!function_exists('cmsms')) exit;
 
 
-$is_readable = false;
+$is_readable = true;
 $is_writable = false;
 $is_deletable = false;
 $author_name = null;

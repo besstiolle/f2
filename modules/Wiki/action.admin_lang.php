@@ -28,7 +28,7 @@ if($action == 'delete') {
 	$example->addCriteria('isdefault', OrmTypeCriteria::$NEQ, array(1));
 	OrmCore::deleteByExample(new Lang(), $example);
 
-	$this->Redirect($id, 'defaultadmin');
+	$this->RedirectToAdminTab('tab2');
 } else if($action == 'default') {
 	$lang = new Lang();
 	$query1 = "UPDATE {$lang->getDbname()} SET isdefault=0 WHERE 1";
@@ -41,7 +41,7 @@ if($action == 'delete') {
 	$defaultLang = $langs[0];
 	$this->SetPreference('default_lang',$defaultLang->get('code'));
 
-	$this->Redirect($id, 'defaultadmin');
+	$this->RedirectToAdminTab('tab2');
 } else if($action == 'edit') {
 
 	$lang_id = null;

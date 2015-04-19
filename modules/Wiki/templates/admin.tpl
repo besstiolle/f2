@@ -31,6 +31,12 @@
 
 </style>
 
+{tab_header name='tab1' label='Customize your wiki'}
+{tab_header name='tab2' label='Customize the langs'}
+{tab_header name='tab3' label='Set the Access'}
+{tab_header name='tab4' label='Reset the Wiki'}
+
+{tab_start name='tab1'}
 {$form_save}
 <div class='box'>
 	<div class='choice'>
@@ -78,6 +84,7 @@
 	</div>
 </form>
 
+{tab_start name='tab2'}
 <table class="pagetable">
 	<thead>
 		<tr>
@@ -117,6 +124,19 @@
 	</tbody>
 </table>
 
+{tab_start name='tab3'}
+{$form_tpl_save}
+	<div>
+		<textarea name='{$actionid}template_access' id='{$actionid}template_access' style="width: 100%; min-height: 500px;">{$accessTpl}</textarea>
+	</div>
+	<div>
+		<input type='submit' value='save' />
+	</div>
+</form>
+
+{tab_start name='tab4'}
 <div><p>Clic <span onclick='$("#resetme").show();' style='color:#F00;cursor: no-drop;'>here</span> if you really <b>really</b> want to reset the wiki</p>
 	<p id='resetme' style='display:none;'><a href='{$reset}' >Reset the entire Wiki (trust me, you certainly don't want to clic on this link...)</a></p>
 </div>
+
+{tab_end}

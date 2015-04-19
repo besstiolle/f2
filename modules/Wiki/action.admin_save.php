@@ -19,7 +19,7 @@ if(isset($params['prefix'])){
 //Refresh Routes
 $this->CreateStaticRoutes();
 
-$this->redirect($id,'defaultadmin');
+$this->RedirectToAdminTab('tab1');
 
 
 ?>

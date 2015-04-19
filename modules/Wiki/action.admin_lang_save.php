@@ -41,7 +41,8 @@ $lang->set('code', $code);
 $lang->set('label', $label);
 $lang->save();
 
-$this->redirect($id,'defaultadmin');
+
+$this->RedirectToAdminTab('tab2');
 
 
 ?>

@@ -47,7 +47,7 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <h4>{Wiki action="setAccess"}</h4>
 <p>To customize the access you can modify the options in the admin panel. Into the access template you can add/customize the tag {Wiki action="setAccess"} to set the authorization. There is some options : </p>
 <ul>
-<li>is_readable (FALSE by default)</li>
+<li>is_readable (TRUE by default)</li>
 <li>is_writable (FALSE by default)</li>
 <li>is_deletable (FALSE by default)</li>
 <li>author_name (empty by default)</li>
@@ -57,8 +57,6 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <p>For example : </p>
 <pre>
 {Wiki action="setAccess" is_readable="TRUE" is_writable="TRUE" is_deletable="FALSE"}
-[...]
-{Wiki}
 </pre>
 
 <p>You can easily test the current FEU user/group to allow or deny access to the wiki</p>
@@ -68,8 +66,6 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 {else}
   {Wiki action="setAccess" is_readable="TRUE"}
 {/if}
-[...]
-{Wiki}
 </pre>
 
 <p>finally you can customize your own test with a custom UDT or with another module and the array {$gatewayParams}.For example : </p>

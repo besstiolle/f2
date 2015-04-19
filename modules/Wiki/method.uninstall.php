@@ -11,6 +11,7 @@ foreach($entities as $anEntity) {
 $this->RemovePreference();
 $this->RemoveSmartyPlugin();
 cms_route_manager::del_static('',$this->GetName());
+$this->DeleteTemplate('access');
 
 // put mention into the admin log
 $this->Audit( 0, $this->Lang('friendlyname'), $this->Lang('uninstalled'));

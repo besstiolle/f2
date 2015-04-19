@@ -40,5 +40,10 @@ $smarty->assign('langs', $langs_values);
 $smarty->assign('reset', $this->create_url($id,'admin_reset', '', array()));
 $smarty->assign('addLang', $this->create_url($id,'admin_lang', '', array('act'=>'edit')));
 
+
+$accessTpl = $this->getTemplate('access'); 
+$smarty->assign('form_tpl_save', $this->CreateFormStart($id,'admin_template_save'));;
+$smarty->assign('accessTpl', $accessTpl);
+
 echo $this->ProcessTemplate('admin.tpl');
 ?>
