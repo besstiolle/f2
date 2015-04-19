@@ -86,10 +86,6 @@ if($version == null){
 		$messages = array("wiki_page_not_exists");
 		$smarty->assign('messages', $messages);
 		echo $this->ProcessTemplate('message.tpl');
-		/*
-		$errors = array("wiki_not_writable");
-		$smarty->assign('errors', $errors);
-		echo $this->ProcessTemplate('message.tpl');*/
 
 		return;
 	}

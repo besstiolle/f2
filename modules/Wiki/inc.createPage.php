@@ -13,6 +13,8 @@ if(!empty($params['vtitle'])){
 
 if(!empty($params['vtext'])){
 	$vals['text'] = html_entity_decode($params['vtext']);
+} else if( $this->_getDefaultAlias() == $page->get('alias') && $this->_getDefaultLang() == $lang->get('code')){
+	$vals['text'] = htmlentities(file_get_contents($config['root_path'].'/modules/Wiki/default.md'));
 } else {
 	$vals['text'] = "## Your subTitle for the new page {$aliasParam} [".$lang->get('label')."]\r\nWrite here some text";
 }
