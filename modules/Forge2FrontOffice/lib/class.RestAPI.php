@@ -106,6 +106,8 @@ class RestAPI{
 
 	private static function _GET($route, $paramsUrl = null){
 
+		$start = microtime(true);
+
 		$stringParameters = '';
 		if(!empty($paramsUrl)){
 			$stringParameters = '?'.http_build_query($paramsUrl);
@@ -114,24 +116,21 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[]['GET'] = $restUrl;
+		$ref = RestAPI::addEntry(null, 'GET', $restUrl);
 
 		$request = new Curl\Get( $restUrl );
-		$request->send();/*
-		$status = $request->getStatus();
-		if($status !== 200){
-			throw new Exception("Error Processing GET Request on $restUrl with dataParams =
-						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$status." 
-						\n ".print_r(RestAPI::getDump(),true), 1);
-		}
+		$request->send();
 
-		return $request->getResponse();*/
+		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
+		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+
 		return $request;
 	}
 
 	private static function _POST($route, $paramsUrl = null, $paramsData = null){
 
+		$start = microtime(true);
+
 		$stringParameters = '';
 		if(!empty($paramsUrl)){
 			$stringParameters = '?'.http_build_query($paramsUrl); 
@@ -140,24 +139,21 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[]['POST'] = $restUrl;
+		$ref = RestAPI::addEntry(null, 'POST', $restUrl);
 
 		$request = new Curl\POST( $restUrl , ['data' => $paramsData]);
-		$request->send();/*
-		$status = $request->getStatus();
-		if($status !== 200){
-			throw new Exception("Error Processing POST Request on $restUrl with dataParams =
-						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$status." 
-						\n ".print_r(RestAPI::getDump(),true), 1);
-		}
+		$request->send();
 
-		return $request->getResponse();*/
+		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
+		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+
 		return $request;
 	}
 
 	private static function _PUT($route, $paramsUrl = null, $paramsData = null){
 
+		$start = microtime(true);
+
 		$stringParameters = '';
 		if(!empty($paramsUrl)){
 			$stringParameters = '?'.http_build_query($paramsUrl); 
@@ -166,25 +162,22 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[]['PUT'] = $restUrl;
+		$ref = RestAPI::addEntry(null, 'PUT', $restUrl);
 
 		$request = new Curl\PUT( $restUrl , ['data' => $paramsData]);
-		$request->send();/*
-		$status = $request->getStatus();
-		if($status !== 200){
+		$request->send();
 
-			throw new Exception("Error Processing PUT Request on $restUrl with dataParams =
-						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$status."  
-						\n ".print_r(RestAPI::getDump(),true), 1);
-		}
-
-		return $request->getResponse();*/
-		return $request;
+		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
+		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+		/*
+		
+		return $request;*/
 	}
 
 	private static function _DELETE($route, $paramsUrl = null, $paramsData = null){
 
+		$start = microtime(true);
+
 		$stringParameters = '';
 		if(!empty($paramsUrl)){
 			$stringParameters = '?'.http_build_query($paramsUrl); 
@@ -193,7 +186,7 @@ class RestAPI{
 		$restUrl = RestAPI::$base_url.$route.$stringParameters ;
 
 		//For future debug
-		RestAPI::$dump[]['DELETE'] = $restUrl;
+		$ref = RestAPI::addEntry(null, 'DELETE', $restUrl);
 
 		$request = new Curl\DELETE( $restUrl );
 		$request->send();/*
@@ -205,7 +198,11 @@ class RestAPI{
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
 
-		return $request->getResponse();*/
+		return $request->getResponse();
+
+		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
+		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+		*/
 		return $request;
 	}
 
@@ -213,4 +210,14 @@ class RestAPI{
 		return RestAPI::$dump;
 	}
 
+	public static function addEntry($ref = null, $key, $value){
+		if($ref == null){
+			RestAPI::$dump[] = array();
+		}
+		$ref = count(RestAPI::$dump) - 1;
+
+		RestAPI::$dump[$ref][$key] = $value;
+
+		return $ref;
+	}
 }
