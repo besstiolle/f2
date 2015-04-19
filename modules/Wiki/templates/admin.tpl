@@ -37,7 +37,8 @@
 {tab_header name='tab4' label='Reset the Wiki'}
 
 {tab_start name='tab1'}
-{$form_save}
+
+{form_start action="admin_save"}
 <div class='box'>
 	<div class='choice'>
 		<h2>Mono-Instance VS Multi-Instances</h2>
@@ -125,7 +126,8 @@
 </table>
 
 {tab_start name='tab3'}
-{$form_tpl_save}
+
+{form_start action="admin_template_save"}
 	<div>
 		<textarea name='{$actionid}template_access' id='{$actionid}template_access' style="width: 100%; min-height: 500px;">{$accessTpl}</textarea>
 	</div>

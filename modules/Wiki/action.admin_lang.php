@@ -67,7 +67,6 @@ if($action == 'delete') {
 	}
 
 	$smarty->assign('lang', $lang);
-	$smarty->assign('form_save',$this->CreateFormStart($id,'admin_lang_save', '', 'post', '', false, '', array('lang_id'=>$lang_id)));
 
 	if($lang_id == null){
 		$smarty->assign('title', 'Creation');
