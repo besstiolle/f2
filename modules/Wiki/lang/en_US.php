@@ -47,9 +47,10 @@ $lang['type_Page'] = 'Page';
 $lang['help'] = '<h3>What Does This Do?</h3>
 <p>more informations on : <a href="https://github.com/besstiolle/wiki-ms" target="_blank">https://github.com/besstiolle/wiki-ms</a></p>
 <h3>How use it</h3>
-<h4>{Wiki}</h4>
-<p>add the tag {Wiki} in your template to implement the wiki. It won\'t be readable by default</p>
-<h4>{Wiki action="setAccess"}</h4>
+<h4>Step 1 : Install it</h4>
+<p>Just install it ! it will works immediatly for the page /wiki. you don\'t have to create a page for it. You can customize the options in the admin pale.</p>
+<p>in the case where you would have a cmsms page called "wiki" you should change the prefix of this module in the options.</p>
+<h4>Access Template</h4>
 <p>To customize the access you can modify the options in the admin panel. Into the access template you can add/customize the tag {Wiki action="setAccess"} to set the authorization. There is some options : </p>
 <ul>
 <li>is_readable (TRUE by default)</li>
@@ -58,7 +59,7 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <li>author_name (empty by default)</li>
 <li>author_id (empty by default)</li>
 </ul>
-
+<p>If you don\'t touch anything you will have a readonly wiki</p>
 <p>For example : </p>
 <pre>
 {Wiki action="setAccess" is_readable="TRUE" is_writable="TRUE" is_deletable="FALSE"}

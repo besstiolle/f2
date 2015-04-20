@@ -12,7 +12,8 @@ if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
 $config = cmsms()->GetConfig();
 $c_css1 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/css_normalize');
 $c_css2 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/css_foundation');
-$c_css3 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/css_wiki');
+$c_css3 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/css_foundation_icones');
+$c_css4 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/css_wiki');
 
 $c_tpl1 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/tpl_wiki1col');
 $c_tpl2 = file_get_contents($config['root_path'].'/modules/Wiki/templates/init/tpl_wiki2cols');
@@ -23,7 +24,6 @@ try {
   //Using core::page type
   $wiki_type = CmsLayoutTemplateType::load("Core::page");
 
-
   // CREATE TEMPLATE 1 COL
   $tpl1 = new CmsLayoutTemplate();
   $tpl1->set_name('Wiki Sample 1 col');
@@ -32,7 +32,6 @@ try {
   $tpl1->set_type($wiki_type);
   $tpl1->set_type_dflt(TRUE);
   $tpl1->save();
-  //CmsLayoutTemplate::load($tpl1->get_name());
 
   // CREATE TEMPLATE 2 ROL
   $tpl2 = new CmsLayoutTemplate();
@@ -42,7 +41,6 @@ try {
   $tpl2->set_type($wiki_type);
   $tpl2->set_type_dflt(TRUE);
   $tpl2->save();
-  //CmsLayoutTemplate::load($tpl2->get_name());
 
   // CREATE CSS
   $css1 = new CmsLayoutStylesheet();
@@ -50,21 +48,24 @@ try {
   $css1->set_content($c_css1);
   $css1->set_description("CSS for the Normalize's base design v3.0.2");
   $css1->save();
-  //CmsLayoutStylesheet::load($css1->get_name());
 
   $css2 = new CmsLayoutStylesheet();
   $css2->set_name('Wiki_Foundation');
   $css2->set_content($c_css2);
   $css2->set_description("CSS for the foundation's base design v5.5.1");
   $css2->save();
-  //CmsLayoutStylesheet::load($css2->get_name());
 
   $css3 = new CmsLayoutStylesheet();
-  $css3->set_name('Wiki_Main');
+  $css3->set_name('Wiki_Foundation_icones');
   $css3->set_content($c_css3);
-  $css3->set_description("CSS for the wiki v1.0.0 . Extends the foundations's base design");
+  $css3->set_description("CSS for the foundation's icones design v3.0");
   $css3->save();
-  //CmsLayoutStylesheet::load($css3->get_name());
+
+  $css4 = new CmsLayoutStylesheet();
+  $css4->set_name('Wiki_Main');
+  $css4->set_content($c_css4);
+  $css4->set_description("CSS for the wiki v1.0.0 . Extends the foundations's base design");
+  $css4->save();
 
 
   // CREATE TEMPLATE 2 ROL
@@ -78,7 +79,8 @@ try {
   $design->set_stylesheets(array(
   			$css1->get_id(),
   			$css2->get_id(),
-  			$css3->get_id(),
+        $css3->get_id(),
+  			$css4->get_id(),
   			));
   $design->save();
 
