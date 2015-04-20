@@ -88,7 +88,7 @@
 <div class='box'>
 	<div class='choice'>
 		<h2>Cms Page's Alias</h2>
-		<p>You must create a classic content page in CmsMadeSimple, settings the design/template of your choice and typing the alias of this new page here. It will hekp the module Wiki to "choose" the good template. This parameter can be anything as it is the alias of a existing page</p>
+		<p>You must create a classic content page in CmsMadeSimple, settings the design/template of your choice and typing the alias of this new page here. It will hekp the module Wiki to "choose" the good template. This parameter can be anything as it is the alias of a existing page. The content of the new page does not matter, the module Wiki won't use it.</p>
 		<label for='{$actionid}cms_page'>
 			Default Alias : 
 			<input type='text' name='{$actionid}cms_page' value='{$cms_page}' />
