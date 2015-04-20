@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{Sitename} | </title>
+    <title>{Sitename} | {if isset($title)}{$title}{else}{title}{/if}</title>
     {cms_stylesheet}
 
     <link rel='stylesheet' type='text/css' href='{root_url}/modules/Wiki/scripts/fancybox/jquery.fancybox.css?v=2.1.5' media='screen' />
