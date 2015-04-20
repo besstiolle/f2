@@ -29,7 +29,14 @@
 
 }
 
+.h2error{
+	color:#FF0000;
+}
+
 </style>
+
+
+{if !$has_asset}<h2 class='h2error'>Foundation's Package not found</h2><p>It seems that you don't have installed the foundation package into the directory /uploads. These files are required to the module. You can download them on the <a href='{$asset_link}'>page of the project</a></p>{/if}
 
 {if $_VisibleToUser}
 {tab_header name='tab1' label='Customize your wiki'}

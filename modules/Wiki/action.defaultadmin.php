@@ -3,6 +3,16 @@ if (!function_exists('cmsms')) exit;
 
 if(!$this->VisibleToAdminUser()) exit;
 
+$config = cmsms()->GetConfig();
+$has_asset = false;
+$filename = $config['root_path'].'/uploads/foundation/version';
+if(file_exists($filename)){
+	$value = file_get_contents($filename);
+	$has_asset = (intval($value) >= $this->_getMinimalVersionFoundationAsset());
+}
+$smarty->assign('has_asset', $has_asset);
+$smarty->assign('asset_link', $this->_gethttplinkToFoundationAsset());
+
 if($this->_VisibleToUser()){
 
 	$smarty->assign('prefix', $this->GetPreference('prefix','wiki'));

@@ -215,5 +215,14 @@ class Wiki extends Orm {
 	}
 
 
+	function _getMinimalVersionFoundationAsset(){
+		return 1;
+	}
+
+	function _gethttplinkToFoundationAsset(){
+		return "#";
+	}
+
+
 } 
 ?>
