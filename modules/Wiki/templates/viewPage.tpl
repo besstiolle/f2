@@ -1,10 +1,3 @@
-<style>
-	pre code{
-		display: block;
-	}
-</style>
-
-
 {if !empty($breadcrumbs)}<ul class="breadcrumbs">
 {foreach $breadcrumbs as $bread}
 	 <li {if $bread@last}class='current'{/if}><a href="{$bread.url}" {if !empty($bread.class)}class='{$bread.class}'{/if} {if !empty($bread.title)}title='{$bread.title}'{/if}>{$bread.name}</a></li>
