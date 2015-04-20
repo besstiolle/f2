@@ -63,7 +63,12 @@ class Wiki extends Orm {
 	
 	public function CreateStaticRoutes() {
 		
-		$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
+		$page = cmsms()->GetContentOperations()->LoadContentFromAlias($this->_getCmsPage());
+		if($page == null) {
+			$returnid = cmsms()->GetContentOperations()->GetDefaultContent();
+		} else {
+			$returnid = $page->Id();
+		}
 		cms_route_manager::del_static('',$this->GetName());
 
 		$mi = $this->_getMultiInstances();
@@ -205,28 +210,10 @@ class Wiki extends Orm {
 		return $this->GetPreference('multiInstances',FALSE);
 	}
 
-
-/*
-	public static function page_type_lang_callback($str)
-	{
-		$mod = cms_utils::get_module('Wiki');
-		if( is_object($mod) ) return $mod->Lang('type_'.$str);
+	function _getCmsPage(){
+		return $this->GetPreference('cms_page','wiki');
 	}
 
-	public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
-	{
-		if( $type->get_originator() != 'Wiki' ) {throw new CmsLogicException('Cannot reset contents for this template type');}
 
-		$mod = cms_utils::get_module('Wiki');
-		
-		if( !is_object($mod) ) return;
-		
-		//switch( $type->get_name() ) {
-			//case 'searchform':
-		//return "";//$mod->GetSearchHtmlTemplate();
-			//case 'searchresults':
-		return "";//$mod->GetResultsHtmlTemplate();
-
-	}*/
 } 
 ?>

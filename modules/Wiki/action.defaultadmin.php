@@ -6,10 +6,10 @@ if(!$this->VisibleToAdminUser()) exit;
 if($this->_VisibleToUser()){
 
 	$smarty->assign('prefix', $this->GetPreference('prefix','wiki'));
-	$smarty->assign('show_code_iso', $this->GetPreference('show_code_iso',TRUE));
-	$smarty->assign('multiInstances', $this->GetPreference('multiInstances',FALSE));
-	$smarty->assign('default_alias', $this->GetPreference('default_alias','home'));
-	$smarty->assign('form_save',$this->CreateFormStart($id,'admin_save'));
+	$smarty->assign('show_code_iso', $this->_getShowCodeIso());
+	$smarty->assign('multiInstances', $this->_getMultiInstances());
+	$smarty->assign('default_alias', $this->_getDefaultAlias());
+	$smarty->assign('cms_page', $this->_getCmsPage());
 
 
 	$admintheme = cms_utils::get_theme_object();
