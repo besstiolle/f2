@@ -20,7 +20,7 @@ $this->RemovePermission('Advance Manage Wiki');
 /**
  * Remove Design
  **/
-include_once(dirname(__FILE__).'/inc.designDelete.php');
+//include_once(dirname(__FILE__).'/inc.designDelete.php');
 
 
 // put mention into the admin log
