@@ -150,14 +150,6 @@ class Wiki extends Orm {
     private function _add_static($route, $params){
 		cms_route_manager::add_static(new CmsRoute($route, $this->GetName(), $params));
     }
-
-	
-	/**
-	 * a inner function for factorize some recurrent code
-	 **/
-	/*function securize($str){
-		return htmlentities($str, ENT_QUOTES, 'UTF-8');
-	}*/
 	
 	/**
 	* @param string $str unicode and ulrencoded string
@@ -220,7 +212,7 @@ class Wiki extends Orm {
 	}
 
 	function _gethttplinkToFoundationAsset(){
-		return "#";
+		return "http://dev.cmsmadesimple.org/project/files/1256#package-1303";
 	}
 
 
