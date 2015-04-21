@@ -78,7 +78,7 @@
 		{foreach $wiki_menu_siblings as $elt}
 			<li><a href="{$elt.viewUrl}" {if !empty($elt.class)}class='{$elt.class}'{/if}>{$elt.label|capitalize}</a></li>
 		{foreachelse}
-			<li>There is no siblings entry in this wiki</li>
+			{*<li>There is no siblings entry in this wiki</li>*}
 		{/foreach}
 	</ul>
 </aside>
