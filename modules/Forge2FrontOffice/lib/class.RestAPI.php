@@ -211,7 +211,7 @@ class RestAPI{
 	}
 
 	public static function addEntry($ref = null, $key, $value){
-		if($ref == null){
+		if($ref === null){
 			RestAPI::$dump[] = array();
 		}
 		$ref = count(RestAPI::$dump) - 1;

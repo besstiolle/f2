@@ -1,16 +1,16 @@
 <?php
 
+$smarty->addTemplateDir(dirname(__FILE__).'/../templates'); 
 
 if(!isset($page_counter)){
-	echo "<h1>Hey IT-man, you forgot to assign page_counter parameter in your action classe (asshole)</h1>";
-	exit;
+	echo "<h1>Hey IT-man, you forgot to assign page_counter parameter in your action class (or there is something wrong with the REST query)</h1>";
+	return;
 }
 if(!isset($page_url)){
-	echo "<h1>Hey IT-man, you forgot to assign page_url parameter in your action classe (asshole)</h1>";
-	exit;
+	echo "<h1>Hey IT-man, you forgot to assign page_url parameter in your action class (or there is something wrong with the REST query)</h1>";
+	return;
 }
 
-$smarty->addTemplateDir(dirname(__FILE__).'/../templates'); 
 
 // # current page
 $page = 1;
