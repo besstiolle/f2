@@ -210,7 +210,7 @@ class RestAPI{
 		return RestAPI::$dump;
 	}
 
-	public static function addEntry($ref = null, $key, $value){
+	private static function addEntry($ref = null, $key, $value){
 		if($ref === null){
 			RestAPI::$dump[] = array();
 		}
