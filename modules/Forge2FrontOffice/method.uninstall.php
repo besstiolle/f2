@@ -3,10 +3,10 @@
 if (!function_exists("cmsms")) exit;
 
 //Drop all the tables automatically
-/*$entities = MyAutoload::getAllInstances($this->GetName(), $this->getName());
+$entities = MyAutoload::getAllInstances($this->GetName(), $this->getName());
 foreach($entities as $anEntity) {
 	OrmCore::dropTable($anEntity);
-}*/
+}
 
 
 $this->RemovePreference('user');

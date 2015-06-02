@@ -12,4 +12,5 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 ';
 
 $lang['admin_param_saved'] = 'The settings of the forge are saved with succes';
+$lang['admin_wiki_initiated'] = 'The settings of the wiki are initiated with succes';
 ?>

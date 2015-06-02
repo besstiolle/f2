@@ -3,10 +3,10 @@
 if (!function_exists("cmsms")) exit;
 
 //Create all the tables automatically 
-/*$entities = MyAutoload::getAllInstances($this->GetName());
+$entities = MyAutoload::getAllInstances($this->GetName());
 foreach($entities as $anEntity) {
 	OrmCore::createTable($anEntity);
-}*/
+}
 
 $this->SetPreference('user', '[TO DEFINED]');
 $this->SetPreference('pass', '[TO DEFINED]');
