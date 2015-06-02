@@ -1,14 +1,19 @@
-{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}
+{strip}{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}
 
 {* Navigation bar*}
 <ul class="button-group">
-<li><a class='button tiny' href='{$root_url}/project/list'>Project List</a></li>
-<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}'>Summary</a></li>
-<li><a class='button success tiny {if !$doesPageExists}disabled{/if}' {if $doesPageExists}href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'{/if} {if !$doesPageExists}onclick="javascript: return false;"{/if}>Wiki</a></li>
-<li><a class='button success tiny disabled' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a></li>
-<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a></li>
-<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a></li>
+	<li><a class='button tiny' href='{$root_url}/project/list'>Project List</a></li>
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}'>Summary</a></li>
+{if !$doesPageExists && ($is_admin || $is_member)}
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a></li>
+{else if $doesPageExists}
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a></li>
+{/if}
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a></li>
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a></li>
+	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a></li>
 </ul>
+{/strip}{* END Navigation bar*}
 
 <p><b>{$tracker_item.summary}</b></p>
 <p>#{$tracker_item.id} opened on {$tracker_item.created_at|cms_date_format} by {$feu_smarty->get_user_properties($tracker_item.created_by_id,'userprops')}{$userprops.pseudo}</p>
