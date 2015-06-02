@@ -117,6 +117,8 @@ $smarty->assign('elements', $elements);
 $smarty->assign('enumTrackerItemResolution', array_flip(Enum::ConstToArray('EnumTrackerItemResolution')));
 $smarty->assign('enumTrackerItemSeverity', array_flip(Enum::ConstToArray('EnumTrackerItemSeverity')));
 $smarty->assign('enumTrackerItemState', array_flip(Enum::ConstToArray('EnumTrackerItemState')));
+$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
+$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 
 $avatar = $config['root_url'].'/uploads/forge/design/user-64.png';
 $smarty->assign('avatar', $avatar);

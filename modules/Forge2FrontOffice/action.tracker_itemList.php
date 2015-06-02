@@ -134,6 +134,9 @@ if($params['type'] == EnumTrackerItemType::Bug){
 //Include paginator
 include('lib/inc.paginator.php');
 
+$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
+$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
+
 echo $this->processTemplate('tracker_items.tpl');
 
 
