@@ -7,6 +7,7 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'admin_sa
 $smarty->assign('user', $this->getPreference('user', '[TO DEFINED]'));
 $smarty->assign('pass', $this->getPreference('pass', '[TO DEFINED]'));
 $smarty->assign('rest_url', $this->getPreference('rest_url', '[TO DEFINED]'));
+$smarty->assign('forminit', $this->CreateFrontendFormStart($id, $returnid, 'admin_init_secu_wiki', 'post','', true, '',  array()));
 
 if(isset($params['message'])){
 	echo $this->ShowMessage($this->Lang($params['message']));

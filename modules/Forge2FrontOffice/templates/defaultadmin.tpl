@@ -12,3 +12,9 @@
 {else}
 <b style="color:#A61B21">No Connection with Rest Service available</b>
 {/if}
+
+<h1>Update Wiki's Settings</h1>
+
+{$forminit}
+<input type='submit' value="Initiate Wiki's settings" />
+</form>
