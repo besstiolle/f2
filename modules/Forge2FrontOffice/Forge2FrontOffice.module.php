@@ -243,7 +243,7 @@ class Forge2FrontOffice extends Orm
 		//Init the RestAPI
 		require_once($config['root_path'].'/modules/Forge2FrontOffice/lib/class.RestAPI.php');
 
-		RestAPI::init($user, $pass, $rest_url);
+		RestAPI::init($user, $pass, $rest_url, $this);
 	}
 
 	static function smarty_is_project_admin($params, $smarty){

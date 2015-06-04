@@ -32,16 +32,25 @@ class RestAPI{
 	private static $tokenExpireOn = null;
 	private static $tokenIsUnique = null;
 
-	public static function init($login, $pass, $base_url){
+	private static $wiki = null;
+
+	public static function init($login, $pass, $base_url, $wiki){
 		RestAPI::$login = $login;
 		RestAPI::$pass = $pass;
 		RestAPI::$base_url = $base_url;
+		RestAPI::$wiki = $wiki;
 	}
 
 	public static function getToken(){
 
+		//Get the token of the current application
+		if(RestAPI::$token == null){
+			RestAPI::$token = RestAPI::$wiki->GetPreference('token');
+			RestAPI::$tokenExpireOn = RestAPI::$wiki->GetPreference('tokenExpireOn');
+			RestAPI::$tokenIsUnique = false;
+		}
 		// if we already have a valid token which is not unique
-		if(RestAPI::$token != null && RestAPI::$tokenExpireOn != null && RestAPI::$tokenIsUnique != null 
+		if(RestAPI::$token != null && RestAPI::$tokenExpireOn != null && RestAPI::$tokenIsUnique !== null 
 			&& RestAPI::$tokenIsUnique == FALSE && time() < RestAPI::$tokenExpireOn) {
 			return RestAPI::$token;
 		} 
@@ -63,6 +72,8 @@ class RestAPI{
 		RestAPI::$tokenExpireOn = $response['server']['token']['expireOn'];
 		RestAPI::$tokenIsUnique = $response['server']['token']['isUnique'];
 
+		RestAPI::$wiki->SetPreference('token', RestAPI::$token);
+		RestAPI::$wiki->SetPreference('tokenExpireOn', RestAPI::$tokenExpireOn);
 		return RestAPI::$token;
 
 	}
