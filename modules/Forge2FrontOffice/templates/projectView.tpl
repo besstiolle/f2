@@ -25,6 +25,20 @@
 	{if isset($avatar)}<img src='{$root_url}{$baseurl_avatar}{$avatar}' />{/if}
 	<p>{$project.description|nl2br}</p>
 
+	{foreach $packages as $package}
+	<div>
+		<h3>{$package.name} | {$package.releases.0.name}</h3>
+		<p>Last Update : {$package.updated_at}</p>
+		<h4> Changelog : </h4>
+		<p>{$package.releases.0.changelog}</p>
+		<h4> Release Notes : </h4>
+		<p>{$package.releases.0.release_notes}</p>
+	</div>
+
+{$package.releases|var_dump}
+
+	{/foreach}
+
 	{if $is_admin}<a class='button tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/delete'>Delete</a>{/if}
 	{if $is_admin || $is_member}<a class='button tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/edit'>Edit</a>{/if}
 
