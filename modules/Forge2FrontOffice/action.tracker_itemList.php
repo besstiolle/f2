@@ -55,8 +55,7 @@ $restParameters['type'] = $params['type'];
 
 if($state !== NULL){
 	$restParameters['state'] = $state;
-}
-					
+}				
 $request = RestAPI::GET('rest/v1/tracker_item/', $restParameters);
 if($request->getStatus() === 404){
 /*	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
