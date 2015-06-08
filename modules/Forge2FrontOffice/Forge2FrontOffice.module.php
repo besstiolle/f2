@@ -134,10 +134,10 @@ class Forge2FrontOffice extends Orm
 		$new = 'new';
 		$delete = 'delete';
 		$edit = 'edit';
-		$projectId = '(?P<projectId>[\w]+)';
+		$projectId = '(?P<projectId>[\d]+)';
 		$projectName = '(?P<projectName>[\d\w\-\:]+)';
-		$packageId = '(?P<packageId>[\w]+)';
-		$tracker_itemId = '(?P<tracker_itemId>[\w]+)';
+		$packageId = '(?P<packageId>[\d]+)';
+		$tracker_itemId = '(?P<tracker_itemId>[\d]+)';
 		//$filterAlpha = '(?P<filterAlpha>[\d\w])';
 
 
