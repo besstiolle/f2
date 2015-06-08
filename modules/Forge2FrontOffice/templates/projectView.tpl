@@ -26,16 +26,17 @@
 	<p>{$project.description|nl2br}</p>
 
 	{foreach $packages as $package}
-	<div>
+	<div class='callout panel'>
 		<h3>{$package.name} | {$package.releases.0.name}</h3>
-		<p>Last Update : {$package.updated_at}</p>
-		<h4> Changelog : </h4>
-		<p>{$package.releases.0.changelog}</p>
-		<h4> Release Notes : </h4>
-		<p>{$package.releases.0.release_notes}</p>
+		<p class='small'>Last Update : {$package.releases.0.updated_at|cms_date_format}</p>
+		{if !empty($package.releases.0.changelog)}
+			<p><b> Changelog : </b>{$package.releases.0.changelog|markdown}</p>
+		{/if}
+		{if !empty($package.releases.0.release_notes)}
+			<p><b> Release Notes : </b>{$package.releases.0.release_notes|markdown}</p>
+		{/if}
 	</div>
 
-{$package.releases|var_dump}
 
 	{/foreach}
 

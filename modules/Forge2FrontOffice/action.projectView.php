@@ -57,13 +57,14 @@ $response = json_decode($request->getResponse(), true);
 //Get the packages in the response data
 $packages = $response['data']['packages'];
 
-foreach ($packages as $package) {
+for($i=0; $i < count($packages); $i++) {
+	$package = $packages[$i];
 	$restParameters = array();
 	$restParameters['package_id'] = $package['id'];
 	//$restParameters['p'] = 0;
 	$restParameters['n'] = 1;
-	$request = RestAPI::GET('rest/v1/package/', $restParameters);
-	$request = RestAPI::GET('rest/v1/package/', $restParameters);
+	$request = RestAPI::GET('rest/v1/release/', $restParameters);
+	$request = RestAPI::GET('rest/v1/release/', $restParameters);
 	if($request->getStatus() === 404){
 		$smarty->assign('error', 'The package '.$package['id'].' doesn\' have any release');
 		echo $this->processTemplate('notFound.tpl');
@@ -77,7 +78,7 @@ foreach ($packages as $package) {
 		return;
 	}
 	$response = json_decode($request->getResponse(), true);
-	$package['releases'] = $response['data']['releases'];
+	$packages[$i]['releases'] = $response['data']['releases'];
 }
 
 
