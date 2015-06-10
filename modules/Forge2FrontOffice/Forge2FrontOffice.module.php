@@ -117,6 +117,10 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('type',CLEAN_INT);
 		$this->SetParameterType('tracker_itemId',CLEAN_INT);
 
+		//release
+		$this->SetParameterType('releaseId',CLEAN_INT);
+		$this->SetParameterType('all',CLEAN_STRING);
+
 		//Fiters
 		$this->SetParameterType('state',CLEAN_STRING);
 
@@ -131,6 +135,8 @@ class Forge2FrontOffice extends Orm
 		$prefixProject = 'project';
 		$prefixBug = 'bug';
 		$prefixRequest = 'request';
+		$releaseRequest = 'release';
+		$all = 'all';
 		$new = 'new';
 		$delete = 'delete';
 		$edit = 'edit';
@@ -138,6 +144,7 @@ class Forge2FrontOffice extends Orm
 		$projectName = '(?P<projectName>[\d\w\-\:]+)';
 		$packageId = '(?P<packageId>[\d]+)';
 		$tracker_itemId = '(?P<tracker_itemId>[\d]+)';
+		$releaseId = '(?P<releaseId>[\d]+)';
 		//$filterAlpha = '(?P<filterAlpha>[\d\w])';
 
 
@@ -180,6 +187,14 @@ class Forge2FrontOffice extends Orm
 		//Page of bug of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRequest, $tracker_itemId);
 		$this->_add_static($route, array('action'=>'tracker_itemView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
+
+		//Page of list of file for a release
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $releaseRequest, $releaseId);
+		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid));
+
+		//Page of list of file for a release + older
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $releaseRequest, $releaseId, $all);
+		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid, 'all' => true));
 
 		//Access Denied
 		$route = $this->_generateRoute('401');

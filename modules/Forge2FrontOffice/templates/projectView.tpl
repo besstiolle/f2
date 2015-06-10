@@ -40,14 +40,19 @@
 
 	{foreach $packages as $package}
 	<div class='callout panel'>
-		<h3 data-magellan-destination="p_{$package.id}">{$package.name} | {$package.releases.0.name}</h3><a name="p_{$package.id}"></a>
+		<h3 data-magellan-destination="p_{$package.id}"><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$package.releases.0.id}'>{$package.name} | {$package.releases.0.name}</a></h3><a name="p_{$package.id}"></a>
 		<p class='small'>Last Update : {$package.releases.0.updated_at|cms_date_format}</p>
-		{if !empty($package.releases.0.changelog)}
-			<p><b> Changelog : </b>{$package.releases.0.changelog|markdown}</p>
-		{/if}
-		{if !empty($package.releases.0.release_notes)}
-			<p><b> Release Notes : </b>{$package.releases.0.release_notes|markdown}</p>
-		{/if}
+		
+		<div class='expendable'>
+			{if !empty($package.releases.0.changelog)}
+				<p><b> Changelog : </b>{$package.releases.0.changelog|markdown}</p>
+			{/if}
+		</div>
+		<div class='expendable'>
+			{if !empty($package.releases.0.release_notes)}
+				<p><b> Release Notes : </b>{$package.releases.0.release_notes|markdown}</p>
+			{/if}
+		</div>
 	</div>
 
 

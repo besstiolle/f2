@@ -64,7 +64,6 @@ for($i=0; $i < count($packages); $i++) {
 	//$restParameters['p'] = 0;
 	$restParameters['n'] = 1;
 	$request = RestAPI::GET('rest/v1/release/', $restParameters);
-	$request = RestAPI::GET('rest/v1/release/', $restParameters);
 	if($request->getStatus() === 404){
 		$smarty->assign('error', 'The package '.$package['id'].' doesn\' have any release');
 		echo $this->processTemplate('notFound.tpl');
