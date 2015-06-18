@@ -134,6 +134,7 @@ class RestAPI{
 
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+		$ref = RestAPI::addEntry($ref, 'request', $request);
 
 		return $request;
 	}
@@ -157,6 +158,7 @@ class RestAPI{
 
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+		$ref = RestAPI::addEntry($ref, 'request', $request);
 
 		return $request;
 	}
@@ -180,6 +182,7 @@ class RestAPI{
 
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
+		$ref = RestAPI::addEntry($ref, 'request', $request);
 		/*
 		
 		return $request;*/
@@ -208,12 +211,13 @@ class RestAPI{
 						\ncode returned = ".$status." 
 						\n ".print_r(RestAPI::getDump(),true), 1);
 		}
-
 		return $request->getResponse();
 
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
-		*/
+		$ref = RestAPI::addEntry($ref, 'request', $request);
+		
+        */
 		return $request;
 	}
 

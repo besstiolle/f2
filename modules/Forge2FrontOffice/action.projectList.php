@@ -112,8 +112,4 @@ include('lib/inc.paginator.php');
 
 echo $this->processTemplate('projects.tpl');
 
-
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-echo $this->processTemplate('vardump.tpl');
+include('lib/inc.debug.php');

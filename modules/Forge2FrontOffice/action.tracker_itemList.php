@@ -138,10 +138,4 @@ $smarty->assign('is_member', forge_utils::is_project_member($project, forge_util
 
 echo $this->processTemplate('tracker_items.tpl');
 
-
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-echo $this->processTemplate('vardump.tpl');
-
-?>
+include('lib/inc.debug.php');

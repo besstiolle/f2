@@ -111,7 +111,4 @@ $smarty->assign('baseurl_show', $baseurl_show);
 
 echo $this->processTemplate('releaseView.tpl');
 
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-echo $this->processTemplate('vardump.tpl');
+include('lib/inc.debug.php');

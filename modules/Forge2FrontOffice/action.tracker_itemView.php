@@ -125,9 +125,5 @@ $smarty->assign('avatar', $avatar);
 
 echo $this->processTemplate('tracker_itemView.tpl');
 
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-echo $this->processTemplate('vardump.tpl');
-
+include('lib/inc.debug.php');
 ?>

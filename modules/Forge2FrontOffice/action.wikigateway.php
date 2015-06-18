@@ -65,6 +65,6 @@ $smarty->assign('is_readable', $is_readable);
 $smarty->assign('is_writable', $is_writable);
 $smarty->assign('is_deletable', $is_deletable);
 
-
+include('lib/inc.debug.php');
 
 ?>

@@ -49,8 +49,4 @@ $smarty->assign('link_back', $config['root_url'].'/project/list');
 
 echo $this->processTemplate('projectDelete.tpl');
 
-
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-echo $this->processTemplate('vardump.tpl');
+include('lib/inc.debug.php');

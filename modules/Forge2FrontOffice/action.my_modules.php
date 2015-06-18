@@ -42,9 +42,5 @@ $smarty->assign('enumAssignmentRole', Enum::ConstToArray('EnumAssignmentRole'));
 
 echo $this->processTemplate('my_projects.tpl');
 
-//Debug part
-$smarty->assign('response', $response);
-$smarty->assign('dump', RestAPI::getDump());
-
-echo $this->processTemplate('vardump.tpl');
+include('lib/inc.debug.php');
 ?>

@@ -17,3 +17,5 @@ $smarty->assign('enumProjectType', Enum::ConstToArray('EnumProjectType'));
 $smarty->assign('title', 'Create a new Project');
 
 echo $this->processTemplate('projectNew.tpl');
+
+include('lib/inc.debug.php');
