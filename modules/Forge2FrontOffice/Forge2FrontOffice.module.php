@@ -126,6 +126,7 @@ class Forge2FrontOffice extends Orm
 
 		//Various parameters
 		$this->SetParameterType('wiki_prefix',CLEAN_NONE);
+		$this->SetParameterType('debugId',CLEAN_STRING);
 
 		$this->_init();
 	}
@@ -145,6 +146,7 @@ class Forge2FrontOffice extends Orm
 		$packageId = '(?P<packageId>[\d]+)';
 		$tracker_itemId = '(?P<tracker_itemId>[\d]+)';
 		$releaseId = '(?P<releaseId>[\d]+)';
+		$debugId = '(?P<debugId>[\d\w]+)';
 		//$filterAlpha = '(?P<filterAlpha>[\d\w])';
 
 
@@ -199,6 +201,9 @@ class Forge2FrontOffice extends Orm
 		//Access Denied
 		$route = $this->_generateRoute('401');
 		$this->_add_static($route, array('action'=>'access_denied', 'returnid'=>$returnid));
+		//Access Denied
+		$route = $this->_generateRoute('debug', $debugId);
+		$this->_add_static($route, array('action'=>'debug', 'returnid'=>$returnid));
 
 		//Page of new project
 		//$route = $this->_generateRoute('404');

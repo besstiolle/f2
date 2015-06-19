@@ -11,4 +11,8 @@ if (!function_exists("cmsms")) exit;
 
 $debug = Debug::getInstance();
 $debug->saveDump(RestAPI::getDump());
-$debug->publish();
+$tag = $debug->getTag();
+if($tag !== FALSE){
+	$smarty->assign('debug_tag',$tag);
+	echo $this->processTemplate('vardump_tag.tpl');
+}
