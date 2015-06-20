@@ -54,7 +54,7 @@
   <table>
   <thead><tr><th>Key</th><th>Value</th></tr></thead>
   <tbody>
-  <tr><td class='key'>request.curloptions</td><td>{$rest.request->getCurlOptions}</td></tr>
+  <tr><td class='key'>request.curloptions</td><td><pre>{$rest.request->getCurlOptions()|var_dump}</pre></td></tr>
   <tr><td class='key'>request.status</td><td>{$rest.request->getStatus()}</td></tr>
   <tr><td class='key'>request.header</td><td><pre>{$rest.request->getHeader()}</pre></td></tr>
   </tbody>

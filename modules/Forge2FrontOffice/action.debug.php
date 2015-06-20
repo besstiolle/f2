@@ -16,7 +16,7 @@ for($i = 0 ; $i < $cpt; $i++) {
 	$json = preg_replace('#:([\[\{\]\}])#',': $1', $json);
 	$json = preg_replace('#\}\|\|\|\,#','} ,', $json);
 	$json = preg_replace('#\"([a-zA-Z0-9_]*)\"\:#','"<span class="json_key">$1</span>" : ', $json);
-	$json = preg_replace('#\: \"([\w\ \.\:\\\/\-]*)\"#',': "<span class="json_val">$1</span>"', $json);
+	$json = preg_replace('#\: \"([\w\ \.\:\\\/\-\&\;\\n\\r\(\)\#]*)\"#',': "<span class="json_val">$1</span>"', $json);
 	$json = preg_replace('#\: ([0-9\.]+)#',': <span class="json_valnum">$1</span>', $json);
 	$json = preg_replace('#\: (null)#',': <span class="json_null">null</span>', $json);
 	$json_exploded = explode("|||", $json);
@@ -54,7 +54,8 @@ function parseJsonExploded($json_exploded){
 		if(endswith($line,'}') || endswith($line,']')  || endswith($line,'} ,') || endswith($line,'] ,')){
 			$lvl--;
 		}
-		if(!empty(trim($line))){
+		$trim = trim($line);
+		if(!empty($trim)){
 			$output .= '<div class="json_line">'.pad($lvl).$line.'</div>';
 		}
 		if(endswith($line,'{') || endswith($line,'[') ){
