@@ -52,19 +52,24 @@ $smarty->assign('title', 'Edit project '.$project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('link_back', $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name']);
 
+$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
+$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
+$smarty->assign('root_url', $config['root_url']);
 
 $baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
 $baseurl_show = '/uploads/projects/'.$project['id'].'/show';
 
-$smarty->assign('$baseurl_avatar', $baseurl_avatar);
-$smarty->assign('$baseurl_show', $baseurl_show);
+$smarty->assign('baseurl_avatar', $baseurl_avatar);
+$smarty->assign('baseurl_show', $baseurl_show);
+
+$root_path = $config['root_path'];
 
 //Remove file on our side, we only propose visualization from the back server 
-if(is_dir($baseurl_avatar)){
-	rmdir($baseurl_avatar);
+if(is_dir($root_path.$baseurl_avatar)){
+	forge_utils::emptyDir($root_path.$baseurl_avatar, '#(.)*#', true);
 }
-if(is_dir($baseurl_show)){
-	rmdir($baseurl_show);
+if(is_dir($root_path.$baseurl_show)){
+	forge_utils::emptyDir($root_path.$baseurl_show, '#(.)*#', true);
 }
 
 echo $this->processTemplate('projectEdit.tpl');
