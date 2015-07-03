@@ -58,9 +58,9 @@ $request = RestAPI::$method($route, array(), $params);
 $response = json_decode($request->getResponse(), true);
 
 if($request->getStatus() === 200){
-	$sid = $response['data']['projects'][0]['id'];
-	$name = $response['data']['projects'][0]['name'];
-	$unix_name = $response['data']['projects'][0]['unix_name'];
+	$sid = $response['data']['projects']['id'];
+	$name = $response['data']['projects']['name'];
+	$unix_name = $response['data']['projects']['unix_name'];
 	$message = 'the project '.$name.' is updated with success';	
 	$link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
 	
