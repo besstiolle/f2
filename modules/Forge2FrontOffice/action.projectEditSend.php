@@ -59,14 +59,7 @@ if(!forge_utils::hasCookie('edit', $projectId)){
 $request = RestAPI::$method($route, array(), $params);
 $response = json_decode($request->getResponse(), true);
 
-if($request->getStatus() === 200){
-	$sid = $response['data']['projects']['id'];
-	$name = $response['data']['projects']['name'];
-	$unix_name = $response['data']['projects']['unix_name'];
-	$message = 'the project '.$name.' is updated with success';	
-	$link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
-	
-} else {
+if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
 	echo $this->processTemplate('rest_error.tpl');
@@ -74,8 +67,48 @@ if($request->getStatus() === 200){
 	return;
 }
 
+
+$sid = $response['data']['projects']['id'];
+$name = $response['data']['projects']['name'];
+$unix_name = $response['data']['projects']['unix_name'];
+$message = 'the project '.$name.' is updated with success';	
+$link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
+
 $smarty->assign('message',$message);
 $smarty->assign('link',$link);
+
+/** CHECK ALSO PICTURES **/
+$root_path = $config['root_path'];
+$baseurl_avatar = $root_path.'/uploads/projects/'.$project['id'].'/avatar';
+$baseurl_show = $root_path.'/uploads/projects/'.$project['id'].'/show';
+
+$files = getFilesInDir($baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
+if(!empty($files)) {
+	$route = 'rest/v1/files/project/avatar/'.$projectId;
+	$params['files'] = $files;
+	$request = RestAPI::$method($route, array(), $params);
+	if($request->getStatus() !== 200){
+		//Debug part
+		$smarty->assign('error', "Error processing the Rest request");
+		echo $this->processTemplate('rest_error.tpl');
+		include('lib/inc.debug.php');
+		return;
+	}
+}
+
+$files = getFilesInDir($baseurl_show, '/\.(gif|jpe?g|png)$/i');
+if(!empty($files)) {
+	$route = 'rest/v1/files/project/show/'.$projectId;
+	$params['files'] = $files;
+	$request = RestAPI::$method($route, array(), $params);
+	if($request->getStatus() !== 200){
+		//Debug part
+		$smarty->assign('error', "Error processing the Rest request");
+		echo $this->processTemplate('rest_error.tpl');
+		include('lib/inc.debug.php');
+		return;
+	}
+}
 
 echo $this->processTemplate('sended.tpl');
 
