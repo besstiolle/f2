@@ -1,4 +1,6 @@
-{strip}{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}
+{strip}{capture assign='doesPageExists'}{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}{/capture}
+
+{*if $doesPageExists}oui{else}non{/if*}
 
 {* Navigation bar*}
 <ul class="button-group">
