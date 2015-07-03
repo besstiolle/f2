@@ -175,4 +175,24 @@ final class forge_utils
         }
         return $files;
     }
+
+    public static function emptyDir($directory, $pattern = '#(.)*#', $recursiv = false){
+
+        if ($handle = opendir($directory)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry == "." || $entry == ".."){continue;}
+
+                if(is_dir($entry) && $recursiv) {
+                    forge_utils::emptyDir($directory.'/'.$entry, $pattern, $recursiv);
+                    rmdir($directory.'/'.$entry);
+                }
+
+                if (!is_dir($entry) && preg_match( $pattern , $entry)) {
+                    unlink($directory.'/'.$entry);
+                }
+            }
+            closedir($handle);
+        }
+        
+    }
 }
