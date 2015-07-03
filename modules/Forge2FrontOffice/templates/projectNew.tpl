@@ -1,3 +1,5 @@
+{* No navigation because no specific project *}
+
 {if isset($error)}
 	{$error}
 {else}
