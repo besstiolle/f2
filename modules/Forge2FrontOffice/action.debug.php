@@ -22,8 +22,16 @@ for($i = 0 ; $i < $cpt; $i++) {
 	$json_exploded = explode("|||", $json);
 	$json_exploded = parseJsonExploded($json_exploded);
 	$dump[$i]['json_exploded'] = $json_exploded;
-
-	$url = $dump[$i]['GET'];
+	if(isset($dump[$i]['GET'])){
+		$url = $dump[$i]['GET'];
+	} elseif(isset($dump[$i]['POST'])){
+		$url = $dump[$i]['POST'];
+	} elseif(isset($dump[$i]['PUT'])){
+		$url = $dump[$i]['PUT'];
+	} elseif(isset($dump[$i]['DELETE'])){
+		$url = $dump[$i]['DELETE'];
+	}
+	
 	$tmp = explode('?', $url);
 	//$url = explode($tmp[0];
 	$arr = array('base' => $tmp[0], 'key' => array());
