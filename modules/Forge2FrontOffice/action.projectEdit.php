@@ -40,7 +40,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 forge_utils::putCookie('edit', $projectId);
 
 
-$smarty->assign('fo<rm', $this->CreateFrontendFormStart($id, $returnid, 'projectEditSend', 'post','', false, '',  array(
+$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectEditSend', 'post','', false, '',  array(
 				 	'sid' => $project['id'],
 					'_link_next_failed'=> $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name'].'/edit',
 								)));
@@ -50,7 +50,19 @@ $smarty->assign('project', $project);
 $smarty->assign('link_back', $config['root_url'].'/project/'.$project['id'].'/'.$project['unix_name']);
 
 
+$baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
+$baseurl_show = '/uploads/projects/'.$project['id'].'/show';
 
+$smarty->assign('$baseurl_avatar', $baseurl_avatar);
+$smarty->assign('$baseurl_show', $baseurl_show);
+
+//Remove file on our side, we only propose visualization from the back server 
+if(is_dir($baseurl_avatar)){
+	rmdir($baseurl_avatar);
+}
+if(is_dir($baseurl_show)){
+	rmdir($baseurl_show);
+}
 
 echo $this->processTemplate('projectEdit.tpl');
 
