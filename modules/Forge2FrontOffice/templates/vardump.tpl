@@ -36,7 +36,10 @@
   <h2>&rarr;Rest Request&larr;</h2>
   <h3 class="subheader">Summary</h3>
   <div>
-    <p>Route : <span class='tiny'>{$rest.GET}</span></p>
+    {if isset($rest.GET)}<p>Route : <span class='method'>GET</span> <span class='tiny'>{$rest.GET}</span></p>{/if}
+    {if isset($rest.POST)}<p>Route : <span class='method'>POST</span> <span class='tiny'>{$rest.POST}</span></p>{/if}
+    {if isset($rest.PUT)}<p>Route : <span class='method'>PUT</span> <span class='tiny'>{$rest.PUT}</span></p>{/if}
+    {if isset($rest.DELETE)}<p>Route : <span class='method'>DELETE</span> <span class='tiny'>{$rest.DELETE}</span></p>{/if}
     <p>Code : <span class="{if $rest.http_code == 200}success{else}alert{/if} label">{$rest.http_code}</span></p>
     <p>Time : <span class="{if $rest.time_exec < 0.04}success{elseif $rest.time_exec < 0.1}warning{else}alert{/if} label">{$rest.time_exec}</span></p>
   </div>
