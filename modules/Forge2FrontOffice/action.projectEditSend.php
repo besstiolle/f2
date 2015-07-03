@@ -82,7 +82,7 @@ $root_path = $config['root_path'];
 $baseurl_avatar = $root_path.'/uploads/projects/'.$project['id'].'/avatar';
 $baseurl_show = $root_path.'/uploads/projects/'.$project['id'].'/show';
 
-$files = getFilesInDir($baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
+$files = forge_utils::getFilesInDir($baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
 if(!empty($files)) {
 	$route = 'rest/v1/files/project/avatar/'.$projectId;
 	$params['files'] = $files;
@@ -96,8 +96,8 @@ if(!empty($files)) {
 	}
 }
 
-$files = getFilesInDir($baseurl_show, '/\.(gif|jpe?g|png)$/i');
-if(!empty($files)) {
+$files = forge_utils::getFilesInDir($baseurl_show, '/\.(gif|jpe?g|png)$/i');
+if(empty($files)) {
 	$route = 'rest/v1/files/project/show/'.$projectId;
 	$params['files'] = $files;
 	$request = RestAPI::$method($route, array(), $params);
