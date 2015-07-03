@@ -1,3 +1,4 @@
+{*pas de navigation*}
 
 {include file='filter.tpl'}
 

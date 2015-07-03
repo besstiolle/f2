@@ -2,6 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+
 $projectId = $params['projectId'];
 $projectName = $params['projectName'];
 $state = EnumTrackerItemState::Open;

@@ -2,6 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+
 //Check the login
 if(!forge_utils::getConnectedUserId()){
 	forge_utils::inner_redirect('/account');

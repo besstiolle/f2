@@ -1,6 +1,7 @@
 <?php
 
-$smarty->addTemplateDir(dirname(__FILE__).'/../templates'); 
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
 
 if(!isset($page_counter)){
 	echo "<h1>Hey IT-man, you forgot to assign page_counter parameter in your action class (or there is something wrong with the REST query)</h1>";

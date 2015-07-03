@@ -2,6 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+
 $type = EnumProjectType::module;
 if(isset($params['type']) && Enum::IsValidValue( 'EnumProjectType', $params['type']) ){
 	$type = $params['type'];

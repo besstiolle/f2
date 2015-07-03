@@ -1,7 +1,10 @@
 <?php
 
 if (!function_exists("cmsms")) exit;
-//print_r($params);
+
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+
 $restParameters = array();
 $restParameters['n'] = 1;
 
