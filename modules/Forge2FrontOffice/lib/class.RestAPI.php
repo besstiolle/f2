@@ -183,9 +183,8 @@ class RestAPI{
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
 		$ref = RestAPI::addEntry($ref, 'request', $request);
-		/*
 		
-		return $request;*/
+		return $request;
 	}
 
 	private static function _DELETE($route, $paramsUrl = null, $paramsData = null){
