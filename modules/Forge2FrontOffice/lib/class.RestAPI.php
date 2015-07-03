@@ -32,21 +32,21 @@ class RestAPI{
 	private static $tokenExpireOn = null;
 	private static $tokenIsUnique = null;
 
-	private static $wiki = null;
+	private static $forge2 = null;
 
-	public static function init($login, $pass, $base_url, $wiki){
+	public static function init($login, $pass, $base_url, $forge2){
 		RestAPI::$login = $login;
 		RestAPI::$pass = $pass;
 		RestAPI::$base_url = $base_url;
-		RestAPI::$wiki = $wiki;
+		RestAPI::$forge2 = $forge2;
 	}
 
 	public static function getToken(){
 
 		//Get the token of the current application
 		if(RestAPI::$token == null){
-			RestAPI::$token = RestAPI::$wiki->GetPreference('token');
-			RestAPI::$tokenExpireOn = RestAPI::$wiki->GetPreference('tokenExpireOn');
+			RestAPI::$token = RestAPI::$forge2->GetPreference('token');
+			RestAPI::$tokenExpireOn = RestAPI::$forge2->GetPreference('tokenExpireOn');
 			RestAPI::$tokenIsUnique = false;
 		}
 		// if we already have a valid token which is not unique
@@ -72,8 +72,8 @@ class RestAPI{
 		RestAPI::$tokenExpireOn = $response['server']['token']['expireOn'];
 		RestAPI::$tokenIsUnique = $response['server']['token']['isUnique'];
 
-		RestAPI::$wiki->SetPreference('token', RestAPI::$token);
-		RestAPI::$wiki->SetPreference('tokenExpireOn', RestAPI::$tokenExpireOn);
+		RestAPI::$forge2->SetPreference('token', RestAPI::$token);
+		RestAPI::$forge2->SetPreference('tokenExpireOn', RestAPI::$tokenExpireOn);
 		return RestAPI::$token;
 
 	}
