@@ -2,7 +2,7 @@
 
 if (!function_exists("cmsms")) exit;
 
-
+/*
 $config = cmsms()->GetConfig();
 $basePath = $config['root_path'].'/modules/Forge2FrontOffice/';
 include_once($basePath.'lib/vendor/php-curl-master/Curl.php');
@@ -16,7 +16,7 @@ include_once($basePath.'lib/vendor/php-curl-master/Method/Put.php');
 
 
 // Namespace shortcut
-use sylouuu\Curl\Method as Curl;
+use sylouuu\Curl\Method as Curl;*/
 
 class Debug{
 
