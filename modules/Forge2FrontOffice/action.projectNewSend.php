@@ -27,9 +27,8 @@ if($request->getStatus() === 200){
 } else {
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	$smarty->assign('request', $request);
-	$smarty->assign('dump', RestAPI::getDump());
 	echo $this->processTemplate('rest_error.tpl');
+	include('lib/inc.debug.php');
 	return;
 }
 

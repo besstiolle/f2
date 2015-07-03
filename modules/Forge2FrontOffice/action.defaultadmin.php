@@ -23,7 +23,5 @@ try{
 	//Don't bother with this exception.
 }
 
-//var_dump(RestAPI::getDump());
-
 echo $this->processTemplate('defaultadmin.tpl');
 ?>
