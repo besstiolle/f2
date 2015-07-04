@@ -52,10 +52,16 @@ list($name, $hash) = $myFinder->makeTheFile($this, $config, $parameters);
 $smarty->assign('path',$config['root_url'].'/'.'modules'.'/'.$this->GetName().'/'."jqfu");
 $smarty->assign('name',$name);
 $smarty->assign('hash',$hash);
-
+$smarty->assign('alreadyCalled',singleton::$alreadyCalled);
+$smarty->assign('unique_id',md5(rand()));
+if(!singleton::$alreadyCalled){
+	singleton::$alreadyCalled = true;
+}
 
 $html = $this->ProcessTemplateFromDatabase($tpl);
 
 echo $html;
+
+
 
 ?>

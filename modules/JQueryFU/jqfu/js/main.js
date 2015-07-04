@@ -16,17 +16,22 @@ $(function () {
     'use strict';
 
     // Initialize the jQuery File Upload widget:
-    $('#fileupload').fileupload();
+    $('.fileupload').each(function () {
+        $(this).fileupload({
+            dropZone: $(this)
+        });
+    });
 
     // Enable iframe cross-domain access via redirect option:
-    $('#fileupload').fileupload(
+    $('.fileupload').each(function () {
+        $(this).fileupload(
         'option',
         'redirect',
         window.location.href.replace(
             /\/[^\/]*$/,
             '/cors/result.html?%s'
-        )
-    );
+        ));
+    });
 
     if (window.location.hostname === 'blueimp.github.com') {
         // Demo settings:

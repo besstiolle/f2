@@ -1,21 +1,25 @@
-<!-- Bootstrap CSS Toolkit styles -->
-<link rel="stylesheet" href="{$path}/css/bootstrap.min.css">
-<!-- Generic page styles -->
-<!-- link rel="stylesheet" href="{$path}/css/style.css" -->
-<!-- Bootstrap styles for responsive website layout, supporting different screen sizes -->
-<link rel="stylesheet" href="{$path}/css/bootstrap-responsive.min.css">
-<!-- Bootstrap CSS fixes for IE6 -->
-<!--[if lt IE 7]><link rel="stylesheet" href="{$path}/css/bootstrap-ie6.min.css"><![endif]-->
-<!-- Bootstrap Image Gallery styles -->
-<link rel="stylesheet" href="{$path}/css/bootstrap-image-gallery.min.css">
-<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
-<link rel="stylesheet" href="{$path}/css/jquery.fileupload-ui.css">
-<!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
-<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+{if !$alreadyCalled}
+	<!-- Bootstrap CSS Toolkit styles -->
+	<link rel="stylesheet" href="{$path}/css/bootstrap.min.css">
+	<!-- Generic page styles -->
+	<!-- link rel="stylesheet" href="{$path}/css/style.css" -->
+	<!-- Bootstrap styles for responsive website layout, supporting different screen sizes -->
+	<link rel="stylesheet" href="{$path}/css/bootstrap-responsive.min.css">
+	<!-- Bootstrap CSS fixes for IE6 -->
+	<!--[if lt IE 7]><link rel="stylesheet" href="{$path}/css/bootstrap-ie6.min.css"><![endif]-->
+	<!-- Bootstrap Image Gallery styles -->
+	<link rel="stylesheet" href="{$path}/css/bootstrap-image-gallery.min.css">
+	<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+	<link rel="stylesheet" href="{$path}/css/jquery.fileupload-ui.css">
+	<!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
+	<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+{else}<!-- Librairies was already included -->{/if}
 
 <div class='jqfu_block'>
 	<!-- The file upload form used as target for the file upload widget -->
-	<form id="fileupload" action="{$path}/server/php/index.php?name={$name}&amp;hash={$hash}" method="POST" enctype="multipart/form-data">
+		<form class="fileupload" action="{$path}/server/php/index.php?name={$name}&amp;hash={$hash}" method="POST" enctype="multipart/form-data"
+		data-upload-template-id="template-upload_{$unique_id}"
+	    data-download-template-id="template-download_{$unique_id}">
 		<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
 		<div class="row fileupload-buttonbar">
 			<div class="span7">
@@ -86,7 +90,7 @@
 </div>
 {literal}
 <!-- The template to display files available for upload -->
-<script id="template-upload" type="text/x-tmpl">
+<script id="template-upload_{/literal}{$unique_id}{literal}" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">
         <td class="preview"><span class="fade"></span></td>
@@ -117,7 +121,7 @@
 {% } %}
 </script>
 <!-- The template to display files available for download -->
-<script id="template-download" type="text/x-tmpl">
+<script id="template-download_{/literal}{$unique_id}{literal}" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-download fade">
         {% if (file.error) { %}
@@ -146,30 +150,31 @@
 {% } %}
 </script>{/literal}
 
-
-<script src="{$path}/js/jquery.min.js"></script> 
-<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-<script src="{$path}/js/vendor/jquery.ui.widget.js"></script>
-<!-- The Templates plugin is included to render the upload/download listings -->
-<script src="{$path}/js/tmpl.min.js"></script>
-<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-<script src="{$path}/js/load-image.min.js"></script>
-<!-- The Canvas to Blob plugin is included for image resizing functionality -->
-<script src="{$path}/js/canvas-to-blob.min.js"></script>
-<!-- Bootstrap JS and Bootstrap Image Gallery are not required, but included for the demo -->
-<script src="{$path}/js/bootstrap.min.js"></script>
-<script src="{$path}/js/bootstrap-image-gallery.min.js"></script>
-<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-<script src="{$path}/js/jquery.iframe-transport.js"></script>
-<!-- The basic File Upload plugin -->
-<script src="{$path}/js/jquery.fileupload.js"></script>
-<!-- The File Upload file processing plugin -->
-<script src="{$path}/js/jquery.fileupload-fp.js"></script>
-<!-- The File Upload user interface plugin -->
-<script src="{$path}/js/jquery.fileupload-ui.js"></script>
-<!-- The localization script -->
-<script src="{$path}/js/locale.js"></script>
-<!-- The main application script -->
-<script src="{$path}/js/main.js"></script>
-<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
-<!--[if gte IE 8]><script src="{$path}/js/cors/jquery.xdr-transport.js"></script><![endif]-->
+{if !$alreadyCalled}
+	<script src="{$path}/js/jquery.min.js"></script> 
+	<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+	<script src="{$path}/js/vendor/jquery.ui.widget.js"></script>
+	<!-- The Templates plugin is included to render the upload/download listings -->
+	<script src="{$path}/js/tmpl.min.js"></script>
+	<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+	<script src="{$path}/js/load-image.min.js"></script>
+	<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+	<script src="{$path}/js/canvas-to-blob.min.js"></script>
+	<!-- Bootstrap JS and Bootstrap Image Gallery are not required, but included for the demo -->
+	<script src="{$path}/js/bootstrap.min.js"></script>
+	<script src="{$path}/js/bootstrap-image-gallery.min.js"></script>
+	<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+	<script src="{$path}/js/jquery.iframe-transport.js"></script>
+	<!-- The basic File Upload plugin -->
+	<script src="{$path}/js/jquery.fileupload.js"></script>
+	<!-- The File Upload file processing plugin -->
+	<script src="{$path}/js/jquery.fileupload-fp.js"></script>
+	<!-- The File Upload user interface plugin -->
+	<script src="{$path}/js/jquery.fileupload-ui.js"></script>
+	<!-- The localization script -->
+	<script src="{$path}/js/locale.js"></script>
+	<!-- The main application script -->
+	<script src="{$path}/js/main.js"></script>
+	<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
+	<!--[if gte IE 8]><script src="{$path}/js/cors/jquery.xdr-transport.js"></script><![endif]-->
+{else}<!-- Librairies was already included -->{/if}

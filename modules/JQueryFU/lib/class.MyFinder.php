@@ -31,9 +31,9 @@ class MyFinder
     function makeTheFile(CMSModule $module, $config, $parameters){
       $name = $this->getName($parameters);
       $hash = $this->getHash($parameters);
-        
+
       if(!file_exists($this->tmp_path.'JQueryFU'.DIRECTORY_SEPARATOR.$name.'.php')) {
-       
+
         $handle = fopen($this->tmp_path.'JQueryFU'.DIRECTORY_SEPARATOR.$name.'.php', 'w');
         if($handle === FALSE) {
           echo "<h3>Error during the creation of Skeleton class</h3>";
@@ -44,7 +44,7 @@ class MyFinder
 
         //List of file type accepted (regex). By default : images file only
         $this->assignParam($module->smarty, $parameters, "accept_file_types", '/\.(txt|gif|jpe?g|png)$/i');
-        
+
         // The maximum number of files for the upload directory: (number)
         $this->assignParam($module->smarty, $parameters, "max_number_of_files","null");
 
@@ -56,45 +56,45 @@ class MyFinder
 
         //Remove accents and special caracters from the name of the file
         $this->assignParam($module->smarty, $parameters, "clean_name", "true");
-		
+
         //Default directory for the uploads
         $this->assignParam($module->smarty, $parameters, "dir_path", DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'jqueryfu');
         $this->assignParam($module->smarty, $parameters, "dir_url", "/uploads/jqueryfu");
-		
-		if(isset($parameters['dir_path'])){
-			$value_dir_path = $parameters['dir_path'];
-		} else {
-			$value_dir_path = DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'jqueryfu';
-		}
-		$module->smarty->assign('dir_path',$value_dir_path);
-		
-		if(isset($parameters['dir_url'])){
-			$value_dir_url = $parameters['dir_url'];
-		} else {
-			$value_dir_url = "/uploads/jqueryfu";
-		}
-		$module->smarty->assign('dir_url',$value_dir_url);
 
-		//Defult root path/url
-		if(isset($parameters['root_path'])){
-			$value_root_path = $parameters['root_path'];
-		} else {
-			$value_root_path = $config['root_path'];
-		}
-		$module->smarty->assign('root_path',$value_root_path);
-		
-		if(isset($parameters['root_url'])){
-			$value_root_url = $parameters['root_url'];
-		} else {
-			$value_root_url = $config['root_url'];
-		}
-		$module->smarty->assign('root_url',$value_root_url);
-		
-		$module->smarty->assign('DIRECTORY_SEPARATOR', DIRECTORY_SEPARATOR);
+        if(isset($parameters['dir_path'])){
+          $value_dir_path = $parameters['dir_path'];
+        } else {
+          $value_dir_path = DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'jqueryfu';
+        }
+        $module->smarty->assign('dir_path',$value_dir_path);
+
+        if(isset($parameters['dir_url'])){
+          $value_dir_url = $parameters['dir_url'];
+        } else {
+          $value_dir_url = "/uploads/jqueryfu";
+        }
+        $module->smarty->assign('dir_url',$value_dir_url);
+
+        //Defult root path/url
+        if(isset($parameters['root_path'])){
+          $value_root_path = $parameters['root_path'];
+        } else {
+          $value_root_path = $config['root_path'];
+        }
+        $module->smarty->assign('root_path',$value_root_path);
+
+        if(isset($parameters['root_url'])){
+          $value_root_url = $parameters['root_url'];
+        } else {
+          $value_root_url = $config['root_url'];
+        }
+        $module->smarty->assign('root_url',$value_root_url);
+
+        $module->smarty->assign('DIRECTORY_SEPARATOR', DIRECTORY_SEPARATOR);
 
         //$this->createFolders($value_root_path.$value_dir_path);
         $this->createFolders($value_root_path.$value_dir_path.DIRECTORY_SEPARATOR.'thumbnails');
- 
+
         fwrite ($handle , $module->ProcessTemplate('skeleton.tpl'));
         fclose($handle);
       }
