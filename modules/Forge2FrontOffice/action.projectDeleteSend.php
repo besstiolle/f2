@@ -44,7 +44,7 @@ if( forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) )
 //get cookie to avoid url-scam
 if(!forge_utils::hasCookie('delete', $projectId)){
 	$smarty->assign('title', "Token expired");
-	$smarty->assign('error', "Your token is expired. You should retry one more time");
+	$smarty->assign('error', "Your token has been already used. You should retry one more time");
 	$smarty->assign('url', $config['root_url']."/project/".$projectId."/".$project['unix_name']."/delete");
 	echo $this->processTemplate('forge_error.tpl');
 	return;

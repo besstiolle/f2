@@ -50,7 +50,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 //get cookie to avoid url-scam
 if(!forge_utils::hasCookie('edit', $projectId)){
 	$smarty->assign('title', "Token expired");
-	$smarty->assign('error', "Your token is expired. You should retry one more time");
+	$smarty->assign('error', "Your token has been already used. You should retry one more time");
 	$smarty->assign('url', $config['root_url']."/project/".$projectId."/".$project['unix_name']."/edit");
 	echo $this->processTemplate('forge_error.tpl');
 	return;
@@ -79,14 +79,23 @@ $smarty->assign('link',$link);
 
 /** CHECK ALSO PICTURES **/
 $root_path = $config['root_path'];
+$root_url = $config['root_url'];
 $baseurl_avatar = $root_path.'/uploads/projects/'.$project['id'].'/avatar';
 $baseurl_show = $root_path.'/uploads/projects/'.$project['id'].'/show';
 
 $files = forge_utils::getFilesInDir($baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
 if(!empty($files)) {
-	$route = 'rest/v1/files/project/avatar/'.$projectId;
-	$params['files'] = $files;
-	$request = RestAPI::$method($route, array(), $params);
+	$route = 'rest/v1/files/project/'.$projectId.'/avatar/';
+
+	$filesParams = array();
+	foreach ($files as $file) {
+		$filesParams[$file] = array();
+		$filesParams[$file]['url'] = '';
+		$filesParams[$file]['id_related'] = $projectId;
+	}
+	$params['files'] = $filesParams;
+
+	$request = RestAPI::PUT($route, array(), $params);
 	if($request->getStatus() !== 200){
 		//Debug part
 		$smarty->assign('error', "Error processing the Rest request");
@@ -98,9 +107,17 @@ if(!empty($files)) {
 
 $files = forge_utils::getFilesInDir($baseurl_show, '/\.(gif|jpe?g|png)$/i');
 if(empty($files)) {
-	$route = 'rest/v1/files/project/show/'.$projectId;
-	$params['files'] = $files;
-	$request = RestAPI::$method($route, array(), $params);
+	$route = 'rest/v1/files/project/'.$projectId.'/show/';
+	
+	$filesParams = array();
+	foreach ($files as $file) {
+		$filesParams[$file] = array();
+		$filesParams[$file]['url'] = '';
+		$filesParams[$file]['id_related'] = $projectId;
+	}
+	$params['files'] = $filesParams;
+
+	$request = RestAPI::PUT($route, array(), $params);
 	if($request->getStatus() !== 200){
 		//Debug part
 		$smarty->assign('error', "Error processing the Rest request");
