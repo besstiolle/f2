@@ -57,12 +57,12 @@
 		<div class="fileupload-loading"></div>
 		<br>
 		<!-- The table listing the files available for upload/download -->
-		<table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+		<table class="table table-striped"><tbody class="files" data-toggle="modal-gallery_{$unique_id}" data-target="#modal-gallery_{$unique_id}"></tbody></table>
 	</form>
 
 
 	<!-- modal-gallery is the modal dialog used for the image gallery -->
-	<div id="modal-gallery" class="modal modal-gallery hide fade" data-filter=":odd">
+	<div id="modal-gallery_{$unique_id}" class="modal modal-gallery hide fade" data-filter=":odd">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3 class="modal-title"></h3>
