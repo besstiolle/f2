@@ -71,7 +71,7 @@ if($request->getStatus() !== 200){
 $sid = $response['data']['projects']['id'];
 $name = $response['data']['projects']['name'];
 $unix_name = $response['data']['projects']['unix_name'];
-$message = 'the project '.$name.' is updated with success';	
+$message = 'the project '.$name.' is updated with success<br/>If you uploaded some pictures, they will be soon online.';	
 $link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
 
 $smarty->assign('message',$message);
