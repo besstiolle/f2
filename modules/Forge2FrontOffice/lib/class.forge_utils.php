@@ -162,12 +162,12 @@ final class forge_utils
      **/
     public static function getFilesInDir($directory, $pattern){
         $files = array();
-        if(!is_dir($directory)){
+        if(!forge_utils::another_is_dir($directory)){
             return null;
         }
         if ($handle = opendir($directory)) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && !is_dir($entry) && preg_match( $pattern , $entry)) {
+                if ($entry != "." && $entry != ".." && !forge_utils::another_is_dir($directory.'/'.$entry) && preg_match( $pattern , $entry)) {
                    $files[] = $entry;
                 }
             }
@@ -182,17 +182,25 @@ final class forge_utils
             while (false !== ($entry = readdir($handle))) {
                 if ($entry == "." || $entry == ".."){continue;}
 
-                if(is_dir($entry) && $recursiv) {
+                if(forge_utils::another_is_dir($directory.'/'.$entry) && $recursiv) {
                     forge_utils::emptyDir($directory.'/'.$entry, $pattern, $recursiv);
-                    rmdir($directory.'/'.$entry);
+                    //rmdir($directory.'/'.$entry); will break JqueryFU
                 }
 
-                if (!is_dir($entry) && preg_match( $pattern , $entry)) {
+                if (!forge_utils::another_is_dir($directory.'/'.$entry) && preg_match( $pattern , $entry)) {
                     unlink($directory.'/'.$entry);
                 }
             }
             closedir($handle);
         }
         
+    }
+
+    /**
+     * Another function to test Dir, because under windows, is_dir can return false in some case
+     **/
+    public static function another_is_dir ($file) {
+        return file_exists($file) && is_dir($file);
+        //return file_exists($file) && ((fileperms("$file") & 0x4000) == 0x4000);
     }
 }
