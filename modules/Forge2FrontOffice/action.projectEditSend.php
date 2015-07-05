@@ -80,18 +80,17 @@ $smarty->assign('link',$link);
 /** CHECK ALSO PICTURES **/
 $root_path = $config['root_path'];
 $root_url = $config['root_url'];
-$baseurl_avatar = $root_path.'/uploads/projects/'.$project['id'].'/avatar';
-$baseurl_show = $root_path.'/uploads/projects/'.$project['id'].'/show';
+$baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
+$baseurl_show = '/uploads/projects/'.$project['id'].'/show';
 
-$files = forge_utils::getFilesInDir($baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
+$files = forge_utils::getFilesInDir($root_path.$baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
 if(!empty($files)) {
 	$route = 'rest/v1/files/project/'.$projectId.'/avatar/';
 
 	$filesParams = array();
 	foreach ($files as $file) {
 		$filesParams[$file] = array();
-		$filesParams[$file]['url'] = '';
-		$filesParams[$file]['id_related'] = $projectId;
+		$filesParams[$file]['url'] = $root_url.$baseurl_avatar.'/'.$file;
 	}
 	$params['files'] = $filesParams;
 
@@ -105,15 +104,14 @@ if(!empty($files)) {
 	}
 }
 
-$files = forge_utils::getFilesInDir($baseurl_show, '/\.(gif|jpe?g|png)$/i');
-if(empty($files)) {
+$files = forge_utils::getFilesInDir($root_path.$baseurl_show, '/\.(gif|jpe?g|png)$/i');
+if(!empty($files)) {
 	$route = 'rest/v1/files/project/'.$projectId.'/show/';
 	
 	$filesParams = array();
 	foreach ($files as $file) {
 		$filesParams[$file] = array();
-		$filesParams[$file]['url'] = '';
-		$filesParams[$file]['id_related'] = $projectId;
+		$filesParams[$file]['url'] = $root_url.$baseurl_show.'/'.$file;
 	}
 	$params['files'] = $filesParams;
 
