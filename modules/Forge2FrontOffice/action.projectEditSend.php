@@ -91,8 +91,10 @@ $routeShow = 'rest/v1/files/project/'.$projectId.'/show/';
 
 $regex = '/\.(gif|jpe?g|png)$/i';
 
-processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $regex, $routeAvatar);
-processImages($root_path, $root_url, $baseurl_show, $baseurl_show_tmp, $regex, $routeShow);
+if(!processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $regex, $routeAvatar) ||
+	!processImages($root_path, $root_url, $baseurl_show, $baseurl_show_tmp, $regex, $routeShow)){
+	return;
+}
 
 
 echo $this->processTemplate('sended.tpl');
@@ -116,7 +118,7 @@ function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $r
 
 			$filesParams[$file] = array();
 			$filesParams[$file]['url'] = $root_url.$baseurl_tmp.'/'.$file;
-			$filesParams[$file]['md5'] = md5($root_path.$baseurl_tmp);
+			$filesParams[$file]['md5'] = md5_file($root_path.$baseurl_tmp.'/'.$file);
 		}
 		$params['files'] = $filesParams;
 
