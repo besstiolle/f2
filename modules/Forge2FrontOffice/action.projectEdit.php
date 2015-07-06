@@ -56,7 +56,9 @@ $smarty->assign('is_member', forge_utils::is_project_member($project, forge_util
 $smarty->assign('root_url', $config['root_url']);
 
 $baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
+$baseurl_avatar_tmp = '/uploads/projects_cache/'.$project['id'].'/avatar';
 $baseurl_show = '/uploads/projects/'.$project['id'].'/show';
+$baseurl_show_tmp = '/uploads/projects_cache/'.$project['id'].'/show';
 
 $smarty->assign('baseurl_avatar', $baseurl_avatar);
 $smarty->assign('baseurl_show', $baseurl_show);
@@ -65,10 +67,12 @@ $root_path = $config['root_path'];
 
 //Remove file on our side, we only propose visualization from the back server 
 if(is_dir($root_path.$baseurl_avatar)){
-	forge_utils::emptyDir($root_path.$baseurl_avatar, '#(.)*#', true);
+	forge_utils::emptyDir($root_path.$baseurl_avatar, '#(.)*#', false); // should be already empty
+	forge_utils::emptyDir($root_path.$baseurl_avatar.'/thumbnails', '#(.)*#', false);
 }
 if(is_dir($root_path.$baseurl_show)){
-	forge_utils::emptyDir($root_path.$baseurl_show, '#(.)*#', true);
+	forge_utils::emptyDir($root_path.$baseurl_show, '#(.)*#', false); // should be already empty
+	forge_utils::emptyDir($root_path.$baseurl_show.'/thumbnails', '#(.)*#', false);
 }
 
 echo $this->processTemplate('projectEdit.tpl');

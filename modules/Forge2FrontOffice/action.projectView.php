@@ -29,7 +29,7 @@ $response = json_decode($request->getResponse(), true);
 $project = $response['data']['projects'][0];
 $config = cmsms()->GetConfig();
 
-
+//TODO : ask to the back office the files
 $baseurl_avatar = '/uploads/projects/'.$projectId.'/avatar/';
 $baseurl_show = '/uploads/projects/'.$projectId.'/show/';
 

@@ -80,51 +80,54 @@ $smarty->assign('link',$link);
 /** CHECK ALSO PICTURES **/
 $root_path = $config['root_path'];
 $root_url = $config['root_url'];
+
 $baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
+$baseurl_avatar_tmp = '/uploads/projects_cache/'.$project['id'].'/avatar';
+$routeAvatar = 'rest/v1/files/project/'.$projectId.'/avatar/';
+
 $baseurl_show = '/uploads/projects/'.$project['id'].'/show';
+$baseurl_show_tmp = '/uploads/projects_cache/'.$project['id'].'/show';
+$routeShow = 'rest/v1/files/project/'.$projectId.'/show/';
 
-$files = forge_utils::getFilesInDir($root_path.$baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
-if(!empty($files)) {
-	$route = 'rest/v1/files/project/'.$projectId.'/avatar/';
+$regex = '/\.(gif|jpe?g|png)$/i';
 
-	$filesParams = array();
-	foreach ($files as $file) {
-		$filesParams[$file] = array();
-		$filesParams[$file]['url'] = $root_url.$baseurl_avatar.'/'.$file;
-	}
-	$params['files'] = $filesParams;
+processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $regex, $routeAvatar);
+processImages($root_path, $root_url, $baseurl_show, $baseurl_show_tmp, $regex, $routeShow);
 
-	$request = RestAPI::PUT($route, array(), $params);
-	if($request->getStatus() !== 200){
-		//Debug part
-		$smarty->assign('error', "Error processing the Rest request");
-		echo $this->processTemplate('rest_error.tpl');
-		include('lib/inc.debug.php');
-		return;
-	}
-}
-
-$files = forge_utils::getFilesInDir($root_path.$baseurl_show, '/\.(gif|jpe?g|png)$/i');
-if(!empty($files)) {
-	$route = 'rest/v1/files/project/'.$projectId.'/show/';
-	
-	$filesParams = array();
-	foreach ($files as $file) {
-		$filesParams[$file] = array();
-		$filesParams[$file]['url'] = $root_url.$baseurl_show.'/'.$file;
-	}
-	$params['files'] = $filesParams;
-
-	$request = RestAPI::PUT($route, array(), $params);
-	if($request->getStatus() !== 200){
-		//Debug part
-		$smarty->assign('error', "Error processing the Rest request");
-		echo $this->processTemplate('rest_error.tpl');
-		include('lib/inc.debug.php');
-		return;
-	}
-}
 
 echo $this->processTemplate('sended.tpl');
 
 include('lib/inc.debug.php');
+
+
+function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $route){
+
+	$files = forge_utils::getFilesInDir($root_path.$baseurl, $regex);
+	if(!empty($files)) {
+		
+		$filesParams = array();
+		foreach ($files as $file) {
+			if(!is_dir($root_path.$baseurl_tmp)){
+				//Create tmp directory if necessary
+				mkdir($root_path.$baseurl_tmp, 0750, true);
+			}
+			//Moving to tmp directory
+			rename($root_path.$baseurl.'/'.$file, $root_path.$baseurl_tmp.'/'.$file);
+
+			$filesParams[$file] = array();
+			$filesParams[$file]['url'] = $root_url.$baseurl_tmp.'/'.$file;
+			$filesParams[$file]['md5'] = md5($root_path.$baseurl_tmp);
+		}
+		$params['files'] = $filesParams;
+
+		$request = RestAPI::PUT($route, array(), $params);
+		if($request->getStatus() !== 200){
+			//Debug part
+			$smarty->assign('error', "Error processing the Rest request");
+			echo $this->processTemplate('rest_error.tpl');
+			include('lib/inc.debug.php');
+			return false;
+		}
+	}
+	return true;
+}
