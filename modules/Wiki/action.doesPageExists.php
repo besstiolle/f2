@@ -14,14 +14,21 @@ if(!empty($params['vlang'])){
 	$vlang = $params['vlang'];
 }
 
+
 $page = PagesService::getOneByAlias($pprefix, $palias);
 $lang = LangsService::getOne($vlang);
+
+
 $version = null;
 if($page == null || $lang == null){
-	return false;
+	return;
 } else {
 	$version = VersionsService::getOne($page->get("page_id"), $lang->get("lang_id") , Version::$STATUS_CURRENT);
-	return ($version != null);
+	if($version != null){
+		echo "true";
+	}else{
+	}
+	return;
 }
 
 ?>

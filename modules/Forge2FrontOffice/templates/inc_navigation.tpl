@@ -1,7 +1,5 @@
 {strip}{capture assign='doesPageExists'}{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}{/capture}
 
-
-
 {* Navigation bar*}
 <ul class="button-group">
 	<li><a class='button tiny' href='{$root_url}/project/list'>Project List</a></li>
