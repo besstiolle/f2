@@ -24,12 +24,12 @@ if($request->getStatus() === 404){
 	$smarty->assign('message',$message);
 	$smarty->assign('link',$link);
 
-	echo $this->processTemplate('sended.tpl');
+	echo $smarty->display('msg_sended.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -52,7 +52,7 @@ if(!forge_utils::hasCookie('edit', $projectId)){
 	$smarty->assign('title', "Token expired");
 	$smarty->assign('error', "Your token has been already used. You should retry one more time");
 	$smarty->assign('url', $config['root_url']."/project/".$projectId."/".$project['unix_name']."/edit");
-	echo $this->processTemplate('forge_error.tpl');
+	echo $smarty->display('msg_forge_error.tpl');
 	return;
 }
 
@@ -62,7 +62,7 @@ $response = json_decode($request->getResponse(), true);
 if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -97,7 +97,7 @@ if(!processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $
 }
 
 
-echo $this->processTemplate('sended.tpl');
+echo $smarty->display('msg_sended.tpl');
 
 include('lib/inc.debug.php');
 
@@ -126,7 +126,7 @@ function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $r
 		if($request->getStatus() !== 200){
 			//Debug part
 			$smarty->assign('error', "Error processing the Rest request");
-			echo $this->processTemplate('rest_error.tpl');
+			echo $smarty->display('msg_rest_error.tpl');
 			include('lib/inc.debug.php');
 			return false;
 		}

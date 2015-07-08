@@ -23,5 +23,5 @@ try{
 	//Don't bother with this exception.
 }
 
-echo $this->processTemplate('defaultadmin.tpl');
+echo $smarty->display('defaultadmin.tpl');
 ?>

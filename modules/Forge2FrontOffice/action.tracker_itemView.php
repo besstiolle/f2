@@ -14,12 +14,12 @@ $projectName = $params['projectName'];
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -34,12 +34,12 @@ $project = $response['data']['projects'][0];
 $request = RestAPI::GET('rest/v1/tracker_item/'.$params['tracker_itemId']);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -63,12 +63,12 @@ $parameter = array('commentable_id' => $params['tracker_itemId']);
 $request = RestAPI::GET('rest/v1/comment/', $parameter);
 if($request->getStatus() === 404){
 /*	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;*/
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -83,12 +83,12 @@ $parameter = array('historizable_id' => $params['tracker_itemId']);
 $request = RestAPI::GET('rest/v1/history/', $parameter);
 if($request->getStatus() === 404){
 /*	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;*/
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -122,7 +122,7 @@ $smarty->assign('is_member', forge_utils::is_project_member($project, forge_util
 $avatar = $config['root_url'].'/uploads/forge/design/user-64.png';
 $smarty->assign('avatar', $avatar);
 
-echo $this->processTemplate('tracker_itemView.tpl');
+echo $smarty->display('tracker_itemView.tpl');
 
 include('lib/inc.debug.php');
 ?>

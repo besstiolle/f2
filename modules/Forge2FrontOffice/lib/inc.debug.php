@@ -9,5 +9,5 @@ if($tag !== FALSE){
 	$config = cmsms()->GetConfig();
 	$smarty->assign('root_url',$config['root_url']);
 	$smarty->assign('debug_tag',$tag);
-	echo $this->processTemplate('vardump_tag.tpl');
+	echo $smarty->display('inc_vardump_tag.tpl');
 }

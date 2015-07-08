@@ -19,12 +19,12 @@ $request = RestAPI::GET('rest/v1/assignment', $restParameters);
 
 if($request->getStatus() === 404){
 	/*$smarty->assign('error', 'you don\'t have any project');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;*/
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');	
 	return;
 }
@@ -42,7 +42,7 @@ $smarty->assign('link_create', $config['root_url'].'/project/new');
 $smarty->assign('enumProjectState', Enum::ConstToArray('EnumProjectState'));
 $smarty->assign('enumAssignmentRole', Enum::ConstToArray('EnumAssignmentRole'));
 
-echo $this->processTemplate('my_projects.tpl');
+echo $smarty->display('inc_myProjects.tpl');
 
 include('lib/inc.debug.php');
 ?>

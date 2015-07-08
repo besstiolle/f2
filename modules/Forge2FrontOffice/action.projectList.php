@@ -40,12 +40,12 @@ if(isset($params['filterAlpha'])) {
 $request = RestAPI::GET('rest/v1/project', $restParameters);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'there is no project in the forge');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -112,6 +112,7 @@ $page_url = $config['root_url'].'/project/list?'.$currentQueryParameter;
 //Include paginator
 include('lib/inc.paginator.php');
 
-echo $this->processTemplate('projects.tpl');
+//echo $smarty->display('projects.tpl');
+echo  $smarty->display('projects.tpl');
 
 include('lib/inc.debug.php');

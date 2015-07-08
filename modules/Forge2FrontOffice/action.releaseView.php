@@ -16,12 +16,12 @@ if(empty($params['all'])){
 $request = RestAPI::GET('rest/v1/release/'.$params['releaseId'], $restParameters);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The release '.$params['releaseId'].' doesn\' not exists');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -44,12 +44,12 @@ if($all){
 
 	if($request->getStatus() === 404){
 		$smarty->assign('error', 'The release '.$params['releaseId'].' doesn\' not exists');
-		echo $this->processTemplate('notFound.tpl');
+		echo $smarty->display('msg_notFound.tpl');
 		return;
 	} else if($request->getStatus() !== 200){
 		//Debug part
 		$smarty->assign('error', "Error processing the Rest request");
-		echo $this->processTemplate('rest_error.tpl');
+		echo $smarty->display('msg_rest_error.tpl');
 		include('lib/inc.debug.php');
 		return;
 	}
@@ -71,12 +71,12 @@ $projectId = $release['package_id']['project_id'];
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project #'.$projectId.' does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -109,6 +109,6 @@ $smarty->assign('baseurl_avatar', $baseurl_avatar);
 $smarty->assign('baseurl_show', $baseurl_show);
 
 
-echo $this->processTemplate('releaseView.tpl');
+echo $smarty->display('releaseView.tpl');
 
 include('lib/inc.debug.php');

@@ -27,7 +27,7 @@ if($request->getStatus() === 200){
 } else {
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -35,6 +35,6 @@ if($request->getStatus() === 200){
 $smarty->assign('message',$message);
 $smarty->assign('link',$link);
 
-echo $this->processTemplate('sended.tpl');
+echo $smarty->display('msg_sended.tpl');
 
 include('lib/inc.debug.php');

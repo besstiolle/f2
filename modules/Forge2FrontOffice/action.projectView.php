@@ -13,12 +13,12 @@ $projectName = $params['projectName'];
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -45,12 +45,12 @@ $restParameters['is_public'] = 1;
 $request = RestAPI::GET('rest/v1/package/', $restParameters);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') doesn\' have any package');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -68,12 +68,12 @@ for($i=0; $i < count($packages); $i++) {
 	$request = RestAPI::GET('rest/v1/release/', $restParameters);
 	if($request->getStatus() === 404){
 		$smarty->assign('error', 'The package '.$package['id'].' doesn\' have any release');
-		echo $this->processTemplate('notFound.tpl');
+		echo $smarty->display('msg_notFound.tpl');
 		return;
 	} else if($request->getStatus() !== 200){
 		//Debug part
 		$smarty->assign('error', "Error processing the Rest request");
-		echo $this->processTemplate('rest_error.tpl');
+		echo $smarty->display('msg_rest_error.tpl');
 		include('lib/inc.debug.php');
 		return;
 	}
@@ -94,6 +94,6 @@ $smarty->assign('baseurl_avatar', $baseurl_avatar);
 $smarty->assign('baseurl_show', $baseurl_show);
 
 
-echo $this->processTemplate('projectView.tpl');
+echo $smarty->display('projectView.tpl');
 
 include('lib/inc.debug.php');

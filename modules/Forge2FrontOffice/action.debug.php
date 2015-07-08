@@ -2,6 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
+$config = cmsms()->GetConfig();
+$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+
 
 $debug = Debug::getInstance();
 $dump = $debug->load($params['debugId']);
@@ -51,7 +54,7 @@ for($i = 0 ; $i < $cpt; $i++) {
 }
 $smarty->assign('dump',$dump);
 $smarty->assign('title',"Debug the Rest Stack.");
-echo $this->processTemplate('vardump.tpl');
+echo $smarty->display('vardump.tpl');
 
 
 function parseJsonExploded($json_exploded){

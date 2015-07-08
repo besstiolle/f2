@@ -17,12 +17,12 @@ $projectName = $params['projectName'];
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The Project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -75,6 +75,6 @@ if(is_dir($root_path.$baseurl_show)){
 	forge_utils::emptyDir($root_path.$baseurl_show.'/thumbnails', '#(.)*#', false);
 }
 
-echo $this->processTemplate('projectEdit.tpl');
+echo $smarty->display('projectEdit.tpl');
 
 include('lib/inc.debug.php');

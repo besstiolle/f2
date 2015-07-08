@@ -21,12 +21,12 @@ if(isset($params['state'])){
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -61,12 +61,12 @@ if($state !== NULL){
 $request = RestAPI::GET('rest/v1/tracker_item/', $restParameters);
 if($request->getStatus() === 404){
 /*	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;*/
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 }
@@ -137,6 +137,6 @@ include('lib/inc.paginator.php');
 $smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
 $smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 
-echo $this->processTemplate('tracker_items.tpl');
+echo $smarty->display('tracker_items.tpl');
 
 include('lib/inc.debug.php');

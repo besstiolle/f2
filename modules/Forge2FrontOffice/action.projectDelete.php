@@ -17,12 +17,12 @@ $projectName = $params['projectName'];
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
 	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $this->processTemplate('notFound.tpl');
+	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
-	echo $this->processTemplate('rest_error.tpl');
+	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
 	return;
 } 
@@ -49,6 +49,6 @@ $smarty->assign('title', 'Delete project '.$project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('link_back', $config['root_url'].'/project/list');
 
-echo $this->processTemplate('projectDelete.tpl');
+echo $smarty->display('projectDelete.tpl');
 
 include('lib/inc.debug.php');
