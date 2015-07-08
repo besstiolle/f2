@@ -26,6 +26,13 @@ php;
 
 $wiki->SetTemplate('access',$secu);
 
+//Set preferences
+$wiki->SetPreference('multiInstances',1);
+$wiki->SetPreference('prefix','project\/[0-9]*\/(.)*\/wiki');
+
+//Refresh Routes
+$wiki->CreateStaticRoutes();
+
 $this->redirect($id, 'defaultadmin', $returnid, array('message'=>'admin_wiki_initiated'));
 
 ?>
