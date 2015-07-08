@@ -1,18 +1,33 @@
-<div class="row">
+{process_pagedata}{content assign='content'}<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{if isset($title)}{$title}{else}{title}{/if} | {Sitename}</title>
+    {cms_stylesheet}
+
+    <link rel='stylesheet' type='text/css' href='{root_url}/modules/Wiki/scripts/fancybox/jquery.fancybox.css?v=2.1.5' media='screen' />
+
+    <script src="{root_url}/uploads/foundation/js/vendor/modernizr.js"></script>
+  </head>
+  <body>
+  
+  <div class="row">
 	<div class="large-12 columns">
-		<h1>{block name=title}{if isset($title)}{$title}{else}{title}{/if}{/block}</h1>
+		<h1>{if isset($title)}{$title}{else}{title}{/if}</h1>
 	</div>
 </div>
 
 <div class="row">
 	<div class="large-8 columns">
 		<div class="">
-			{block name=main_content}:){/block}
+                        {Forge2FrontOffice action='navigation'}
+			{$content}
 		</div>
 	</div>
 
 	<div class="large-4 columns">
-		{block name=sidebar}
 
 			<div class="panel">
 				{if ccUser::loggedin()}
@@ -28,13 +43,13 @@
 				</div>
 			{/if}
 
-		{/block}
+		
 
 	</div>
 
 </div>
 
-{block name=js}
+
 	<script>window.jQuery || document.write('<script src="{root_url}/uploads/foundation/js/vendor/jquery.js"><\/script>')</script>
 	<script src="{root_url}/uploads/foundation/js/foundation.min.js"></script>
 	<script src="{root_url}/uploads/foundation/js/foundation/foundation.abide.js"></script>
@@ -53,4 +68,6 @@
 	  $(document).foundation();
 	</script>
 	{if isset($wiki_js)}{$wiki_js}{/if}
-{/block}
+  
+  </body>
+</html> 

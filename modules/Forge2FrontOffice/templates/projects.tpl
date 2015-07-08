@@ -1,8 +1,8 @@
 {extends file="_glob_2col.tpl"}
 
 {block name=main_content}
-
-	{*pas de navigation*}
+	
+	{include file='inc_navigation.tpl'}
 
 	{include file='inc_filter.tpl'}
 

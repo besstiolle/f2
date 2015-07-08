@@ -13,13 +13,17 @@
 		{else if $doesPageExists}
 			<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/wiki'>Wiki</a></li>
 		{/if}
-		<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a></li>
+	{*	<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/file/list'>Files</a></li> *}
 		<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/bug/list'>Bug Tracker</a></li>
 		<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a></li>
 
 	{/if}
 	{if ccUser::loggedin()}
 	<li><a class='button tiny' href='{$root_url}/account'>My Account</a></li>
+	<li><a class='button tiny' href='{$root_url}/account'>Logout</a></li>
+	{else}
+	<li><a class='button tiny' href='{$root_url}/account'>Login</a></li>
+	<li><a class='button tiny' href='{$root_url}/account'>Sign Up</a></li>
 	{/if}
 
 </ul>

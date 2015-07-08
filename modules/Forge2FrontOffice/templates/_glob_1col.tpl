@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="large-12 columns">
-		<h1>{block name=title}{title}{/block}</h1>
+		<h1>{block name=title}{if isset($title)}{$title}{else}{title}{/if}{/block}</h1>
 	</div>
 </div>
 

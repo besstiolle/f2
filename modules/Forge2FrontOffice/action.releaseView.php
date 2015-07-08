@@ -95,7 +95,6 @@ $baseurl_show = '/uploads/projects/'.$projectId.'/show/';
 $avatars = forge_utils::getFilesInDir($config['root_path'].$baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
 $shows = forge_utils::getFilesInDir($config['root_path'].$baseurl_show, '/\.(gif|jpe?g|png)$/i');
 
-
 $smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('releases', $releases);
@@ -107,6 +106,7 @@ $smarty->assign('avatar', (!empty($avatars)?$avatars[0]:null));
 $smarty->assign('show', $shows);
 $smarty->assign('baseurl_avatar', $baseurl_avatar);
 $smarty->assign('baseurl_show', $baseurl_show);
+
 
 
 echo $smarty->display('releaseView.tpl');
