@@ -88,6 +88,9 @@ class MyFinder
         } else {
           $value_root_url = $config['root_url'];
         }
+
+        $this->assignParam($module->smarty, $parameters, "umask", cms_siteprefs::get('global_umask',$global_umask));
+
         $module->smarty->assign('root_url',$value_root_url);
 
         $module->smarty->assign('DIRECTORY_SEPARATOR', DIRECTORY_SEPARATOR);

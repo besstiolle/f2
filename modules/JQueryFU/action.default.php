@@ -43,6 +43,10 @@ if(isset($params['dir_path'])) {
 if(isset($params['dir_url'])) {
 	$parameters['dir_url'] = $params['dir_url'];
 }
+//By default : the umask of cmsms
+if(isset($params['umask'])) {
+	$parameters['umask'] = $params['umask'];
+}
 
 $tpl = !empty($params['template'])?TMPL_PREFIX_DISPLAY.$params['template']:TMPL_PREFIX_DISPLAY.$this->GetPreference(DEFAULT_DISPLAY_TMPL_PREF_NAME);
 

@@ -58,7 +58,8 @@ class UploadHandler
                     'max_width' => 80,
                     'max_height' => 80
                 )
-            )
+            ),
+            'umask' => null,
         );
         if ($options) {
 		
@@ -176,6 +177,10 @@ class UploadHandler
         // Free up memory (imagedestroy does not delete files):
         @imagedestroy($src_img);
         @imagedestroy($new_img);
+
+        //CHMOD CMSMS
+        if($success && !empty($this->options['umask'])){chmod($new_file_path, 0777 ^ $this->options['umask']);}
+
         return $success;
     }
 
@@ -327,6 +332,11 @@ class UploadHandler
                     $append_file ? FILE_APPEND : 0
                 );
             }
+
+            //CHMOD CMSMS 
+            if(!empty($this->options['umask'])){chmod($file_path, 0777 ^ $this->options['umask']);}
+
+
             $file_size = filesize($file_path);
             if ($file_size === $file->size) {
             	if ($this->options['orient_image']) {
