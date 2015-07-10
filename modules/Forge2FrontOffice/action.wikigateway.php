@@ -1,8 +1,8 @@
 <?php
 
+if (!function_exists("cmsms")) exit;
 
-$config = cmsms()->GetConfig();
-$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+include_once('lib/inc.initialize.php');
 
 $query = $_SERVER["QUERY_STRING"];
 $pattern = "#^[\w=]*project\/(?P<projectId>[\d]*)\/([\w\d]+)\/wiki#";

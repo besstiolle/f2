@@ -2,28 +2,13 @@
 
 if (!function_exists("cmsms")) exit;
 
-$config = cmsms()->GetConfig();
-$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
-errorGenerator::init($this, $id, $returnid, $config['root_url']);
-
-
-
-$projectId = $params['projectId'];
-$projectName = $params['projectName'];
-
-//Ask the module/tag/...
-$request = RestAPI::GET('rest/v1/project/'.$projectId);
-if($request->getStatus() === 404){
-	return errorGenerator::display404('The project '.$projectName.' (#'.$projectId.') does not exist');
-} else if($request->getStatus() !== 200){
-	return errorGenerator::display400();
-} 
-
-$response = json_decode($request->getResponse(), true);
-
-//Get the projects in the response data
-$project = $response['data']['projects'][0];
-$config = cmsms()->GetConfig();
+	//include_once('lib/inc.initialize.php');
+try{
+	//Initiate the vars.
+	include_once('lib/inc.initialize.php');
+} catch(Exception $e){
+	return;
+}
 
 //TODO : ask to the back office the files
 $baseurl_avatar = '/uploads/projects/'.$projectId.'/avatar/';
@@ -40,9 +25,7 @@ $restParameters['is_active'] = 1;
 $restParameters['is_public'] = 1;
 $request = RestAPI::GET('rest/v1/package/', $restParameters);
 if($request->getStatus() === 404){
-	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') doesn\' have any package');
-	echo $smarty->display('msg_notFound.tpl');
-	return;
+	return errorGenerator::display404('The project '.$projectName.' (#'.$projectId.') doesn\' have any package');
 } else if($request->getStatus() !== 200){
 	return errorGenerator::display400();
 } 
@@ -59,9 +42,7 @@ for($i=0; $i < count($packages); $i++) {
 	$restParameters['n'] = 1;
 	$request = RestAPI::GET('rest/v1/release/', $restParameters);
 	if($request->getStatus() === 404){
-		$smarty->assign('error', 'The package '.$package['id'].' doesn\' have any release');
-		echo $smarty->display('msg_notFound.tpl');
-		return;
+		return errorGenerator::display404('The package '.$package['id'].'of the project '.$projectName.' (#'.$projectId.') doesn\' have any release');
 	} else if($request->getStatus() !== 200){
 		return errorGenerator::display400();
 	}
@@ -75,7 +56,6 @@ $smarty->assign('project', $project);
 $smarty->assign('packages', $packages);
 $smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
 $smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
-$smarty->assign('root_url', $config['root_url']);
 $smarty->assign('avatar', (!empty($avatars)?$avatars[0]:null));
 $smarty->assign('show', $shows);
 $smarty->assign('baseurl_avatar', $baseurl_avatar);

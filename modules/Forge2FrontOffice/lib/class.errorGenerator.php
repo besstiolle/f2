@@ -34,7 +34,9 @@ class errorGenerator{
 
 		echo $smarty->display('message.tpl');
 
-		include('lib/inc.debug.php');
+		include('inc.debug.php');
+
+		return false;
 	}
 
 	/**
@@ -53,7 +55,9 @@ class errorGenerator{
 
 		echo $smarty->display('message.tpl');
 
-		include('lib/inc.debug.php');
+		include('inc.debug.php');
+
+		return false;
 	}
 
 	/**
@@ -72,7 +76,9 @@ class errorGenerator{
 
 		echo $smarty->display('message.tpl');
 
-		include('lib/inc.debug.php');
+		include('inc.debug.php');
+
+		return false;
 	}
 }
 

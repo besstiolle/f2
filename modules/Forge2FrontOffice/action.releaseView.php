@@ -2,8 +2,8 @@
 
 if (!function_exists("cmsms")) exit;
 
-$config = cmsms()->GetConfig();
-$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+//Initiate the vars.
+require_once('lib/inc.initialize.php');
 
 $restParameters = array();
 $restParameters['n'] = 1;
@@ -29,6 +29,14 @@ $response = json_decode($request->getResponse(), true);
 $release = $response['data']['releases'][0];
 $release['current'] = true;
 $releases = array($release);
+
+/**
+ Check the project
+**/
+$projectId = $release['package_id']['project_id'];
+if($project['id'] !== $projectId){
+	return errorGenerator::display404('The project '.$project['name'].' (#'.$project['id'].') doesn\' have any release #'.$params['releaseId']);
+}
 
 /**
  * Get previous releases
@@ -62,30 +70,6 @@ if($all){
 }
 
 
-/**
- Get project
-**/
-$projectId = $release['package_id']['project_id'];
-
-//Ask the module/tag/...
-$request = RestAPI::GET('rest/v1/project/'.$projectId);
-if($request->getStatus() === 404){
-	$smarty->assign('error', 'The project #'.$projectId.' does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-} 
-
-$response = json_decode($request->getResponse(), true);
-
-//Get the projects in the response data
-$project = $response['data']['projects'][0];
-$config = cmsms()->GetConfig();
 
 
 $baseurl_avatar = '/uploads/projects/'.$projectId.'/avatar/';
@@ -101,7 +85,6 @@ $smarty->assign('releases', $releases);
 $smarty->assign('all', $all);
 $smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
 $smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
-$smarty->assign('root_url', $config['root_url']);
 $smarty->assign('avatar', (!empty($avatars)?$avatars[0]:null));
 $smarty->assign('show', $shows);
 $smarty->assign('baseurl_avatar', $baseurl_avatar);
