@@ -127,6 +127,7 @@ class Forge2FrontOffice extends Orm
 		//Various parameters
 		$this->SetParameterType('wiki_prefix',CLEAN_NONE);
 		$this->SetParameterType('debugId',CLEAN_STRING);
+		$this->SetParameterType('confirm',CLEAN_STRING);
 
 		$this->_init();
 	}
