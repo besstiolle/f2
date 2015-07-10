@@ -12,15 +12,19 @@ $projectName = $params['projectName'];
 //Ask the module/tag/...
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
-	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
+	/*$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
 	echo $smarty->display('msg_notFound.tpl');
-	return;
+	return;*/
+	$label = 'The project '.$projectName.' (#'.$projectId.') does not exist';
+	$this->Redirect($id, 'message', $returnId, array('code'=>, 404, 'label' => $label));
 } else if($request->getStatus() !== 200){
 	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
+	/*$smarty->assign('error', "Error processing the Rest request");
 	echo $smarty->display('msg_rest_error.tpl');
 	include('lib/inc.debug.php');
-	return;
+	return;*/
+	$label = 'Error processing the Rest request';
+	$this->Redirect($id, 'message', $returnId, array('code'=>, 502, 'label' => $label));
 } 
 
 $response = json_decode($request->getResponse(), true);
