@@ -4,6 +4,8 @@ if (!function_exists("cmsms")) exit;
 
 $config = cmsms()->GetConfig();
 $smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+errorGenerator::init($this, $id, $returnid, $config['root_url']);
+
 
 
 $projectId = $params['projectId'];
@@ -12,19 +14,9 @@ $projectName = $params['projectName'];
 //Ask the module/tag/...
 $request = RestAPI::GET('rest/v1/project/'.$projectId);
 if($request->getStatus() === 404){
-	/*$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;*/
-	$label = 'The project '.$projectName.' (#'.$projectId.') does not exist';
-	$this->Redirect($id, 'message', $returnId, array('code'=>, 404, 'label' => $label));
+	return errorGenerator::display404('The project '.$projectName.' (#'.$projectId.') does not exist');
 } else if($request->getStatus() !== 200){
-	//Debug part
-	/*$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;*/
-	$label = 'Error processing the Rest request';
-	$this->Redirect($id, 'message', $returnId, array('code'=>, 502, 'label' => $label));
+	return errorGenerator::display400();
 } 
 
 $response = json_decode($request->getResponse(), true);
@@ -52,11 +44,7 @@ if($request->getStatus() === 404){
 	echo $smarty->display('msg_notFound.tpl');
 	return;
 } else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
+	return errorGenerator::display400();
 } 
 
 $response = json_decode($request->getResponse(), true);
@@ -75,11 +63,7 @@ for($i=0; $i < count($packages); $i++) {
 		echo $smarty->display('msg_notFound.tpl');
 		return;
 	} else if($request->getStatus() !== 200){
-		//Debug part
-		$smarty->assign('error', "Error processing the Rest request");
-		echo $smarty->display('msg_rest_error.tpl');
-		include('lib/inc.debug.php');
-		return;
+		return errorGenerator::display400();
 	}
 	$response = json_decode($request->getResponse(), true);
 	$packages[$i]['releases'] = $response['data']['releases'];
