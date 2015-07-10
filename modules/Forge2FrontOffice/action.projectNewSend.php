@@ -7,34 +7,23 @@ if(!forge_utils::getConnectedUserId()){
 	forge_utils::inner_redirect('/account');
 }
 
-$route = 'rest/v1/project';
-$failed = $params['_link_next_failed'];
-$method = 'PUT';
+//Initiate the vars.
+include_once('lib/inc.initialize.php');
+if($mustStop) {return;}
 
-//TODO make some test about "do he have the right to use this route"
+//get cookie to avoid url-scam
+if(!forge_utils::hasCookie('new', $params['CSRF'])){
+	$next = $root_url."/project/new";
+	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
+}
 
-//TODO test uniqueness of the unix_name
-
-$request = RestAPI::$method($route, array(), $params);
-$response = json_decode($request->getResponse(), true);
-
-if($request->getStatus() === 200){
-	$sid = $response['data']['projects'][0]['id'];
-	$name = $response['data']['projects'][0]['name'];
-	$unix_name = $response['data']['projects'][0]['unix_name'];
-	$message = 'the project '.$name.' is created with success';	
-	$link = $config['root_url'].'/project/'.$sid.'/'.$unix_name;
-} else {
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
+$ServiceProject = new ServiceProject();
+$project = $ServiceProject->create($params, $root_url.'/project/new');
+if(!$project){
 	return;
 }
 
-$smarty->assign('message',$message);
-$smarty->assign('link',$link);
-
-echo $smarty->display('msg_sended.tpl');
+$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
+errorGenerator::display200('the project '.$project['name'].' is created with success.', $next);
 
 include('lib/inc.debug.php');

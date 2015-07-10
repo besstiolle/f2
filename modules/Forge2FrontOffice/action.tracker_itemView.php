@@ -2,32 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
-$config = cmsms()->GetConfig();
-$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
-
-$projectId = $params['projectId'];
-$projectName = $params['projectName'];
-
-
-/***********************************************************/
-//Ask the module/tag/...
-$request = RestAPI::GET('rest/v1/project/'.$projectId);
-if($request->getStatus() === 404){
-	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-}
-
-$response = json_decode($request->getResponse(), true);
-//Get the project in the response data
-$project = $response['data']['projects'][0];
-
+//Initiate the vars.
+include_once('lib/inc.initialize.php');
+if($mustStop) {return;}
 
 /***********************************************************/
 //Ask the bugs of the module
@@ -50,7 +27,7 @@ $response = json_decode($request->getResponse(), true);
 $tracker_item = $response['data']['tracker_items'][0];
 
 
-$smarty->assign('root_url', $config['root_url']);
+$smarty->assign('root_url', $root_url);
 $smarty->assign('project', $project);
 $smarty->assign('title', $project['name']);
 $smarty->assign('tracker_item', $tracker_item);
@@ -119,7 +96,7 @@ $smarty->assign('enumTrackerItemState', array_flip(Enum::ConstToArray('EnumTrack
 $smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
 $smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 
-$avatar = $config['root_url'].'/uploads/forge/design/user-64.png';
+$avatar = $root_url.'/uploads/forge/design/user-64.png';
 $smarty->assign('avatar', $avatar);
 
 echo $smarty->display('tracker_itemView.tpl');

@@ -3,7 +3,8 @@
 if (!function_exists("cmsms")) exit;
 
 //Initiate the vars.
-require_once('lib/inc.initialize.php');
+include_once('lib/inc.initialize.php');
+if($mustStop) {return;}
 
 $restParameters = array();
 $restParameters['n'] = 1;
@@ -69,15 +70,12 @@ if($all){
 	$releases = array_merge($releases, $oldReleases);
 }
 
-
-
-
 $baseurl_avatar = '/uploads/projects/'.$projectId.'/avatar/';
 $baseurl_show = '/uploads/projects/'.$projectId.'/show/';
 
 
-$avatars = forge_utils::getFilesInDir($config['root_path'].$baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
-$shows = forge_utils::getFilesInDir($config['root_path'].$baseurl_show, '/\.(gif|jpe?g|png)$/i');
+$avatars = forge_utils::getFilesInDir($root_path.$baseurl_avatar, '/\.(gif|jpe?g|png)$/i');
+$shows = forge_utils::getFilesInDir($root_path.$baseurl_show, '/\.(gif|jpe?g|png)$/i');
 
 $smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);

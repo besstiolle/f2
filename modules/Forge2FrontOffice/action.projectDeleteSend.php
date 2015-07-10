@@ -7,76 +7,27 @@ if(!forge_utils::getConnectedUserId()){
 	forge_utils::inner_redirect('/account');
 }
 
-$projectId = $params['sid'];
-$returnid = $params['returnid'];
-$success = $config['root_url'].'/project/list';
-
-
-//Ask the module/tag/...
-$request = RestAPI::GET('rest/v1/project/'.$projectId);
-if($request->getStatus() === 404){
-	$link = $success;
-	$message = 'the project doesn\'t exists anymore. Maybe someone has already deleted it?';
-
-	$smarty->assign('message',$message);
-	$smarty->assign('link',$link);
-
-	echo $smarty->display('msg_sended.tpl');
-	return;
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-} 
-
-$response = json_decode($request->getResponse(), true);
-
-//Get the projects in the response data
-$project = $response['data']['projects'][0];
+//Initiate the vars.
+include_once('lib/inc.initialize.php');
+if($mustStop) {return;}
 
 //Access denied for any no-admin
-if( forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
-	$this->RedirectForFrontEnd($id, $returnid, 'access_denied');
+if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()) ){
+	return errorGenerator::display403();
 }
 
 //get cookie to avoid url-scam
-if(!forge_utils::hasCookie('delete', $projectId)){
-	$smarty->assign('title', "Token expired");
-	$smarty->assign('error', "Your token has been already used. You should retry one more time");
-	$smarty->assign('url', $config['root_url']."/project/".$projectId."/".$project['unix_name']."/delete");
-	echo $smarty->display('msg_forge_error.tpl');
-	return;
+if(!forge_utils::hasCookie('delete', $params['CSRF'])){
+	$next = $root_url."/project/".$projectId."/".$project['unix_name']."/delete";
+	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
+	
 }
 
-die("delete stopped");
-
-$route = '/rest/v1/project/'.$projectId;
-$method = 'DELETE';
-
-$request = RestAPI::$method($route, array(), $params);
-
-$response = json_decode($request->getResponse(), true);
-$sid = '';
-
-if($request->getStatus() == 200){
-	$link = $success;
-	$message = 'the project is deleted with success';	
-} else if($request->getStatus() === 404){
-	$link = $success;
-	$message = 'the project doesn\'t exists anymore. Maybe someone has already deleted it?';
-} else {
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
+echo "delete avoided in action.projectDelete.php";
+$ServiceProject = new ServiceProject();
+/*if(!$ServiceProject->delete($projectId)){
 	return;
-}
+}*/
 
-$smarty->assign('message',$message);
-$smarty->assign('link',$link);
-
-echo $smarty->display('msg_sended.tpl');
-
-include('lib/inc.debug.php');
+$next = $root_url."/project/list";
+errorGenerator::display200('the project is deleted with success', $next);

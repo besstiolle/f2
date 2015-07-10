@@ -9,11 +9,12 @@
 		<a href='{$root_url}/project/list'>Return</a>
 	{else}
 		{if isset($warn)}{$warn}{/if}
+
 		{$form}
 
-			<label for='{$actionid}name' >Name</label><input type='text' id='{$actionid}name' name='{$actionid}name' value='{$project.name}'/>
-			<label for='{$actionid}unix_name' >Unix Name</label><input type='text' id='{$actionid}unix_name' name='{$actionid}unix_name' value='{$project.unix_name}' disabled="disabled" />
-			<label for='{$actionid}description' >Description</label><textarea id='{$actionid}description' name='{$actionid}description'>{$project.description}</textarea>
+			<label for='{$forge_id}name' >Name</label><input type='text' id='{$forge_id}name' name='{$forge_id}name' value='{$project.name}'/>
+			<label for='{$forge_id}unix_name' >Unix Name</label><input type='text' id='{$forge_id}unix_name' name='{$forge_id}unix_name' value='{$project.unix_name}' disabled="disabled" />
+			<label for='{$forge_id}description' >Description</label><textarea id='{$forge_id}description' name='{$forge_id}description'>{$project.description}</textarea>
 
 			<input class='button tiny' type='submit' value='send' />
 			<a class='button tiny' href='{$link_back}'>cancel</a>

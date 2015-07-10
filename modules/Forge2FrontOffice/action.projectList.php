@@ -2,8 +2,9 @@
 
 if (!function_exists("cmsms")) exit;
 
-$config = cmsms()->GetConfig();
-$smarty->addTemplateDir($config['root_path'].'/modules/Forge2FrontOffice/templates'); 
+//Initiate the vars.
+include_once('lib/inc.initialize.php');
+if($mustStop) {return;}
 
 $type = EnumProjectType::module;
 if(isset($params['type']) && Enum::IsValidValue( 'EnumProjectType', $params['type']) ){
@@ -37,27 +38,11 @@ if(isset($params['filterAlpha'])) {
 } 
 
 //Ask the last 10 modules
-$request = RestAPI::GET('rest/v1/project', $restParameters);
-if($request->getStatus() === 404){
-	$smarty->assign('error', 'there is no project in the forge');
-	echo $smarty->display('msg_notFound.tpl');
-	return;
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-} 
+$ServiceProject = new ServiceProject();
+$result = $ServiceProject->getAll($restParameters);
+$projects = $result[0];
+$page_counter = $result[1];
 
-$response = json_decode($request->getResponse(), true);
-
-//Get the projects in the response data
-$projects = $response['data']['projects'];
-$page_counter = $response['data']['count'];
-$config = cmsms()->GetConfig();
-
-$smarty->assign('root_url', $config['root_url']);
 $smarty->assign('projects', $projects);
 
 
@@ -65,7 +50,7 @@ $smarty->assign('projects', $projects);
 	FILTER Part
 **/
 
-$filter_route = $config['root_url'].'/project/list';
+$filter_route = $root_url.'/project/list';
 $filters = array(
 	array('css' => ($type === EnumProjectType::module)?'active':'',
 			'text' => 'module', 
@@ -107,12 +92,11 @@ $currentQueryParameter = '';
 if(!empty($type)){
 	$currentQueryParameter = '&amp;'.$id.'type='.$type;
 }
-$page_url = $config['root_url'].'/project/list?'.$currentQueryParameter;
+$page_url = $root_url.'/project/list?'.$currentQueryParameter;
 
 //Include paginator
 include('lib/inc.paginator.php');
 
-//echo $smarty->display('projects.tpl');
 echo  $smarty->display('projects.tpl');
 
 include('lib/inc.debug.php');
