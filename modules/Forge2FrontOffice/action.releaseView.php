@@ -6,16 +6,11 @@ if (!function_exists("cmsms")) exit;
 include_once('lib/inc.initialize.php');
 if($mustStop) {return;}
 
-$restParameters = array();
-$restParameters['n'] = 1;
-
-$all = true;
-if(empty($params['all'])){
-	$all = false;
-} 
-
+/**
+ Get the release
+**/
 $serviceRelease = new ServiceRelease();
-$release = $serviceRelease->getOne($params['releaseId'], $restParameters);
+$release = $serviceRelease->getOne($params['releaseId']);
 if(!$release){ return; }
 $release['current'] = true;
 $releases = array($release);
@@ -25,12 +20,14 @@ $releases = array($release);
 **/
 $projectId = $release['package_id']['project_id'];
 if($project['id'] !== $projectId){
-	return errorGenerator::display404('The project '.$project['name'].' (#'.$project['id'].') doesn\' have any release #'.$params['releaseId']);
+	$msg = 'The project #%d %s doesn\'t have any release #%d';
+	return errorGenerator::display404(sprintf($msg, $projectId, $projectName, $release['id']));
 }
 
 /**
  Get previous releases
  **/
+ $all = !(empty($params['all']));
 if($all){
 
 	$serviceRelease = new ServiceRelease();
@@ -41,7 +38,7 @@ if($all){
 	$releases = array_merge($releases, $oldReleases);
 }
 
-$smarty->assign('title', $project['name']);
+$smarty->assign('title', $projectName);
 $smarty->assign('project', $project);
 $smarty->assign('releases', $releases);
 $smarty->assign('all', $all);
