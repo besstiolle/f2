@@ -26,6 +26,7 @@ class CmsUploadHandler extends UploadHandler
           'upload_url'          => '{$root_url}{$dir_url}/thumbnails/',
           )
         ),
+      'umask'          => '{$umask}',
       {literal}
     );
     parent::__construct($replace);
