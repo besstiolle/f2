@@ -31,27 +31,16 @@ $response = json_decode($request->getResponse(), true);
 $packages = $response['data']['packages'];
 
 for($i=0; $i < count($packages); $i++) {
-	$package = $packages[$i];
-	$restParameters = array();
-	$restParameters['package_id'] = $package['id'];
-	//$restParameters['p'] = 0;
-	$restParameters['n'] = 1;
-	$request = RestAPI::GET('rest/v1/release/', $restParameters);
-	if($request->getStatus() === 404){
-		return errorGenerator::display404('The package '.$package['id'].'of the project '.$projectName.' (#'.$projectId.') doesn\' have any release');
-	} else if($request->getStatus() !== 200){
-		return errorGenerator::display400();
-	}
-	$response = json_decode($request->getResponse(), true);
-	$packages[$i]['releases'] = $response['data']['releases'];
+	$serviceRelease = new ServiceRelease();
+	$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName);
+	if(!$releases){ return; }
+	$packages[$i]['releases'] = $releases;
 }
 
 
 $smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('packages', $packages);
-$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
-$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 $smarty->assign('avatar', (!empty($avatars)?$avatars[0]:null));
 $smarty->assign('show', $shows);
 $smarty->assign('baseurl_avatar', $baseurl_avatar);
