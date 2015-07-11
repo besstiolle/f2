@@ -38,23 +38,21 @@ errorGenerator::display200('the project '.$project['name'].' is updated with suc
 
 $baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
 $baseurl_avatar_tmp = '/uploads/projects_cache/'.$project['id'].'/avatar';
-$routeAvatar = 'rest/v1/files/project/'.$projectId.'/avatar/';
 
 $baseurl_show = '/uploads/projects/'.$project['id'].'/show';
 $baseurl_show_tmp = '/uploads/projects_cache/'.$project['id'].'/show';
-$routeShow = 'rest/v1/files/project/'.$projectId.'/show/';
 
 $regex = '/\.(gif|jpe?g|png)$/i';
 
-if(!processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $regex, $routeAvatar) ||
-	!processImages($root_path, $root_url, $baseurl_show, $baseurl_show_tmp, $regex, $routeShow)){
+if(!processImages($root_path, $root_url, $baseurl_avatar, $baseurl_avatar_tmp, $regex, $project['id'], 0) ||
+	!processImages($root_path, $root_url, $baseurl_show, $baseurl_show_tmp, $regex, $project['id'], 1)){
 	return;
 }
 
 include('lib/inc.debug.php');
 
 
-function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $route){
+function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $projectId, $case){
 
 	$files = forge_utils::getFilesInDir($root_path.$baseurl, $regex);
 	if(!empty($files)) {
@@ -72,16 +70,16 @@ function processImages($root_path, $root_url, $baseurl, $baseurl_tmp, $regex, $r
 			$filesParams[$file]['url'] = $root_url.$baseurl_tmp.'/'.$file;
 			$filesParams[$file]['md5'] = md5_file($root_path.$baseurl_tmp.'/'.$file);
 		}
-		$params['files'] = $filesParams;
-
-		$request = RestAPI::PUT($route, array(), $params);
-		if($request->getStatus() !== 200){
-			//Debug part
-			$smarty->assign('error', "Error processing the Rest request");
-			echo $smarty->display('msg_rest_error.tpl');
-			include('lib/inc.debug.php');
-			return false;
+		$bodyParam = array('files' => $filesParams);
+		
+		$serviceFile = new ServiceFile();
+		if($case == 0){
+			$result = $serviceFile->addAvatarForProjectId($projectId, $bodyParam);
+		} else {
+			$result = $serviceFile->addShowForProjectId($projectId, $bodyParam);
 		}
+		
+		return $result;
 	}
 	return true;
 }
