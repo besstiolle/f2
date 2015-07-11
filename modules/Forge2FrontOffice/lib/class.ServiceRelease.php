@@ -42,7 +42,7 @@ class ServiceRelease {
 	 * @param  array a list of urlParameter
 	 * @return mixed array with the list releases & the number of results or FALSE if an error occured
 	 */
-	public function getAll($urlParam = array()){
+	/*public function getAll($urlParam = array()){
 		$request = RestAPI::GET($this->url, $urlParam);
 		
 		if($request->getStatus() !== 200){
@@ -53,7 +53,7 @@ class ServiceRelease {
 		$releases = $response['data'][$this->jsonNode];
 		$count = $response['data']['count'];
 		return array($releases, $count);
-	}
+	}*/
 
 	/**
 	 * Delete a release
@@ -61,7 +61,7 @@ class ServiceRelease {
 	 * @param  integer the id of the release
 	 * @return boolean FALSE if an error occured
 	 */
-	public function delete($id){
+	/*public function delete($id){
 		$request = RestAPI::DELETE($this->url.$id);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404){
@@ -69,7 +69,7 @@ class ServiceRelease {
 		}
 
 		return;
-	}
+	}*/
 
 	/**
 	 * Update a release
@@ -78,7 +78,7 @@ class ServiceRelease {
 	 * @param  array a list of bodyParameter
 	 * @return mixed array with the list releases & the number of results or FALSE if an error occured
 	 */
-	public function update($id, $bodyParameter = array(), $_link_next_failed){
+	/*public function update($id, $bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::POST($this->url.$id, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -87,7 +87,7 @@ class ServiceRelease {
 
 		$response = json_decode($request->getResponse(), true);
 		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}
+	}*/
 
 	/**
 	 * Create a release
@@ -95,7 +95,7 @@ class ServiceRelease {
 	 * @param  array a list of bodyParameter
 	 * @return mixed array with the list releases & the number of results or FALSE if an error occured
 	 */
-	public function create($bodyParameter = array(), $_link_next_failed){
+	/*public function create($bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -104,7 +104,7 @@ class ServiceRelease {
 
 		$response = json_decode($request->getResponse(), true);
 		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}
+	}*/
 
 
 	/**

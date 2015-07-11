@@ -38,7 +38,7 @@ if($all){
 	$releases = array_merge($releases, $oldReleases);
 }
 
-$smarty->assign('title', $projectName);
+$smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('releases', $releases);
 $smarty->assign('all', $all);

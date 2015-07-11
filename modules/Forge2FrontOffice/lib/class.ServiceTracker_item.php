@@ -1,47 +1,46 @@
 <?php
 
 /**
- * Will call the API Package
+ * Will call the API Tracker_item
  */
-class ServicePackage {
+class ServiceTracker_item {
 	
-	private $url = 'rest/v1/package/';
+	private $url = 'rest/v1/tracker_item/';
 
-	private $msg404 = 'The package #%d %s does not exist';
+	private $msg404 = 'The tracker item #%d does not exist';
 
-	private $jsonNode = 'packages';
+	private $jsonNode = 'tracker_items';
 
 	function __construct(){
 		
 	}
 
 	/**
-	 * Return a package
+	 * Return a tracker_item
 	 * 
-	 * @param  integer the id of the package
-	 * @param  string a name (usefull for the message in case of error)
+	 * @param  integer the id of the tracker_item
 	 * @param  array a list of urlParameter
-	 * @return mixed the package or FALSE if an error occured
+	 * @return mixed the tracker_item or FALSE if an error occured
 	 */
-	/*public function getOne($id, $name = '', $urlParam = array()){
+	public function getOne($id, $urlParam = array()){
 		$request = RestAPI::GET($this->url.$id, $urlParam);
 		
 		if($request->getStatus() === 404){
-			return errorGenerator::display404(sprintf($this->msg404, $id, $name));
+			return errorGenerator::display404(sprintf($this->msg404, $id));
 		} else if($request->getStatus() !== 200){
 			return errorGenerator::display400();
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		$package = $response['data'][$this->jsonNode][0];
-		return $package;
-	}*/
+		$tracker_item = $response['data'][$this->jsonNode][0];
+		return $tracker_item;
+	}
 
 	/**
-	 * Return a list of packages + the counter
+	 * Return a list of tracker_items + the counter
 	 * 
 	 * @param  array a list of urlParameter
-	 * @return mixed array with the list packages & the number of results or FALSE if an error occured
+	 * @return mixed array with the list tracker_items & the number of results or FALSE if an error occured
 	 */
 	/*public function getAll($urlParam = array()){
 		$request = RestAPI::GET($this->url, $urlParam);
@@ -51,15 +50,15 @@ class ServicePackage {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		$packages = $response['data'][$this->jsonNode];
+		$tracker_items = $response['data'][$this->jsonNode];
 		$count = $response['data']['count'];
-		return array($packages, $count);
+		return array($tracker_items, $count);
 	}*/
 
 	/**
-	 * Delete a package
+	 * Delete a tracker_item
 	 * 
-	 * @param  integer the id of the package
+	 * @param  integer the id of the tracker_item
 	 * @return boolean FALSE if an error occured
 	 */
 	/*public function delete($id){
@@ -73,11 +72,11 @@ class ServicePackage {
 	}*/
 
 	/**
-	 * Update a package
+	 * Update a tracker_item
 	 * 
-	 * @param  integer the id of the package
+	 * @param  integer the id of the tracker_item
 	 * @param  array a list of bodyParameter
-	 * @return mixed array with the list packages & the number of results or FALSE if an error occured
+	 * @return mixed array with the list tracker_items & the number of results or FALSE if an error occured
 	 */
 	/*public function update($id, $bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::POST($this->url.$id, array(), $bodyParameter);
@@ -91,10 +90,10 @@ class ServicePackage {
 	}*/
 
 	/**
-	 * Create a package
+	 * Create a tracker_item
 	 * 
 	 * @param  array a list of bodyParameter
-	 * @return mixed array with the list packages & the number of results or FALSE if an error occured
+	 * @return mixed array with the list tracker_items & the number of results or FALSE if an error occured
 	 */
 	/*public function create($bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
@@ -109,32 +108,38 @@ class ServicePackage {
 
 
 	/**
-	 * Return all active & public package by projectId
+	 * 	
+	 * Return list of tracker_items for a projectId with differents filters
 	 * 
-	 * @param  integer the id of the project
-	 * @param  string the project name (usefull for the message in case of error)
-	 * @param  array a list of urlParameter
-	 * @return mixed the package or FALSE if an error occured
+	 * @param  integer the packageId
+	 * @param  string the type of the tracker_item
+	 * @param  string the state of the tracker_item
+	 * @param  integer the number of element per page
+	 * @param  integer the number of the page
+	 * @return array with the list tracker_items & the number of results or FALSE if an error occured
 	 */
-	public function getActiveAndPublicByProjectId($projectId, $projectName){
+	public function getByProjectIdAndTypeAndState($projectId, $type = null, $state = null, $number = 10, $page = 1){
 		$urlParam = array();
+
+		$urlParam['p'] = $page;
+		$urlParam['n'] = $number;
 		$urlParam['project_id'] = $projectId;
-		$urlParam['is_active'] = 1;
-		$urlParam['is_public'] = 1;
+		$urlParam['type'] = $type;
+		if($state !== NULL){
+			$urlParam['state'] = $state;
+		}				
 
 		$request = RestAPI::GET($this->url, $urlParam);
 		
-		if($request->getStatus() === 404){
-			$msg = 'The project #%d %s doesn\' have any package';
-			return errorGenerator::display404(sprintf($msg, $projectId, $projectName));
-		} else if($request->getStatus() !== 200){
+		if($request->getStatus() !== 200 && $request->getStatus() !== 404){
 			return errorGenerator::display400();
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		$packages = $response['data'][$this->jsonNode];
-		return $packages;
+		$tracker_items = $response['data'][$this->jsonNode];
+		return array($tracker_items, $response['data']['count']);
 	}
+
 }
 
 ?>

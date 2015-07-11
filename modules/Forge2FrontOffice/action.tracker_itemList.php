@@ -18,50 +18,21 @@ if(isset($params['state'])){
 /**
    GET THE ITEMS TRACKER
 **/
-$restParameters = array();
-
-// Number of the page
-$restParameters['p'] = 1;
-if(!empty($params['pagin_page'])) {
-	$restParameters['p'] = $params['pagin_page'];
+$serviceTracker_item = new ServiceTracker_item();
+if(!empty($params['pagin_page']) && !empty($params['pagin_num'])){
+	$result = $serviceTracker_item->getByProjectIdAndTypeAndState($projectId, $params['type'], $state, $params['pagin_num'], $params['pagin_page']);
+} else {
+	$result = $serviceTracker_item->getByProjectIdAndTypeAndState($projectId, $params['type'], $state);
 }
+if(!$result){ return; }
 
-//Number of element by page
-$restParameters['n'] = 10;
-if(!empty($params['pagin_num'])) {
-	$restParameters['n'] = $params['pagin_num'];
-}
+$tracker_items = $result[0];
+$page_counter = $result[1]; //for paginator
 
-$restParameters['project_id'] = $projectId;
-$restParameters['type'] = $params['type'];
-
-if($state !== NULL){
-	$restParameters['state'] = $state;
-}				
-$request = RestAPI::GET('rest/v1/tracker_item/', $restParameters);
-if($request->getStatus() === 404){
-/*	$smarty->assign('error', 'The project '.$projectName.' (#'.$projectId.') does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;*/
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-}
-
-$response = json_decode($request->getResponse(), true);
-
-//Get the bugs in the response data
-$tracker_items = $response['data']['tracker_items'];
-
-$smarty->assign('root_url', $root_url);
 $smarty->assign('project', $project);
 $smarty->assign('title', $project['name']);
 $smarty->assign('tracker_items', $tracker_items);
 $smarty->assign('tracker_type', $params['type']);
-$page_counter = $response['data']['count'];
 
 $smarty->assign('enumTrackerItemResolution', array_flip(Enum::ConstToArray('EnumTrackerItemResolution')));
 $smarty->assign('enumTrackerItemSeverity', array_flip(Enum::ConstToArray('EnumTrackerItemSeverity')));
@@ -113,9 +84,6 @@ if($params['type'] == EnumTrackerItemType::Bug){
 }
 //Include paginator
 include('lib/inc.paginator.php');
-
-$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
-$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
 
 echo $smarty->display('tracker_items.tpl');
 

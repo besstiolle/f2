@@ -35,7 +35,7 @@ $avatars = forge_utils::getFilesInDir($root_path.$baseurl_avatar, '/\.(gif|jpe?g
 $shows = forge_utils::getFilesInDir($root_path.$baseurl_show, '/\.(gif|jpe?g|png)$/i');
 
 
-$smarty->assign('title', $projectName);
+$smarty->assign('title', $project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('packages', $packages);
 $smarty->assign('avatar', (!empty($avatars)?$avatars[0]:null));

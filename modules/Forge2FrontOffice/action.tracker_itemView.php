@@ -6,28 +6,13 @@ if (!function_exists("cmsms")) exit;
 include_once('lib/inc.initialize.php');
 if($mustStop) {return;}
 
-/***********************************************************/
-//Ask the bugs of the module
-$request = RestAPI::GET('rest/v1/tracker_item/'.$params['tracker_itemId']);
-if($request->getStatus() === 404){
-	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;
-} else if($request->getStatus() !== 200){
-	//Debug part
-	$smarty->assign('error', "Error processing the Rest request");
-	echo $smarty->display('msg_rest_error.tpl');
-	include('lib/inc.debug.php');
-	return;
-}
+/**
+ Ask the bugs of the module
+**/
+$serviceTracker_item = new ServiceTracker_item();
+$tracker_item = $serviceTracker_item->getOne($params['tracker_itemId']);
+if(!$tracker_item) { return; }
 
-$response = json_decode($request->getResponse(), true);
-
-//Get the bugs in the response data
-$tracker_item = $response['data']['tracker_items'][0];
-
-
-$smarty->assign('root_url', $root_url);
 $smarty->assign('project', $project);
 $smarty->assign('title', $project['name']);
 $smarty->assign('tracker_item', $tracker_item);
@@ -39,9 +24,7 @@ $smarty->assign('tracker_type', $params['type']);
 $parameter = array('commentable_id' => $params['tracker_itemId']);
 $request = RestAPI::GET('rest/v1/comment/', $parameter);
 if($request->getStatus() === 404){
-/*	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;*/
+
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
@@ -59,9 +42,7 @@ $comments = $response['data']['comments'];
 $parameter = array('historizable_id' => $params['tracker_itemId']);
 $request = RestAPI::GET('rest/v1/history/', $parameter);
 if($request->getStatus() === 404){
-/*	$smarty->assign('error', 'The tracker item #'.$params['tracker_itemId'].' does not exist');
-	echo $smarty->display('msg_notFound.tpl');
-	return;*/
+
 } else if($request->getStatus() !== 200){
 	//Debug part
 	$smarty->assign('error', "Error processing the Rest request");
