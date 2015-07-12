@@ -24,7 +24,7 @@ if(!empty($params['pagin_page']) && !empty($params['pagin_num'])){
 } else {
 	$result = $serviceTracker_item->getByProjectIdAndTypeAndState($projectId, $params['type'], $state);
 }
-if(!$result){ return; }
+if($result === FALSE){ return; }
 
 $tracker_items = $result[0];
 $page_counter = $result[1]; //for paginator

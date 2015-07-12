@@ -11,7 +11,7 @@ if($mustStop) {return;}
 **/
 $serviceTracker_item = new ServiceTracker_item();
 $tracker_item = $serviceTracker_item->getOne($params['tracker_itemId']);
-if(!$tracker_item) { return; }
+if($tracker_item === FALSE) { return; }
 
 $smarty->assign('project', $project);
 $smarty->assign('title', $project['name']);
@@ -24,11 +24,11 @@ $smarty->assign('tracker_type', $params['type']);
 **/
 $serviceComment = new ServiceComment();
 $comments = $serviceComment->getByTrackerId($params['tracker_itemId']);
-if(!$comments) { return; }
+if($comments === FALSE) { return; }
 
 $serviceHistory = new ServiceHistory();
 $histories = $serviceHistory->getByTrackerId($params['tracker_itemId']);
-if(!$histories) { return; }
+if($histories === FALSE) { return; }
 
 //Merge the 2 array
 $elements = array();

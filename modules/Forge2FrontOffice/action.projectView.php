@@ -11,7 +11,7 @@ if($mustStop) {return;}
 **/
 $servicePackage = new ServicePackage();
 $packages = $servicePackage->getActiveAndPublicByProjectId($projectId, $projectName);
-if(!$packages){ return; }
+if($packages === FALSE){ return; }
 
 /**
   Get the last release for each package
@@ -20,7 +20,7 @@ $serviceRelease = new ServiceRelease();
 for($i=0; $i < count($packages); $i++) {
 	
 	$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName);
-	if(!$releases){ return; }
+	if($releases === FALSE){ return; }
 	$packages[$i]['releases'] = $releases;
 }
 

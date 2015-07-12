@@ -23,24 +23,26 @@ forge_utils::putCookie('edit', $CSRF);
 
 
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectEditSend', 'post','', false, '',  array(
-				 	'projectId' => $project['id'],
+				 	'projectId' => $projectId,
 				 	'CSRF' => $CSRF
 								)));
 
 $smarty->assign('title', 'Edit project '.$project['name']);
 $smarty->assign('project', $project);
-$smarty->assign('link_back', $root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
+$smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name']);
 
 /**
    Move the Pictures 
  */
-$baseurl_avatar = '/uploads/projects/'.$project['id'].'/avatar';
-$baseurl_avatar_tmp = '/uploads/projects_cache/'.$project['id'].'/avatar';
-$baseurl_show = '/uploads/projects/'.$project['id'].'/show';
-$baseurl_show_tmp = '/uploads/projects_cache/'.$project['id'].'/show';
+$baseurl_avatar = '/uploads/projects/'.$projectId.'/avatar';
+$baseurl_avatar_tmp = '/uploads/projects_cache/'.$projectId.'/avatar';
+$baseurl_show = '/uploads/projects/'.$projectId.'/show';
+$baseurl_show_tmp = '/uploads/projects_cache/'.$projectId.'/show';
 
 $smarty->assign('baseurl_avatar', $baseurl_avatar);
 $smarty->assign('baseurl_show', $baseurl_show);
+$smarty->assign('baseurl_avatar_tmp', $baseurl_avatar_tmp);
+$smarty->assign('baseurl_show_tmp', $baseurl_show_tmp);
 
 //Remove file on our side, we only propose visualization from the back server 
 if(is_dir($root_path.$baseurl_avatar)){
@@ -51,6 +53,25 @@ if(is_dir($root_path.$baseurl_show)){
 	forge_utils::emptyDir($root_path.$baseurl_show, '#(.)*#', false); // should be already empty
 	forge_utils::emptyDir($root_path.$baseurl_show.'/thumbnails', '#(.)*#', false);
 }
+
+$serviceFile = new ServiceFile();
+$avatarsWaiting = $serviceFile->getAvatarsWaitingForProjectId($projectId);
+if($avatarsWaiting === FALSE) { return; }
+
+$avatars = $serviceFile->getAvatarsForProjectId($projectId);
+if($avatars === FALSE) { return; }
+
+$showsWaiting = $serviceFile->getShowsWaitingForProjectId($projectId);
+if($showsWaiting === FALSE) { echo "arf";return; }
+
+$shows = $serviceFile->getShowsForProjectId($projectId);
+if($shows === FALSE) { return; }
+
+
+print_r($avatarsWaiting);
+print_r($avatars);
+print_r($showsWaiting);
+print_r($shows);
 
 echo $smarty->display('projectEdit.tpl');
 

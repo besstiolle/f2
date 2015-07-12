@@ -12,7 +12,7 @@ if(!forge_utils::getConnectedUserId()){
 
 $serviceAssignment = new ServiceAssignment();
 $assignments = $serviceAssignment->getByUserId($params['user_id']);
-if(!$assignments) { return; }
+if($assignments === FALSE) { return; }
 
 $smarty->assign('assignments', $assignments);
 $smarty->assign('link_create', $config['root_url'].'/project/new');

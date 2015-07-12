@@ -11,7 +11,7 @@ if($mustStop) {return;}
 **/
 $serviceRelease = new ServiceRelease();
 $release = $serviceRelease->getOne($params['releaseId']);
-if(!$release){ return; }
+if($release === FALSE){ return; }
 $release['current'] = true;
 $releases = array($release);
 
@@ -32,7 +32,7 @@ if($all){
 
 	$serviceRelease = new ServiceRelease();
 	$oldReleases = $serviceRelease->getOlderReleasesByPackageId($release['id'], $release['package_id']['id']);
-	if(!$oldReleases){ return; }
+	if($oldReleases === FALSE){ return; }
 
 	//merge both
 	$releases = array_merge($releases, $oldReleases);
