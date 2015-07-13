@@ -11,21 +11,23 @@
 
 
 
-		{if isset($avatar)}<img src='{$root_url}{$baseurl_avatar}{$avatar}' />{/if}
+		{if !empty($avatars)}<img src='{$avatars.0.url}' width='150px' height='150px'/>{/if}
 
-		<div data-magellan-expedition="fixed">
+		{*<div data-magellan-expedition="fixed">
 		  <dl class="sub-nav">
 		  	<dd data-magellan-arrival="summary"><a href="#summary">Summary</a></dd>
 		  {foreach $packages as $package}
 		    <dd data-magellan-arrival="p_{$package.id}"><a href="#p_{$package.id}">{$package.name}</a></dd>
 		  {/foreach}
 		  </dl>
-		</div>
+		</div>*}
 
 
 		<a name="summary"></a><p data-magellan-destination="summary">{$project.description|markdown}</p>
 
-
+		{foreach $shows as $img}
+			<img src='{$img.url}' width='250px' height='250px' />
+		{/foreach}
 
 		{foreach $packages as $package}
 		<div class='callout panel'>

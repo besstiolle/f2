@@ -62,16 +62,19 @@ $avatars = $serviceFile->getAvatarsForProjectId($projectId);
 if($avatars === FALSE) { return; }
 
 $showsWaiting = $serviceFile->getShowsWaitingForProjectId($projectId);
-if($showsWaiting === FALSE) { echo "arf";return; }
+if($showsWaiting === FALSE) { return; }
 
 $shows = $serviceFile->getShowsForProjectId($projectId);
 if($shows === FALSE) { return; }
 
 
-print_r($avatarsWaiting);
-print_r($avatars);
-print_r($showsWaiting);
-print_r($shows);
+
+$smarty->assign('avatarsWaiting', $avatarsWaiting);
+$smarty->assign('avatars', $avatars);
+$smarty->assign('showsWaiting', $showsWaiting);
+$smarty->assign('shows', $shows);
+$smarty->assign('max_avatars', max(0, 1 - count($avatarsWaiting) - count($avatars)));
+$smarty->assign('max_shows', max(0, 10 - count($showsWaiting) - count($shows)));
 
 echo $smarty->display('projectEdit.tpl');
 
