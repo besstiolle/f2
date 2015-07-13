@@ -10,8 +10,9 @@
 	{else}
 
 
-
+*{CGSmartImage src=$avatars[0]['url'] notag=true}*
 		{if !empty($avatars)}<img src='{$avatars.0.url}' width='150px' height='150px'/>{/if}
+		{if !empty($avatars)}<img src='{CGSmartImage src=$avatars[0]['url'] notag=true}' width='150px' height='150px'/>{/if}
 
 		{*<div data-magellan-expedition="fixed">
 		  <dl class="sub-nav">
