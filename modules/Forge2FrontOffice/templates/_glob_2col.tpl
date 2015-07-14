@@ -42,6 +42,7 @@
 	<script src="{root_url}/uploads/foundation/js/foundation/foundation.equalizer.js"></script>
 	<script src="{root_url}/uploads/foundation/js/foundation/foundation.offcanvas.js"></script>
 	<script src="{root_url}/uploads/foundation/js/foundation/foundation.magellan.js"></script>
+	<script src="{root_url}/uploads/foundation/js/foundation/foundation.clearing.js"></script>
 
 	<!-- Add mousewheel plugin (this is optional) -->
 	<script type='text/javascript' src='{root_url}/modules/Wiki/scripts/jquery/jquery.mousewheel-3.0.6.pack.js'></script>
