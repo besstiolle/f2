@@ -79,10 +79,9 @@ final class forge_utils
      * @param $id : the id of the ressource, used to make each cookie unique.
      */
     public static function putCookie($action, $id){
-        $sha1Key = sha1($action . $id);
-        $salt = forge_utils::generateRandomString();
-        cms_cookies::set($sha1Key."_s", $salt);
-        cms_cookies::set($sha1Key."_h", sha1($salt.forge_utils::getConnectedUserId()));
+        $sha1Key = sha1($action . forge_utils::getConnectedUserId());
+        cms_cookies::set($sha1Key."_s", $id);
+        cms_cookies::set($sha1Key."_h", sha1($id.forge_utils::getConnectedUserId()));
     }
 
     /**
@@ -92,7 +91,7 @@ final class forge_utils
      * @param $id : the id of the ressource, used to make each cookie unique.
      */
     public static function hasCookie($action, $id){
-        $sha1Key = sha1($action . $id);
+        $sha1Key = sha1($action . forge_utils::getConnectedUserId());
         if(!cms_cookies::exists($sha1Key."_s") || !cms_cookies::exists($sha1Key."_h")){
             return false;
         }
