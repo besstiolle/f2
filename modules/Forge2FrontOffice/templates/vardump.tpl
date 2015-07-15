@@ -73,9 +73,9 @@
     <tr><td class='key'>response.code</td><td>{$rest.json_object.server.code}</td></tr>
     <tr><td class='key'>response.message</td><td>{$rest.json_object.server.message}</td></tr>
     <tr><td class='key'>response.microtime</td><td>{$rest.json_object.server.microtime}</td></tr>
-    <tr><td class='key'>token</td><td>{$rest.json_object.server.token.token}</td></tr>
-    <tr><td class='key'>tocken expire on</td><td>{$rest.json_object.server.token.expireOn}</td></tr>
-    <tr><td class='key'>token unique</td><td>{$rest.json_object.server.token.isUnique}</td></tr>
+    <tr><td class='key'>token</td><td>{if isset($rest['json_object']['server'][token])}{$rest.json_object.server.token.token}{/if}</td></tr>
+    <tr><td class='key'>tocken expire on</td><td>{if isset($rest['json_object']['server'][token])}{$rest.json_object.server.token.expireOn}{/if}</td></tr>
+    <tr><td class='key'>token unique</td><td>{if isset($rest['json_object']['server'][token])}{$rest.json_object.server.token.isUnique}{/if}</td></tr>
 
     <thead><tr><th>Key</th><th>Value</th></tr></thead>
     <tr><td class='key'>raw response</td><td><pre>{$rest.request->getResponse()}</pre></td></tr>

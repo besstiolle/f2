@@ -201,22 +201,14 @@ class RestAPI{
 		//For future debug
 		$ref = RestAPI::addEntry(null, 'DELETE', $restUrl);
 
-		$request = new Curl\DELETE( $restUrl );
-		$request->send();/*
-		$status = $request->getStatus();
-		if($status !== 200){
-			throw new Exception("Error Processing DELETE Request on $restUrl with dataParams =
-						\n ".print_r($paramsData,true)."
-						\ncode returned = ".$status." 
-						\n ".print_r(RestAPI::getDump(),true), 1);
-		}
-		return $request->getResponse();
+		$request = new Curl\DELETE( $restUrl , ['data' => $paramsData]);
+		$request->send();
 
 		$ref = RestAPI::addEntry($ref, 'http_code', $request->getStatus());
 		$ref = RestAPI::addEntry($ref, 'time_exec', microtime(true) - $start);
 		$ref = RestAPI::addEntry($ref, 'request', $request);
 		
-        */
+        
 		return $request;
 	}
 
