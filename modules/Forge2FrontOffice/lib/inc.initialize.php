@@ -28,10 +28,15 @@ if(isset($params['projectId'])){
 	}
 	$serviceProject = new ServiceProject();
 	$project = $serviceProject->getOne($projectId, $projectName);
+	$projectName = $project['name'];
 	$mustStop = ($project === false);
 
-	$smarty->assign('is_admin', forge_utils::is_project_admin($project, forge_utils::getConnectedUserId()));
-	$smarty->assign('is_member', forge_utils::is_project_member($project, forge_utils::getConnectedUserId()));
+	$is_admin = forge_utils::is_project_admin($project, forge_utils::getConnectedUserId());
+	$is_member = forge_utils::is_project_member($project, forge_utils::getConnectedUserId());
+
+	$smarty->assign('is_admin', $is_admin);
+	$smarty->assign('is_member', $is_member);
+	$smarty->assign('project', $project);
 
 	return;
 }
