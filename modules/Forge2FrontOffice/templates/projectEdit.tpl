@@ -2,6 +2,25 @@
 
 {block name=main_content}
 
+	<style>
+		.img_wrapper{
+			display:inline-block;
+			position: relative;
+			margin-bottom: 10px;
+			margin-right: 10px;
+		}
+		.delete_action, .delete_action:hover, .delete_action:focus {
+		    color: #cf2a0e;
+		    cursor: pointer;
+		    font-size: 2.22222rem;
+		    font-weight: bold;
+		    line-height: 1;
+		    position: absolute;
+		    right: 0.2rem;
+		    top: 0.2rem;
+		}
+	</style>
+
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}
@@ -26,7 +45,17 @@
 			<h4>The logo for your module</h4>
 			{if !empty($avatars)}
 				{foreach $avatars as $img}
-					<a class='th radius' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='150,150,#000000,127'}"></a>
+					<div class='img_wrapper'>
+						<a class='th radius' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='150,150,#000000,127'}"></a>
+						<a class="delete_action" aria-label="Close" data-reveal-id="myModal_{$img.url|md5}">&#215;</a>
+					</div>
+					<div id="myModal_{$img.url|md5}" class="reveal-modal" data-reveal aria-labelledby="modalTitle_{$img.url|md5}" aria-hidden="true" role="dialog">
+					  <h2 id="modalTitle_{$img.url|md5}">Delete the picture</h2>
+					  <p><a class='th radius right' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='75,75,#000000,127'}"></a>Are you sure you want deleting this picture ? the operation will be instant and can not be canceled.</p>
+					  <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
+
+					  <a href="{$deleteAvatarUrl}?{$forge_id}filename={$img.name|urlencode}" class="button tiny alert">Delete</a>
+					</div>
 				{/foreach}
 			{else}
 				<p>You don't have uploaded any picture</p>
@@ -51,7 +80,17 @@
 			<h4>The pictures for the slideshow of your module</h4>
 			{if !empty($shows)}
 				{foreach $shows as $img}
-					<a class='th radius' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='75,75,#000000,127'}"></a>
+					<div class='img_wrapper'>
+						<a class='th radius' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='75,75,#000000,127'}"></a>
+						<a class="delete_action" aria-label="Close" data-reveal-id="myModal_{$img.url|md5}">&#215;</a>
+					</div>
+					<div id="myModal_{$img.url|md5}" class="reveal-modal" data-reveal aria-labelledby="modalTitle_{$img.url|md5}" aria-hidden="true" role="dialog">
+					  <h2 id="modalTitle_{$img.url|md5}">Delete the picture</h2>
+					  <p><a class='th radius right' href="{$img['url']}"><img src="{CGSmartImage src=$img['url'] notag=true filter_resizetofit='75,75,#000000,127'}"></a>Are you sure you want deleting this picture ? the operation will be instant and can not be canceled.</p>
+					  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+
+					  <a href="{$deleteShowUrl}?{$forge_id}filename={$img.name|urlencode}" class="button tiny alert">Delete</a>
+					</div>
 				{/foreach}
 			{else}
 				<p>You don't have uploaded any picture</p>

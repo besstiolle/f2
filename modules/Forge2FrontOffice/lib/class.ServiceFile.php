@@ -57,9 +57,11 @@ class ServiceFile {
 	 * @param integer the projectId
 	 * @param array the parameters of the file(s)
 	 */
-	public function deleteAvatarsForProjectId($projectId){
+	public function deleteAvatarsForProjectId($projectId, $filename){
+		$urlParams = array();
+		$urlParams['filename'] = $filename;
 
-		$request = RestAPI::DELETE(sprintf($this->url_avatar, $projectId));
+		$request = RestAPI::DELETE(sprintf($this->url_avatar, $projectId), $urlParams);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404 ){
 			return errorGenerator::display400();
@@ -130,9 +132,11 @@ class ServiceFile {
 	 * @param integer the projectId
 	 * @param array the parameters of the file(s)
 	 */
-	public function deleteShowsForProjectId($projectId){
+	public function deleteShowsForProjectId($projectId, $filename){
+		$urlParams = array();
+		$urlParams['filename'] = $filename;
 
-		$request = RestAPI::DELETE(sprintf($this->url_show, $projectId));
+		$request = RestAPI::DELETE(sprintf($this->url_show, $projectId), $urlParams);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404 ){
 			return errorGenerator::display400();

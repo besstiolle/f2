@@ -130,6 +130,10 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('confirm',CLEAN_STRING);
 		$this->SetParameterType('CSRF',CLEAN_STRING);
 
+		//delete file
+		$this->SetParameterType('typeFile',CLEAN_INT);
+		$this->SetParameterType('filename',CLEAN_STRING);		
+
 		$this->_init();
 	}
 
@@ -149,6 +153,7 @@ class Forge2FrontOffice extends Orm
 		$tracker_itemId = '(?P<tracker_itemId>[\d]+)';
 		$releaseId = '(?P<releaseId>[\d]+)';
 		$debugId = '(?P<debugId>[\d\w]+)';
+		$fileType = '(?P<typeFile>[\d]+)';
 		//$filterAlpha = '(?P<filterAlpha>[\d\w])';
 
 
@@ -200,10 +205,14 @@ class Forge2FrontOffice extends Orm
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $releaseRequest, $releaseId, $all);
 		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid, 'all' => true));
 
+		//delete a file of a project
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, 'file', 'delete' , $fileType);
+		$this->_add_static($route, array('action'=>'projectPictureDelete', 'returnid'=>$returnid));
+
 		//Access Denied
 		$route = $this->_generateRoute('401');
 		$this->_add_static($route, array('action'=>'access_denied', 'returnid'=>$returnid));
-		//Access Denied
+		//debug oage
 		$route = $this->_generateRoute('debug', $debugId);
 		$this->_add_static($route, array('action'=>'debug', 'returnid'=>$returnid));
 

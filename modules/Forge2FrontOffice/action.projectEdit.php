@@ -67,7 +67,11 @@ if($showsWaiting === FALSE) { return; }
 $shows = $serviceFile->getShowsForProjectId($projectId);
 if($shows === FALSE) { return; }
 
+$deleteAvatarUrl = $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/file/delete/1';
+$deleteShowUrl = $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/file/delete/2';
 
+$smarty->assign('deleteAvatarUrl', $deleteAvatarUrl);
+$smarty->assign('deleteShowUrl', $deleteShowUrl);
 
 $smarty->assign('avatarsWaiting', $avatarsWaiting);
 $smarty->assign('avatars', $avatars);
