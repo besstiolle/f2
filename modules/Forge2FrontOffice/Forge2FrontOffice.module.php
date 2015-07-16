@@ -39,7 +39,7 @@ class Forge2FrontOffice extends Orm
 	}
 
 	function GetVersion() {
-		return '0.0.1';
+		return '0.0.2';
 	}
 
 	function GetDependencies() {

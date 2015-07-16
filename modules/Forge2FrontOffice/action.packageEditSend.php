@@ -17,9 +17,18 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 	return errorGenerator::display403();
 }
 
+//get cookie to avoid url-scam
+/*if(!forge_utils::hasCookie('package_edit', $params['CSRF'])){
+	$next = $root_url."/project/new";
+	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
+}*/
+
+$params['package_id'] = $params['packageId'];
+
 $servicePackage= new ServicePackage();
 $package = $servicePackage->getOne($params['packageId']);
 if(!$package) { return; }
+
 
 if($package['project_id']['id'] != $projectId){
 	$msg = "The project #%d %s doesn't have any package #%d %s";
@@ -27,20 +36,12 @@ if($package['project_id']['id'] != $projectId){
 		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
 }
 
-//set cookie to avoid url-scam
-$CSRF = forge_utils::generateRandomString();
-forge_utils::putCookie('package_delete', $CSRF);
+$package = $servicePackage->update($params['packageId'], $params, $root_url.'/project/'.$projectId.'/'.$projectName.'/package/new');
+if(!$package){
+	return;
+}
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageDeleteSend', 'post','', true, '', 
-				 array(
-				 	'projectId' => $project['id'],
-				 	'packageId' => $package['id'],
-				 	'CSRF' => $CSRF
-				 	)));
-
-$smarty->assign('title', $projectName.' : Delete package '.$package['name']);
-$smarty->assign('link_back', $root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
-
-echo $smarty->display('packageDelete.tpl');
+$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
+errorGenerator::display200('the package '.$package['name'].' for the project '.$project['name'].' is created with success.', $next);
 
 include('lib/inc.debug.php');

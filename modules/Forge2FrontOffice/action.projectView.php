@@ -24,7 +24,8 @@ for($i=0; $i < count($packages); $i++) {
 	if($releases === FALSE){ return; }
 	$packages[$i]['releases'] = $releases;
 	if($is_member || $is_admin){
-		$packages[$i]['delete_link'] = $root.'/project/'.$projectId.'/'.$project['unix_name'].'/package/'.$packages[$i]['id'].'/delete';
+		$packages[$i]['delete_link'] = $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/package/'.$packages[$i]['id'].'/delete';
+		$packages[$i]['edit_link'] = $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/package/'.$packages[$i]['id'].'/edit';
 	}
 }
 

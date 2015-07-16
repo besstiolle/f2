@@ -79,7 +79,7 @@ class ServicePackage {
 	 * @param  array a list of bodyParameter
 	 * @return mixed array with the list packages & the number of results or FALSE if an error occured
 	 */
-	/*public function update($id, $bodyParameter = array(), $_link_next_failed){
+	public function update($id, $bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::POST($this->url.$id, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -88,7 +88,7 @@ class ServicePackage {
 
 		$response = json_decode($request->getResponse(), true);
 		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}*/
+	}
 
 	/**
 	 * Create a package

@@ -27,20 +27,22 @@ if($package['project_id']['id'] != $projectId){
 		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
 }
 
-//set cookie to avoid url-scam
+//set cookie to avoid url-scam & double action
 $CSRF = forge_utils::generateRandomString();
-forge_utils::putCookie('package_delete', $CSRF);
+forge_utils::putCookie('package_edit', $CSRF);
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageDeleteSend', 'post','', true, '', 
-				 array(
+
+$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageEditSend', 'post','', true, '',  array(
 				 	'projectId' => $project['id'],
 				 	'packageId' => $package['id'],
 				 	'CSRF' => $CSRF
 				 	)));
 
-$smarty->assign('title', $projectName.' : Delete package '.$package['name']);
-$smarty->assign('link_back', $root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
+$smarty->assign('title', $projectName.' : Edit Package '.$package['name']);
+$smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name']);
+$smarty->assign('package', $package);
 
-echo $smarty->display('packageDelete.tpl');
+
+echo $smarty->display('packageEdit.tpl');
 
 include('lib/inc.debug.php');

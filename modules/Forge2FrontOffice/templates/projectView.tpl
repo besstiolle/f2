@@ -62,6 +62,7 @@
 			{if $is_admin || $is_member}
 				<ul class="button-group radius right">
 					<li><a {if !isset($package.releases.0)}href='{$package.delete_link}'{/if} class="tiny button{if isset($package.releases.0)} secondary disabled{else} alert{/if}">Delete</a></li>
+					<li><a href='{$package.edit_link}' class="tiny button">Edit</a></li>
 				</ul>
 			{/if}
 			<h3 {*data-magellan-destination="p_{$package.id}"*}><a href='{if isset($package.releases.0)}{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$package.releases.0.id}{else}#{/if}'>{$package.name} {if isset($package.releases.0)}| {$package.releases.0.name}{/if}</a></h3>{*<a name="p_{$package.id}"></a>*}
@@ -84,7 +85,7 @@
 
 		{/foreach}
 
-		{if $is_admin}<a class='button tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/delete'>Delete</a>{/if}
+		{if $is_admin}<a class='button tiny alert' href='{$root_url}/project/{$project.id}/{$project.unix_name}/delete'>Delete</a>{/if}
 		{if $is_admin || $is_member}<a class='button tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/edit'>Edit</a>{/if}
 		{if $is_admin || $is_member}<a class='button tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/new'>Create new Package</a>{/if}
 

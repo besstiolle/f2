@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="large-6 columns">
 				<label>Should it be active ?</label>
-				<input type="radio" name="{$forge_id}is_active" value="1" id="is_active_1" checked><label for="is_active_1" checked>Active</label>
+				<input type="radio" name="{$forge_id}is_active" value="1" id="is_active_1" checked><label for="is_active_1">Active</label>
 	     		<input type="radio" name="{$forge_id}is_active" value="0" id="is_active_0"><label for="is_active_0">Disable</label>
 	     	</div>
 
