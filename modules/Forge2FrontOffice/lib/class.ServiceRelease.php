@@ -123,7 +123,7 @@ class ServiceRelease {
 		$request = RestAPI::GET($this->url, $urlParam);
 		
 		if($request->getStatus() === 404){
-			$msg = 'The package %d of the project #%d %s doesn\' have any release';
+			$msg = 'The package %d of the project #%d %s doesn\' not exist';
 			return errorGenerator::display404(sprintf($msg, $id, $projectId, $projectName));
 		} else if($request->getStatus() !== 200){
 			return errorGenerator::display400();
@@ -151,7 +151,10 @@ class ServiceRelease {
 
 		$request = RestAPI::GET($this->url, $urlParam);
 		
-		if($request->getStatus() !== 200 && $request->getStatus() !== 404){
+		if($request->getStatus() === 404){
+			$msg = 'The package %d of the project #%d %s doesn\' not exist';
+			return errorGenerator::display404(sprintf($msg, $id, $projectId, $projectName));
+		} else if($request->getStatus() !== 200){
 			return errorGenerator::display400();
 		} 
 

@@ -10,7 +10,8 @@ if($mustStop) {return;}
  Get the active packages of the project
 **/
 $servicePackage = new ServicePackage();
-$packages = $servicePackage->getActiveAndPublicByProjectId($projectId, $projectName);
+$showActiveOnly = (!$is_member && !$is_admin);
+$packages = $servicePackage->getByProjectId($projectId, $projectName, $showActiveOnly);
 if($packages === FALSE){ return; }
 
 /**
@@ -22,6 +23,9 @@ for($i=0; $i < count($packages); $i++) {
 	$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName);
 	if($releases === FALSE){ return; }
 	$packages[$i]['releases'] = $releases;
+	if($is_member || $is_admin){
+		$packages[$i]['delete_link'] = $this->CreateFrontendLink($id, $returnid, 'packageDeleteSend', '', array(), '', true, false);
+	}
 }
 
 /**

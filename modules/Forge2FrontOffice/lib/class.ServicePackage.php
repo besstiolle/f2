@@ -96,7 +96,7 @@ class ServicePackage {
 	 * @param  array a list of bodyParameter
 	 * @return mixed array with the list packages & the number of results or FALSE if an error occured
 	 */
-	/*public function create($bodyParameter = array(), $_link_next_failed){
+	public function create($bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -104,23 +104,25 @@ class ServicePackage {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}*/
+		return $response['data'][$this->jsonNode][0]; 
+	}
 
 
 	/**
-	 * Return all active & public package by projectId
+	 * Return all packages by projectId
 	 * 
 	 * @param  integer the id of the project
 	 * @param  string the project name (usefull for the message in case of error)
+	 * @param  boolean true if you want filtering on actives packages only
 	 * @param  array a list of urlParameter
 	 * @return mixed the package or FALSE if an error occured
 	 */
-	public function getActiveAndPublicByProjectId($projectId, $projectName){
+	public function getByProjectId($projectId, $projectName, $onlyActive = true){
 		$urlParam = array();
 		$urlParam['project_id'] = $projectId;
-		$urlParam['is_active'] = 1;
-		$urlParam['is_public'] = 1;
+		if($onlyActive) {
+			$urlParam['is_active'] = 1;
+		}
 
 		$request = RestAPI::GET($this->url, $urlParam);
 		

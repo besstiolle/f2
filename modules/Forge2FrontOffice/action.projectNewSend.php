@@ -17,8 +17,8 @@ if(!forge_utils::hasCookie('new', $params['CSRF'])){
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
 }
 
-$ServiceProject = new ServiceProject();
-$project = $ServiceProject->create($params, $root_url.'/project/new');
+$serviceProject = new ServiceProject();
+$project = $serviceProject->create($params, $root_url.'/project/new');
 if(!$project){
 	return;
 }
