@@ -34,5 +34,5 @@ if($params['typeFile'] == 1) {
 }
 
 
-$next = $root_url."/project/".$projectId.'/'.$projectName.'/edit';
+$next = $root_url."/project/".$projectId.'/'.$project['unix_name'].'/edit';
 errorGenerator::display200('the picture is deleted with success', $next);
