@@ -19,8 +19,8 @@
 			
 			{if $is_admin || $is_member}
 				<ul class="button-group radius right">
-					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/delete' class="tiny button alert">Delete</a></li>
-					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/edit' class="tiny button">Edit</a></li>
+					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/{$release.id}/delete' class="tiny button alert">Delete</a></li>
+					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/{$release.id}/edit' class="tiny button">Edit</a></li>
 				</ul>
 			{/if}
 
@@ -58,7 +58,7 @@
 			{/if}
 
 			{if count($releases) == 1}
-				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$release.id}/all' class="tiny button">See Older</a></li>
+				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/{$release.id}/all' class="tiny button">See Older</a></li>
 			{/if}
 		</ul>
 

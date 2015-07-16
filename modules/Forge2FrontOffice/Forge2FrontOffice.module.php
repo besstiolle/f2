@@ -226,14 +226,14 @@ class Forge2FrontOffice extends Orm
 
 		//Page of list of file for a release + older
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId, $all);
-		$this->_add_static($route, array('action'=>'releaseEdit', 'returnid'=>$returnid, 'all' => true));
+		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid, 'all' => true));
 		
 		//Page of edition of a release
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $edit);
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId, $edit);
 		$this->_add_static($route, array('action'=>'releaseEdit', 'returnid'=>$returnid));
 		
 		//Page of delete of a release
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $delete);
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId, $delete);
 		$this->_add_static($route, array('action'=>'releaseDelete', 'returnid'=>$returnid));
 		
 		//Page of creation of a release

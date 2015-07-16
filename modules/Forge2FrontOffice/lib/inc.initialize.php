@@ -31,13 +31,17 @@ if(isset($params['projectId'])){
 	$projectName = $project['name'];
 	$mustStop = ($project === false);
 
+	if($mustStop) {
+		return;
+	}
+
 	$is_admin = forge_utils::is_project_admin($project, forge_utils::getConnectedUserId());
 	$is_member = forge_utils::is_project_member($project, forge_utils::getConnectedUserId());
 
 	$smarty->assign('is_admin', $is_admin);
 	$smarty->assign('is_member', $is_member);
 	$smarty->assign('project', $project);
-
+	
 	return;
 }
 
