@@ -24,7 +24,7 @@ for($i=0; $i < count($packages); $i++) {
 	if($releases === FALSE){ return; }
 	$packages[$i]['releases'] = $releases;
 	if($is_member || $is_admin){
-		$packages[$i]['delete_link'] = $this->CreateFrontendLink($id, $returnid, 'packageDeleteSend', '', array(), '', true, false);
+		$packages[$i]['delete_link'] = $this->CreateFrontendLink($id, $returnid, 'packageDelete', '', array('projectId'=> $projectId, 'sid'=>$packages[$i]['id']), '', true, false);
 	}
 }
 

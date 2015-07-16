@@ -18,22 +18,36 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 }
 
 //get cookie to avoid url-scam
-if(!forge_utils::hasCookie('packagenew', $params['CSRF'])){
-	$next = $root_url."/project/new";
+if(!forge_utils::hasCookie('package_delete', $params['CSRF'])){
+	$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
 }
+
 
 /**
  Check emptyness of the Package
  */
-$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName);
+$servicePackage= new ServicePackage();
+$package = $servicePackage->getOne($params['packageId']);
+
+$serviceRelease = new ServiceRelease();
+$releases = $serviceRelease->getByPackageId($package['id'], $projectId, $projectName);
 if($releases === FALSE){ return; }
 
-if($releases !== null){
-	return errorGenerator::display500('You can\'t delete a package if there is still at least one Release');
+if(count($releases) > 0){
+	foreach ($releases as $release) {
+		if($release['is_active']){
+			$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
+			return errorGenerator::display500('You can\'t delete a package if there is still at least one Release', $next);
+		} 
+	}
 }
 
-die('end');
+$servicePackage->delete($package['id']);
+
+
+$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
+errorGenerator::display200('the package is deleted with success', $next);
 
 
 include('lib/inc.debug.php');

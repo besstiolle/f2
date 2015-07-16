@@ -42,7 +42,7 @@ class ServiceRelease {
 	 * @param  array a list of urlParameter
 	 * @return mixed array with the list releases & the number of results or FALSE if an error occured
 	 */
-	/*public function getAll($urlParam = array()){
+	public function getAll($urlParam = array()){
 		$request = RestAPI::GET($this->url, $urlParam);
 		
 		if($request->getStatus() !== 200){
@@ -53,7 +53,7 @@ class ServiceRelease {
 		$releases = $response['data'][$this->jsonNode];
 		$count = $response['data']['count'];
 		return array($releases, $count);
-	}*/
+	}
 
 	/**
 	 * Delete a release

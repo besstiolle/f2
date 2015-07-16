@@ -61,7 +61,7 @@
 		<div class='callout panel{if !$package.is_active} disabled{/if}'>
 			{if $is_admin || $is_member}
 				<ul class="button-group radius right">
-					<li><a {if !isset($package.releases.0)}aria-label="Close" data-reveal-id="myModal_{$package.id}"{/if} class="tiny button{if isset($package.releases.0)} secondary disabled{else} alert{/if}">Delete</a></li>
+					<li><a {if !isset($package.releases.0)}href='{$package.delete_link}'{/if} class="tiny button{if isset($package.releases.0)} secondary disabled{else} alert{/if}">Delete</a></li>
 				</ul>
 			{/if}
 			<h3 {*data-magellan-destination="p_{$package.id}"*}><a href='{if isset($package.releases.0)}{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$package.releases.0.id}{else}#{/if}'>{$package.name} {if isset($package.releases.0)}| {$package.releases.0.name}{/if}</a></h3>{*<a name="p_{$package.id}"></a>*}
@@ -79,13 +79,6 @@
 					{/if}
 				</div>
 			{/if}
-			<div id="myModal_{$package.id}" class="reveal-modal" data-reveal aria-labelledby="modalTitle_{$package.id}" aria-hidden="true" role="dialog">
-					  <h2 id="modalTitle_{$package.id}">Delete the package</h2>
-					  <p>Are you sure you want deleting this package ? the operation will be instant and can not be canceled.</p>
-					  <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
-
-					  <a href="#" class="button tiny alert">Delete</a>
-					</div>
 		</div>
 
 

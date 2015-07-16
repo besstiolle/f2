@@ -25,7 +25,7 @@ forge_utils::putCookie('packagenew', $CSRF);
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageNewSend', 'post','', true, '',  array(
 				 	'CSRF' => $CSRF
 				 	)));
-$smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$projectName);
+$smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name']);
 
 $smarty->assign('title', $projectName.' : Add new Package');
 

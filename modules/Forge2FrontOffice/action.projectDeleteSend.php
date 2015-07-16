@@ -18,7 +18,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 
 //get cookie to avoid url-scam
 if(!forge_utils::hasCookie('delete', $params['CSRF'])){
-	$next = $root_url."/project/".$projectId."/".$project['unix_name']."/delete";
+	$next = $root_url."/project/".$projectId."/".$project['unix_name'];
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
 	
 }
@@ -31,3 +31,6 @@ $ServiceProject = new ServiceProject();
 
 $next = $root_url."/project/list";
 errorGenerator::display200('the project is deleted with success', $next);
+
+
+include('lib/inc.debug.php');

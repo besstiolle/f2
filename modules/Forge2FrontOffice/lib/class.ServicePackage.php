@@ -23,7 +23,7 @@ class ServicePackage {
 	 * @param  array a list of urlParameter
 	 * @return mixed the package or FALSE if an error occured
 	 */
-	/*public function getOne($id, $name = '', $urlParam = array()){
+	public function getOne($id, $name = '', $urlParam = array()){
 		$request = RestAPI::GET($this->url.$id, $urlParam);
 		
 		if($request->getStatus() === 404){
@@ -35,7 +35,7 @@ class ServicePackage {
 		$response = json_decode($request->getResponse(), true);
 		$package = $response['data'][$this->jsonNode][0];
 		return $package;
-	}*/
+	}
 
 	/**
 	 * Return a list of packages + the counter
@@ -62,7 +62,7 @@ class ServicePackage {
 	 * @param  integer the id of the package
 	 * @return boolean FALSE if an error occured
 	 */
-	/*public function delete($id){
+	public function delete($id){
 		$request = RestAPI::DELETE($this->url.$id);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404){
@@ -70,7 +70,7 @@ class ServicePackage {
 		}
 
 		return;
-	}*/
+	}
 
 	/**
 	 * Update a package

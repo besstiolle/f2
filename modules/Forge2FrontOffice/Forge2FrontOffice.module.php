@@ -135,6 +135,7 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('filename',CLEAN_STRING);	
 
 		//package
+		$this->SetParameterType('packageId',CLEAN_INT);
 		$this->SetParameterType('is_active',CLEAN_INT);
 		$this->SetParameterType('is_public',CLEAN_INT);
 
