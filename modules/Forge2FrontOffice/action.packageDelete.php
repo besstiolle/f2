@@ -18,7 +18,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 }
 
 $servicePackage= new ServicePackage();
-$package = $servicePackage->getOne($params['sid']);
+$package = $servicePackage->getOne($params['packageId']);
 
 if($package['project_id']['id'] != $projectId){
 	$msg = "The project #%d %s doesn't have any package #%d %s";

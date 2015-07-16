@@ -209,8 +209,8 @@ class Forge2FrontOffice extends Orm
 		$this->_add_static($route, array('action'=>'packageEdit', 'returnid'=>$returnid));
 		
 		//Page of edition of a package
-		/*$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $delete);
-		$this->_add_static($route, array('action'=>'packageDeleteSend', 'returnid'=>$returnid));*/
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $delete);
+		$this->_add_static($route, array('action'=>'packageDelete', 'returnid'=>$returnid));
 		
 		//Page of creation of a package
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $new);
