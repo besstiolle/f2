@@ -204,6 +204,8 @@ class Forge2FrontOffice extends Orm
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRequest, $tracker_itemId);
 		$this->_add_static($route, array('action'=>'tracker_itemView', 'returnid'=>$returnid, 'type' => EnumTrackerItemType::FeatureRequest));
 		
+
+
 		//Page of edition of a package
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $edit);
 		$this->_add_static($route, array('action'=>'packageEdit', 'returnid'=>$returnid));
@@ -216,13 +218,29 @@ class Forge2FrontOffice extends Orm
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $new);
 		$this->_add_static($route, array('action'=>'packageNew', 'returnid'=>$returnid));
 
+
+
 		//Page of list of file for a release
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRelease, $releaseId);
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId);
 		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid));
 
 		//Page of list of file for a release + older
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixRelease, $releaseId, $all);
-		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid, 'all' => true));
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId, $all);
+		$this->_add_static($route, array('action'=>'releaseEdit', 'returnid'=>$returnid, 'all' => true));
+		
+		//Page of edition of a release
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $edit);
+		$this->_add_static($route, array('action'=>'releaseEdit', 'returnid'=>$returnid));
+		
+		//Page of delete of a release
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $delete);
+		$this->_add_static($route, array('action'=>'releaseDelete', 'returnid'=>$returnid));
+		
+		//Page of creation of a release
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $new);
+		$this->_add_static($route, array('action'=>'releaseNew', 'returnid'=>$returnid));
+
+
 
 		//delete a file of a project
 		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, 'file', 'delete' , $fileType);

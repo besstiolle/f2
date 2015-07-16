@@ -34,17 +34,8 @@
 				{if empty($avatars)}<img src='{CGSmartImage src='uploads/forge/design/cmsms_400.png' notag=true filter_resizetofit='150,150,#000000,127'}' width='150px' height='150px'/>{/if}
 				{if !empty($avatars)}<img src='{CGSmartImage src=$avatars[0]['url'] notag=true filter_resizetofit='150,150,#000000,127'}' width='150px' height='150px'/>{/if}
 			</div>
-			{*<div data-magellan-expedition="fixed">
-			  <dl class="sub-nav">
-			  	<dd data-magellan-arrival="summary"><a href="#summary">Summary</a></dd>
-			  {foreach $packages as $package}
-			    <dd data-magellan-arrival="p_{$package.id}"><a href="#p_{$package.id}">{$package.name}</a></dd>
-			  {/foreach}
-			  </dl>
-			</div>*}
-
-
-			{*<a name="summary"></a>*}<p {*data-magellan-destination="summary"*}>{$project.description|markdown}</p>
+			
+			<p>{$project.description|markdown}</p>
 		</div>
 
 		{if !empty($shows)}
@@ -65,7 +56,7 @@
 					<li><a href='{$package.edit_link}' class="tiny button">Edit</a></li>
 				</ul>
 			{/if}
-			<h3 {*data-magellan-destination="p_{$package.id}"*}><a href='{if isset($package.releases.0)}{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$package.releases.0.id}{else}#{/if}'>{$package.name} {if isset($package.releases.0)}| {$package.releases.0.name}{/if}</a></h3>{*<a name="p_{$package.id}"></a>*}
+			<h3><a href='{if isset($package.releases.0)}{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$package.id}/release/{$package.releases.0.id}{else}{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$package.id}/release/new{/if}'>{$package.name} {if isset($package.releases.0)}| {$package.releases.0.name}{/if}</a></h3>
 			{if isset($package.releases.0)}
 				 <p class='small'>Last Update : {$package.releases.0.updated_at|cms_date_format}</p>
 				

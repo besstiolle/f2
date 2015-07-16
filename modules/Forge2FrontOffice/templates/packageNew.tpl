@@ -10,7 +10,6 @@
 		{$form}
 		<div class="row">
 			<div class="large-12 columns">
-				<input type='hidden' name='{$forge_id}projectId' value='{$project.id}' />
 				<label for='{$forge_id}name' >Name</label><input type='text' name='{$forge_id}name' value='' placeholder="stable, beta, alpha, ... or module, design package, extended_module, ..." />
  			</div>
  		</div>

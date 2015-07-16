@@ -14,8 +14,17 @@
 		{if isset($avatar)}<img src='{$root_url}{$baseurl_avatar}{$avatar}' />{/if}
 
 		{foreach $releases as $release}
+
 		<div class='callout panel clearfix {if isset($release.current)}current{/if}'>
-			<h3 data-magellan-destination="r_{$release.id}">Release {$release.name}</h3>
+			
+			{if $is_admin || $is_member}
+				<ul class="button-group radius right">
+					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/delete' class="tiny button alert">Delete</a></li>
+					<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/edit' class="tiny button">Edit</a></li>
+				</ul>
+			{/if}
+
+			<h3 {*data-magellan-destination="r_{$release.id}"*}>Release {$release.name}</h3>
 
 			<p class='small'>Last Update : {$release.updated_at|cms_date_format}</p>
 			
@@ -42,10 +51,16 @@
 			
 			<span class='small right'><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$release.id}'>[PERMALINK]</a></span>
 		</div>
-		{if count($releases) == 1}
-			<a href='{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$release.id}/all'>See Older</a>
-		{/if}
 		{/foreach}
+		<ul class="button-group radius">
+			{if $is_admin || $is_member}
+				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/new' class="tiny button">Add new Release</a></li>
+			{/if}
+
+			{if count($releases) == 1}
+				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/release/{$release.id}/all' class="tiny button">See Older</a></li>
+			{/if}
+		</ul>
 
 	{/if}
 
