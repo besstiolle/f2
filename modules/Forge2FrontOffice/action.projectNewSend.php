@@ -23,6 +23,19 @@ if(!$project){
 	return;
 }
 
+//Set myself to administrator
+$assignment = array(
+	'project_id' => $project['id'],
+	'user_id' => forge_utils::getConnectedUserId(),
+	'role' => EnumAssignmentRole::Administrator,
+	);
+$serviceAssignment = new ServiceAssignment();
+$serviceAssignment->create($assignment, $root_url.'/project/new');
+if(!$serviceAssignment){
+	return;
+}
+
+
 $next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
 errorGenerator::display200('the project '.$project['name'].' is created with success.', $next);
 
