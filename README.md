@@ -9,6 +9,7 @@
  * Forge : Fix Umask in JqueryFU
  * Forge : function ADD/DELETE show & avatar for project
  * Forge : function ADD/DELETE/EDIT package
+ * Forge : function ADD/DELETE/EDIT release
  * Forge : Add CgSmartImage
 
 
