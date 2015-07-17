@@ -115,10 +115,13 @@ class ServiceRelease {
 	 * @param  string the the projectName usefull for the message in case of 404
 	 * @return mixed the release or FALSE if an error occured
 	 */
-	public function getByPackageId($packageId, $projectId, $projectName){
+	public function getByPackageId($packageId, $projectId, $projectName, $onlyActive = false){
 		$urlParam = array();
 		$urlParam['package_id'] = $packageId;
 		$urlParam['n'] = 1;
+		if($onlyActive){
+			$urlParam['is_active'] = 1;
+		}
 
 		$request = RestAPI::GET($this->url, $urlParam);
 		

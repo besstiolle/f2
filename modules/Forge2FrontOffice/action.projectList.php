@@ -40,6 +40,8 @@ if(isset($params['filterAlpha'])) {
 //Ask the last 10 modules
 $ServiceProject = new ServiceProject();
 $result = $ServiceProject->getAll($restParameters);
+if(!$result){ return; }
+
 $projects = $result[0];
 $page_counter = $result[1];
 

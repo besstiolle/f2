@@ -17,10 +17,11 @@ if($packages === FALSE){ return; }
 /**
   Get the last release for each package
  */
+$onlyActive = (!$is_admin && !$is_member);
 $serviceRelease = new ServiceRelease();
 for($i=0; $i < count($packages); $i++) {
-	
-	$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName);
+
+	$releases = $serviceRelease->getByPackageId($packages[$i]['id'], $projectId, $projectName, $onlyActive);
 	if($releases === FALSE){ return; }
 	$packages[$i]['releases'] = $releases;
 	if($is_member || $is_admin){
