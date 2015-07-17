@@ -54,6 +54,6 @@ if(!$release){
 }
 
 $next = $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/'.$params['packageId'].'/release/'.$release['id'];
-errorGenerator::display200('the release '.$release['name'].' for the package '.$package['name'].' for the project '.$project['name'].' is created with success.', $next);
+errorGenerator::display200('the release '.$release['name'].' for the package '.$package['name'].' for the project '.$project['name'].' is edited with success.', $next);
 
 include('lib/inc.debug.php');
