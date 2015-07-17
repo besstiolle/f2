@@ -1,0 +1,73 @@
+[[strip]]
+[[ FOUNDATION OVERRIDE ]]
+textarea{
+	min-height 200px;
+}
+.label.markdown {
+    background-color #000000;
+    color #ffffff;
+}
+.panel.disabled{
+	background #d8d8d8 none repeat scroll 0 0;
+	border-color #bbb;
+}
+.delete_action, .delete_actionhover, .delete_actionfocus {
+    color #cf2a0e;
+    cursor pointer;
+    font-size 2.22222rem;
+    font-weight bold;
+    line-height 1;
+    position absolute;
+    right 0.2rem;
+    top 0.2rem;
+}
+
+[[ PICTURES ]]
+.img_wrapper{
+	displayinline-block;
+	position relative;
+	margin-bottom 10px;
+	margin-right 10px;
+}
+.avatar{
+	padding 10px;
+}
+.show{
+ 	border-top 1px dotted;
+ 	border-bottom 1px dotted;
+    margin 15px 0;
+    padding 15px 0;
+}
+.clearing-thumbs li{
+	margin-bottom 10px;
+}
+
+
+[[ VARDUMP ]]
+.json_line{}
+
+.json_space{
+	display inline-block;
+	width 20px;
+}
+
+.json_key{
+	color#911C42;
+}
+
+.json_val{
+	color#301C91;
+}
+
+.json_valnum{
+	color#7C911C;
+}
+
+.json_null{
+	color#1C916C;
+}
+
+.key{
+	font-weight bold;
+}
+[[strip]]
