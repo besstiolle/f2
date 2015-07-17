@@ -102,7 +102,9 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('projectName',CLEAN_STRING);
 		$this->SetParameterType('name',CLEAN_STRING);
 		$this->SetParameterType('unix_name',CLEAN_STRING);
+		$this->SetParameterType('show_join_request',CLEAN_INT);
 		$this->SetParameterType('description',CLEAN_STRING);
+		$this->SetParameterType('github_repo',CLEAN_STRING);
 		$this->SetParameterType('project_type',CLEAN_INT);
 		$this->SetParameterType('filterAlpha',CLEAN_STRING);
 

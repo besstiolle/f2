@@ -21,6 +21,8 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectN
 				 	)));
 $smarty->assign('link_back', $root_url.'/project/list');
 $smarty->assign('enumProjectType', Enum::ConstToArray('EnumProjectType'));
+$smarty->assign('enumProjectRepository', Enum::ConstToArray('EnumProjectRepository'));
+$smarty->assign('enumProjectState', Enum::ConstToArray('EnumProjectState'));
 
 
 $smarty->assign('title', 'Create a new Project');

@@ -19,6 +19,9 @@
 		    right: 0.2rem;
 		    top: 0.2rem;
 		}
+		textarea{
+			min-height: 200px;
+		}
 	</style>
 
 	{include file='inc_navigation.tpl'}
@@ -31,9 +34,54 @@
 
 		{$form}
 
-			<label for='{$forge_id}name' >Name</label><input type='text' id='{$forge_id}name' name='{$forge_id}name' value='{$project.name}'/>
-			<label for='{$forge_id}unix_name' >Unix Name</label><input type='text' id='{$forge_id}unix_name' name='{$forge_id}unix_name' value='{$project.unix_name}' disabled="disabled" />
-			<label for='{$forge_id}description' >Description</label><textarea id='{$forge_id}description' name='{$forge_id}description'>{$project.description}</textarea>
+			<div class="row">
+				<div class="large-12 columns">
+					<label for='{$forge_id}name' >Name</label>
+					<input type='text' id='{$forge_id}name' name='{$forge_id}name' value='{$project.name}' placeholder='Avoid anything with "made simple" or "-ms inside. Thank you :)'/>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="large-12 columns">
+					<label for='{$forge_id}unix_name' >Unix Name</label>
+					<input type='text' {*id='{$forge_id}unix_name' name='{$forge_id}unix_name' value='{$project.unix_name}'*} disabled="disabled" />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="large-6 columns">
+					<label for='{$forge_id}description' >Description</label>
+					<textarea id='{$forge_id}description' name='{$forge_id}description' placeholder='Will allow people understand why your module is the best module ever.'>{$project.description}</textarea>
+				</div>
+				{if $is_admin}
+				<div class="large-6 columns">
+					<div class="row">
+						<div class="large-12 columns">
+							<label {*for='{$forge_id}project_type'*} >Project Type</label>
+							<input type='text' {*id='{$forge_id}project_type' name='{$forge_id}project_type'*} value='TODO : project type' disabled="disabled" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							<label for='{$forge_id}show_join_request' >Show Join Request Button</label>
+
+							<input type="radio" name="{$forge_id}show_join_request" value="1" id="show_join_request_1" {if $project.show_join_request == 1}checked{/if}><label for="show_join_request_1">Show it</label>
+				     		<input type="radio" name="{$forge_id}show_join_request" value="0" id="show_join_request_0" {if $project.show_join_request == 0}checked{/if}><label for="show_join_request_0">Hide it</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="large-12 columns">
+							
+						</div>
+					</div>
+				</div>
+				{/if}
+			</div>
 
 			<input class='button tiny' type='submit' value='send' />
 			<a class='button tiny' href='{$link_back}'>cancel</a>
