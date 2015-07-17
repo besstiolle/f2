@@ -95,7 +95,7 @@ class ServiceRelease {
 	 * @param  array a list of bodyParameter
 	 * @return mixed array with the list releases & the number of results or FALSE if an error occured
 	 */
-	/*public function create($bodyParameter = array(), $_link_next_failed){
+	public function create($bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -104,7 +104,7 @@ class ServiceRelease {
 
 		$response = json_decode($request->getResponse(), true);
 		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}*/
+	}
 
 
 	/**

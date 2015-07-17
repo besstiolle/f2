@@ -27,22 +27,22 @@ if($package['project_id']['id'] != $projectId){
 		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
 }
 
-//set cookie to avoid url-scam & double action
-$CSRF = forge_utils::generateRandomString();
-forge_utils::putCookie('release_new', $CSRF);
+//get cookie to avoid url-scam
+if(!forge_utils::hasCookie('release_new', $params['CSRF'])){
+	$next = $root_url.'/project/'.$projectId.'/'.$projectName.'/package/'.$params['packageId'].'/release/new';
+	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
+}
 
+$params['package_id'] = $params['packageId'];
+$params['released_by'] = forge_utils::getConnectedUserId();
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'releaseNewSend', 'post','', true, '',  array(
-				 	'projectId' => $projectId,
-				 	'packageId' => $package['id'],
-				 	'CSRF' => $CSRF
-				 	)));
+$serviceRelease = new ServiceRelease();
+$release = $serviceRelease->create($params, $root_url.'/project/'.$projectId.'/'.$projectName.'/package/'.$params['packageId'].'/release/new');
+if(!$release){
+	return;
+}
 
-$smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name']);
-
-$smarty->assign('title', $projectName.' : Add new Release');
-$smarty->assign('packageName', $package['name']);
-
-echo $smarty->display('releaseNew.tpl');
+$next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
+errorGenerator::display200('the release '.$release['name'].' for the package '.$package['name'].' for the project '.$project['name'].' is created with success.', $next);
 
 include('lib/inc.debug.php');

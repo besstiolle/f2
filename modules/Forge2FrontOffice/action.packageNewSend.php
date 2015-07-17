@@ -19,7 +19,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 
 //get cookie to avoid url-scam
 if(!forge_utils::hasCookie('packagenew', $params['CSRF'])){
-	$next = $root_url."/project/new";
+	$next = $root_url.'/project/'.$projectId.'/'.$projectName.'/package/new';
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
 }
 

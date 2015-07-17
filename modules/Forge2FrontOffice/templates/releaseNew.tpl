@@ -1,6 +1,13 @@
 {extends file="_glob_2col.tpl"}
 
 {block name=main_content}
+
+	<style>
+		textarea{
+			min-height: 200px;
+		}
+	</style>
+
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}
@@ -10,18 +17,22 @@
 		{$form}
 		<div class="row">
 			<div class="large-12 columns">
-				<label for='{$forge_id}name' >Name</label><input type='text' name='{$forge_id}name' value='' placeholder="v1.0.0, 1.0.0, Version #1" />
+				<label for='{$forge_id}package' >Package</label><input type='text' name='{$forge_id}package' value='{$packageName}' readonly="readonly" />
+ 			</div>
+ 		</div>
+		<div class="row">
+			<div class="large-12 columns">
+				<label for='{$forge_id}name' >Release's Name</label><input type='text' name='{$forge_id}name' value='' placeholder="v1.0.0, 1.0.0, Version #1" />
  			</div>
  		</div>
  		<div class="row">
 			<div class="large-6 columns">
 				<label>Changelog</label>
-				 <textarea placeholder="small-12.columns"></textarea>
+				 <textarea name='{$forge_id}changelog' placeholder="Write here the new features."></textarea>
 	     	</div>
-		</div>
-		<div class="row">
 			<div class="large-6 columns">
 				<label>Release Notes</label>
+				 <textarea name='{$forge_id}release_notes' placeholder="Write here information about 'how should you do upgrade'."></textarea>
 	     	</div>
 		</div>
 
