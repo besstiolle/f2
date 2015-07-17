@@ -61,15 +61,15 @@ class ServiceRelease {
 	 * @param  integer the id of the release
 	 * @return boolean FALSE if an error occured
 	 */
-	/*public function delete($id){
+	public function delete($id){
 		$request = RestAPI::DELETE($this->url.$id);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404){
 			return errorGenerator::display400();
 		}
 
-		return;
-	}*/
+		return true;
+	}
 
 	/**
 	 * Update a release

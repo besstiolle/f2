@@ -68,7 +68,7 @@ class ServiceTracker_item {
 			return errorGenerator::display400();
 		}
 
-		return;
+		return true;
 	}*/
 
 	/**

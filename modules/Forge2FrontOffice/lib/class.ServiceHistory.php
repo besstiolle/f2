@@ -68,7 +68,7 @@ class ServiceHistory {
 			return errorGenerator::display400();
 		}
 
-		return;
+		return true;
 	}*/
 
 	/**

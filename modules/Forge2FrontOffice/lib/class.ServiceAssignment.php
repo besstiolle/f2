@@ -68,7 +68,7 @@ class ServiceAssignment {
 			return errorGenerator::display400();
 		}
 
-		return;
+		return true;
 	}*/
 
 	/**
