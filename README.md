@@ -1,4 +1,4 @@
-## CHANGELOG FORGE
+## CHANGLOG FORGE
 
 ### Version 0.0.2 : July 2015
 
@@ -10,6 +10,7 @@
  * Forge : function ADD/DELETE show & avatar for project
  * Forge : function ADD/DELETE/EDIT package
  * Forge : function ADD/DELETE/EDIT release
+ * Forge : function ADD/EDIT project
  * Forge : Add CgSmartImage
 
 
