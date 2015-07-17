@@ -6,43 +6,78 @@ if (!function_exists("cmsms")) exit;
 include_once('lib/inc.initialize.php');
 if($mustStop) {return;}
 
-/**
- Get the release
-**/
-$serviceRelease = new ServiceRelease();
-$release = $serviceRelease->getOne($params['releaseId']);
-if($release === FALSE){ return; }
-$release['current'] = true;
-$releases = array($release);
 
-/**
- Check the project
-**/
-$projectId = $release['package_id']['project_id'];
-if($project['id'] !== $projectId){
-	$msg = 'The project #%d %s doesn\'t have any release #%d';
-	return errorGenerator::display404(sprintf($msg, $projectId, $projectName, $release['id']));
-}
+if(empty($params['all'])){
 
-/**
- Get previous releases
- **/
- $all = !(empty($params['all']));
-if($all){
+	/**
+	 Get the release
+	**/
+	$serviceRelease = new ServiceRelease();
+	$release = $serviceRelease->getOne($params['releaseId']);
+	if($release === FALSE){ return; }
+	$release['current'] = true;
+	$releases = array($release);
+
+	/**
+	 Check the project
+	**/
+	$projectId = $release['package_id']['project_id'];
+	if($project['id'] !== $projectId){
+		$msg = 'The project #%d %s doesn\'t have any release #%d';
+		return errorGenerator::display404(sprintf($msg, $projectId, $projectName, $release['id']));
+	}
+
+	$smarty->assign('title', $project['name']);
+	$smarty->assign('project', $project);
+	$smarty->assign('releases', $releases);
+
+	echo $smarty->display('releaseView.tpl');
+}else {
+
+	/**
+	 Get all releases
+	 **/
+	$restParameters = array();
+
+	// Number of the page
+	$restParameters['p'] = 1;
+	if(!empty($params['pagin_page'])) {
+		$restParameters['p'] = $params['pagin_page'];
+	}
+
+	//Number of element by page
+	$restParameters['n'] = 10;
+	if(!empty($params['pagin_num'])) {
+		$restParameters['n'] = $params['pagin_num'];
+	}
+
+	if(!$is_member && !$is_admin){
+		$restParameters['is_active'] = true;
+	}
+
+	$restParameters['package_id'] = $params['packageId'];
 
 	$serviceRelease = new ServiceRelease();
-	$oldReleases = $serviceRelease->getOlderReleasesByPackageId($release['id'], $release['package_id']['id']);
-	if($oldReleases === FALSE){ return; }
+	//$oldReleases = $serviceRelease->getOlderReleasesByPackageId($release['id'], $release['package_id']['id']);
+	$result = $serviceRelease->getAll($restParameters);
+	if($result === FALSE){ return; }
 
-	//merge both
-	$releases = array_merge($releases, $oldReleases);
+	$releases = $result[0];
+	$page_counter = $result[1];
+
+
+	$smarty->assign('title', $project['name']);
+	$smarty->assign('project', $project);
+	$smarty->assign('releases', $releases);
+
+	$page_url = $root_url.'/project/'.$projectId.'/shootbox/package/'.$params['packageId'].'/release/list?';
+
+	//Include paginator
+	include('lib/inc.paginator.php');
+
+	echo $smarty->display('releases.tpl');
+	
 }
 
-$smarty->assign('title', $project['name']);
-$smarty->assign('project', $project);
-$smarty->assign('releases', $releases);
-$smarty->assign('all', $all);
-
-echo $smarty->display('releaseView.tpl');
 
 include('lib/inc.debug.php');

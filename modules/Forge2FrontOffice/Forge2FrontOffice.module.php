@@ -228,7 +228,7 @@ class Forge2FrontOffice extends Orm
 		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid));
 
 		//Page of list of file for a release + older
-		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, $releaseId, $all);
+		$route = $this->_generateRoute($prefixProject, $projectId, $projectName, $prefixPackage, $packageId, $prefixRelease, 'list');
 		$this->_add_static($route, array('action'=>'releaseView', 'returnid'=>$returnid, 'all' => true));
 		
 		//Page of edition of a release

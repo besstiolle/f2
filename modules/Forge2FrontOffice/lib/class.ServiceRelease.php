@@ -86,7 +86,7 @@ class ServiceRelease {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		return $response['data'][$this->jsonNode][0]; //FIXME : should return with array
+		return $response['data'][$this->jsonNode][0]; 
 	}
 
 	/**
@@ -103,7 +103,7 @@ class ServiceRelease {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		return $response['data'][$this->jsonNode]; //FIXME : should return with array
+		return $response['data'][$this->jsonNode][0]; 
 	}
 
 

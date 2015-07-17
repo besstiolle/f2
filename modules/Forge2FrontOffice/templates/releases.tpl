@@ -20,6 +20,8 @@
 
 		{if isset($avatar)}<img src='{$root_url}{$baseurl_avatar}{$avatar}' />{/if}
 
+		{include file='inc_paginator.tpl'}
+
 		{foreach $releases as $release}
 
 		<div class='callout panel clearfix {if !$release.is_active}disabled{/if}'>
@@ -58,16 +60,15 @@
 			
 			<span class='small right'><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/{$release.id}'>[PERMALINK]</a></span>
 		</div>
-
 		{/foreach}
 
-		<ul class="button-group radius">
-			{if $is_admin || $is_member}
-				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/new' class="tiny button">Add new Release</a></li>
-			{/if}
+		{include file='inc_paginator.tpl'}
 
-			<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/list' class="tiny button">See All</a></li>
-		</ul>
+		{if $is_admin || $is_member}
+			<ul class="button-group radius">
+				<li><a href='{$root_url}/project/{$project.id}/{$project.unix_name}/package/{$release.package_id.id}/release/new' class="tiny button">Add new Release</a></li>
+			</ul>
+		{/if}
 
 	{/if}
 
