@@ -42,7 +42,7 @@ $CSRF = forge_utils::generateRandomString();
 forge_utils::putCookie('release_edit', $CSRF);
 
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageNewSend', 'post','', true, '',  array(
+$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'releaseEditSend', 'post','', true, '',  array(
 				 	'projectId' => $projectId,
 				 	'packageId' => $package['id'],
 				 	'releaseId' => $release['id'],
@@ -52,8 +52,9 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageN
 
 $smarty->assign('title', $projectName.' : Edit Release '.$release['name']);
 $smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/package/'.$package['id'].'/release/'.$release['id']);
+$smarty->assign('release', $release);
+$smarty->assign('packageName', $package['name']);
 
-die('end releaseEdit');
 echo $smarty->display('releaseEdit.tpl');
 
 include('lib/inc.debug.php');

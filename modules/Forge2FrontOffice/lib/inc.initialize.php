@@ -29,6 +29,7 @@ if(isset($params['projectId'])){
 	$serviceProject = new ServiceProject();
 	$project = $serviceProject->getOne($projectId, $projectName);
 	$projectName = $project['name'];
+	$projectUnixName = $project['unix_name'];
 	$mustStop = ($project === false);
 
 	if($mustStop) {

@@ -27,17 +27,28 @@ if($package['project_id']['id'] != $projectId){
 		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
 }
 
-//get cookie to avoid url-scam
-if(!forge_utils::hasCookie('release_new', $params['CSRF'])){
-	$next = $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/'.$params['packageId'].'/release/new';
+$serviceRelease = new ServiceRelease();
+$release = $serviceRelease->getOne($params['releaseId']);
+if(!$release) { return; }
+
+if($release['package_id']['id'] != $package['id']){
+	$msg = "The package #%d %s doesn't have any release #%d %s";
+	return errorGenerator::display404(sprintf($msg, $package['id'], $package['name'], $release['id'], $release['name']), 
+		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
+}
+
+//get cookie to avoid url-scam & double action
+if(!forge_utils::hasCookie('release_edit', $params['CSRF'])){
+	$next = $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/'.$params['packageId'].'/release/'.$params['releaseId'].'/edit';
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
 }
 
 $params['package_id'] = $params['packageId'];
-$params['released_by'] = forge_utils::getConnectedUserId();
+$params['release_id'] = $params['releaseId'];
+
 
 $serviceRelease = new ServiceRelease();
-$release = $serviceRelease->create($params, $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/'.$params['packageId'].'/release/new');
+$release = $serviceRelease->update($params['releaseId'],$params, $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/'.$params['packageId'].'/release'.$params['releaseId'].'/edit');
 if(!$release){
 	return;
 }

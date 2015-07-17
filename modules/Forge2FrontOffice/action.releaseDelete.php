@@ -41,7 +41,7 @@ if($release['package_id']['id'] != $package['id']){
 $CSRF = forge_utils::generateRandomString();
 forge_utils::putCookie('release_delete', $CSRF);
 
-$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageDeleteSend', 'post','', true, '', 
+$smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'releaseDeleteSend', 'post','', true, '', 
 				 array(
 				 	'projectId' => $project['id'],
 				 	'packageId' => $package['id'],
@@ -49,10 +49,10 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'packageD
 				 	'CSRF' => $CSRF
 				 	)));
 
-$smarty->assign('title', $projectName.' : Delete release '.$package['name']);
+$smarty->assign('title', $projectName.' : Delete release '.$release['name']);
 $smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/package/'.$package['id'].'/release/'.$release['id']);
 
-die('end releaseDelete');
+
 echo $smarty->display('releaseDelete.tpl');
 
 include('lib/inc.debug.php');

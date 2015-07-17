@@ -87,7 +87,7 @@ class ServicePackage {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		return $response['data'][$this->jsonNode]; //FIXME : should return with array
+		return $response['data'][$this->jsonNode][0];
 	}
 
 	/**

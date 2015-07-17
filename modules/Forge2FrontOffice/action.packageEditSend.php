@@ -18,10 +18,10 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 }
 
 //get cookie to avoid url-scam
-/*if(!forge_utils::hasCookie('package_edit', $params['CSRF'])){
+if(!forge_utils::hasCookie('package_edit', $params['CSRF'])) {
 	$next = $root_url."/project/new";
 	return errorGenerator::display500("Your token has been already used. You should go back and try again", $next);
-}*/
+}
 
 $params['package_id'] = $params['packageId'];
 
@@ -36,12 +36,12 @@ if($package['project_id']['id'] != $projectId){
 		$root_url.'/project/'.$project['id'].'/'.$project['unix_name']);
 }
 
-$package = $servicePackage->update($params['packageId'], $params, $root_url.'/project/'.$projectId.'/'.$projectName.'/package/new');
+$package = $servicePackage->update($params['packageId'], $params, $root_url.'/project/'.$projectId.'/'.$projectUnixName.'/package/new');
 if(!$package){
 	return;
 }
 
 $next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];
-errorGenerator::display200('the package '.$package['name'].' for the project '.$project['name'].' is created with success.', $next);
+errorGenerator::display200('the package '.$package['name'].' for the project '.$projectName.' is updated with success.', $next);
 
 include('lib/inc.debug.php');

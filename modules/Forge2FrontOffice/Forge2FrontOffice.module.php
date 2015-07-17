@@ -117,10 +117,6 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('type',CLEAN_INT);
 		$this->SetParameterType('tracker_itemId',CLEAN_INT);
 
-		//release
-		$this->SetParameterType('releaseId',CLEAN_INT);
-		$this->SetParameterType('all',CLEAN_STRING);
-
 		//Fiters
 		$this->SetParameterType('state',CLEAN_STRING);
 
@@ -138,6 +134,13 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('packageId',CLEAN_INT);
 		$this->SetParameterType('is_active',CLEAN_INT);
 		$this->SetParameterType('is_public',CLEAN_INT);
+
+		//release
+		$this->SetParameterType('releaseId',CLEAN_INT);
+		$this->SetParameterType('all',CLEAN_STRING);
+		$this->SetParameterType('changelog',CLEAN_STRING);
+		$this->SetParameterType('release_notes',CLEAN_STRING);
+		$this->SetParameterType('package_name',CLEAN_STRING);
 
 
 		$this->_init();

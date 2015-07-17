@@ -24,10 +24,9 @@ if(!forge_utils::hasCookie('delete', $params['CSRF'])){
 }
 
 echo "delete avoided in action.projectDelete.php";
-$ServiceProject = new ServiceProject();
-/*if(!$ServiceProject->delete($projectId)){
-	return;
-}*/
+$serviceProject = new ServiceProject();
+/*$result = $serviceProject->delete($projectId);
+if(!result){ return; }*/
 
 $next = $root_url."/project/list";
 errorGenerator::display200('the project is deleted with success', $next);

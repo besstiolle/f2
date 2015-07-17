@@ -43,7 +43,8 @@ if(count($releases) > 0){
 	}
 }
 
-$servicePackage->delete($package['id']);
+$result = $servicePackage->delete($package['id']);
+if(!$result) { return; }
 
 
 $next = $root_url.'/project/'.$project['id'].'/'.$project['unix_name'];

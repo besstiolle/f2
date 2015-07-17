@@ -18,7 +18,7 @@ if( ! forge_utils::is_project_admin($project, forge_utils::getConnectedUserId())
 }
 
 if(empty($params['typeFile']) && empty($params['filename'])){
-	$next = $root_url."/project/".$projectId.'/'.$projectName.'/edit';
+	$next = $root_url."/project/".$projectId.'/'.$projectUnixName.'/edit';
 	return errorGenerator::display500('Some parameters were missing', $next);
 }
 

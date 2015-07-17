@@ -2,6 +2,13 @@
 
 {block name=main_content}
 
+	<style>
+	.panel.disabled{
+		background: #d8d8d8 none repeat scroll 0 0;
+    	border-color: #bbb;
+	}
+	</style>
+
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}
@@ -15,7 +22,7 @@
 
 		{foreach $releases as $release}
 
-		<div class='callout panel clearfix {if isset($release.current)}current{/if}'>
+		<div class='callout panel clearfix {if !$release.is_active}disabled{/if}'>
 			
 			{if $is_admin || $is_member}
 				<ul class="button-group radius right">
