@@ -2,26 +2,6 @@
 
 {block name=main_content}
 
-	<style>
-	.avatar{
-		padding: 10px;
-	}
-	.show{
-	 	border-top: 1px dotted;
-	 	border-bottom: 1px dotted;
-	    margin: 15px 0;
-	    padding: 15px 0;
-	}
-	.clearing-thumbs li{
-		margin-bottom: 10px;
-	}
-	.panel.disabled{
-		background: #d8d8d8 none repeat scroll 0 0;
-    	border-color: #bbb;
-	}
-
-	</style>
-
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}

@@ -1,26 +1,26 @@
 <?php
 
 /**
- * Will call the API Assignment
+ * Will call the API License
  */
-class ServiceAssignment {
+class ServiceLicense {
 	
-	private $url = 'rest/v1/assignment/';
+	private $url = 'rest/v1/license/';
 
-	private $msg404 = 'The assignment #%d does not exist';
+	private $msg404 = 'The license #%d does not exist';
 
-	private $jsonNode = 'assignments';
+	private $jsonNode = 'licenses';
 
 	function __construct(){
 		
 	}
 
 	/**
-	 * Return a assignment
+	 * Return a license
 	 * 
-	 * @param  integer the id of the assignment
+	 * @param  integer the id of the license
 	 * @param  array a list of urlParameter
-	 * @return mixed the assignment or FALSE if an error occured
+	 * @return mixed the license or FALSE if an error occured
 	 */
 	/*public function getOne($id, $urlParam = array()){
 		$request = RestAPI::GET($this->url.$id, $urlParam);
@@ -32,17 +32,17 @@ class ServiceAssignment {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		$assignment = $response['data'][$this->jsonNode][0];
-		return $assignment;
+		$license = $response['data'][$this->jsonNode][0];
+		return $license;
 	}*/
 
 	/**
-	 * Return a list of histories + the counter
+	 * Return a list of licenses + the counter
 	 * 
 	 * @param  array a list of urlParameter
-	 * @return mixed array with the list histories & the number of results or FALSE if an error occured
+	 * @return mixed array with the list licenses & the number of results or FALSE if an error occured
 	 */
-	/*public function getAll($urlParam = array()){
+	public function getAll($urlParam = array()){
 		$request = RestAPI::GET($this->url, $urlParam);
 		
 		if($request->getStatus() !== 200){
@@ -50,15 +50,15 @@ class ServiceAssignment {
 		} 
 
 		$response = json_decode($request->getResponse(), true);
-		$histories = $response['data'][$this->jsonNode];
+		$licenses = $response['data'][$this->jsonNode];
 		$count = $response['data']['count'];
-		return array($histories, $count);
-	}*/
+		return array($licenses, $count);
+	}
 
 	/**
-	 * Delete a assignment
+	 * Delete a license
 	 * 
-	 * @param  integer the id of the assignment
+	 * @param  integer the id of the license
 	 * @return boolean FALSE if an error occured
 	 */
 	/*public function delete($id){
@@ -72,11 +72,11 @@ class ServiceAssignment {
 	}*/
 
 	/**
-	 * Update a assignment
+	 * Update a license
 	 * 
-	 * @param  integer the id of the assignment
+	 * @param  integer the id of the license
 	 * @param  array a list of bodyParameter
-	 * @return mixed array with the list histories & the number of results or FALSE if an error occured
+	 * @return mixed array with the list licenses & the number of results or FALSE if an error occured
 	 */
 	/*public function update($id, $bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::POST($this->url.$id, array(), $bodyParameter);
@@ -90,12 +90,12 @@ class ServiceAssignment {
 	}*/
 
 	/**
-	 * Create a assignment
+	 * Create a license
 	 * 
 	 * @param  array a list of bodyParameter
-	 * @return mixed array with the list histories & the number of results or FALSE if an error occured
+	 * @return mixed array with the list licenses & the number of results or FALSE if an error occured
 	 */
-	public function create($bodyParameter = array(), $_link_next_failed){
+	/*public function create($bodyParameter = array(), $_link_next_failed){
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){
@@ -104,7 +104,7 @@ class ServiceAssignment {
 
 		$response = json_decode($request->getResponse(), true);
 		return $response['data'][$this->jsonNode]; //FIXME : should return with array
-	}
+	}*/
 
 
 	/**
@@ -114,12 +114,11 @@ class ServiceAssignment {
 	 * @param  integer the tracker_itemId
 	 * @return array with the list comments or FALSE if an error occured
 	 */
-	public function getByUserId($userId, $n = 100, $p = 1){
+	public function getByTrackerId($tracker_itemId){
 		$urlParam = array();
-		$urlParam['user_id'] = $userId;
-		$urlParam['n'] = $n;
-		$urlParam['p'] = $p;
-		
+
+		$urlParam['historizable_id'] = $tracker_itemId;
+
 		$request = RestAPI::GET($this->url, $urlParam);
 		
 		if($request->getStatus() !== 200 && $request->getStatus() !== 404){

@@ -2,12 +2,6 @@
 
 {block name=main_content}
 
-	<style>
-		textarea{
-			min-height: 200px;
-		}
-	</style>
-
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}

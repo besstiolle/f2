@@ -97,6 +97,9 @@ class ServiceProject {
 	 * @return mixed array with the list projects & the number of results or FALSE if an error occured
 	 */
 	public function create($bodyParameter = array(), $_link_next_failed){
+
+		$bodyParameter['state'] = EnumProjectState::accepted; //TODO : change to pending
+
 		$request = RestAPI::PUT($this->url, array(), $bodyParameter);
 		
 		if($request->getStatus() !== 200){

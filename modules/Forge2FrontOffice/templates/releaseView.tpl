@@ -2,13 +2,6 @@
 
 {block name=main_content}
 
-	<style>
-	.panel.disabled{
-		background: #d8d8d8 none repeat scroll 0 0;
-    	border-color: #bbb;
-	}
-	</style>
-
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}

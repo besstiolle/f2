@@ -2,28 +2,6 @@
 
 {block name=main_content}
 
-	<style>
-		.img_wrapper{
-			display:inline-block;
-			position: relative;
-			margin-bottom: 10px;
-			margin-right: 10px;
-		}
-		.delete_action, .delete_action:hover, .delete_action:focus {
-		    color: #cf2a0e;
-		    cursor: pointer;
-		    font-size: 2.22222rem;
-		    font-weight: bold;
-		    line-height: 1;
-		    position: absolute;
-		    right: 0.2rem;
-		    top: 0.2rem;
-		}
-		textarea{
-			min-height: 200px;
-		}
-	</style>
-
 	{include file='inc_navigation.tpl'}
 
 	{if isset($error)}
@@ -44,13 +22,13 @@
 			<div class="row">
 				<div class="large-12 columns">
 					<label for='{$forge_id}unix_name' >Unix Name</label>
-					<input type='text' {*id='{$forge_id}unix_name' name='{$forge_id}unix_name' value='{$project.unix_name}'*} disabled="disabled" />
+					<input type='text' {*id='{$forge_id}unix_name' name='{$forge_id}unix_name'*} value='{$project.unix_name}' disabled="disabled" />
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="large-6 columns">
-					<label for='{$forge_id}description' >Description</label>
+					<label for='{$forge_id}description' >Description <span class="markdown radius label right">Markdown Ready</span></label>
 					<textarea id='{$forge_id}description' name='{$forge_id}description' placeholder='Will allow people understand why your module is the best module ever.'>{$project.description}</textarea>
 				</div>
 				{if $is_admin}
@@ -58,9 +36,34 @@
 					<div class="row">
 						<div class="large-12 columns">
 							<label {*for='{$forge_id}project_type'*} >Project Type</label>
-							<input type='text' {*id='{$forge_id}project_type' name='{$forge_id}project_type'*} value='TODO : project type' disabled="disabled" />
+							<input type='text' {*id='{$forge_id}project_type' name='{$forge_id}project_type'*} value='{$enumProjectType[$project.project_type]}' disabled="disabled" />
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<label for='{$forge_id}license_id' >License</label>
+							<input type='text' {*id='{$forge_id}license_id' name='{$forge_id}license_id'*} value='{$project.license_id.name}' disabled="disabled" />
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<label for='{$forge_id}repository_type' >Project Repository</label>
+							<select name='{$forge_id}repository_type' id='{$forge_id}repository_type'>
+								{foreach $enumProjectRepository key value}<option value='{$key}' {if $key == $project.repository_type}selected{/if}>{$value}</option>{/foreach}
+							</select>
+						</div>
+					</div>
+					<div class="row collapse {if 3 != $project.repository_type}hide{/if}" id='github_repo'>
+						<div class="large-5 columns">
+							<span class="prefix">https://github.com/</span>
+						</div>
+						<div class="large-7 columns">
+							<input type="text" name='{$forge_id}github_repo' placeholder="Enter your URL..." value='{$project.github_repo}'>
+						</div>
+					</div>
+
 					<div class="row">
 						<div class="large-12 columns">
 							<label for='{$forge_id}show_join_request' >Show Join Request Button</label>
@@ -160,4 +163,19 @@
 		</div>
 	{/if}
 
+{/block}
+
+{block name=js}
+	{$smarty.block.parent}
+	<script>
+		$( document ).ready(function() {
+		  $("#{$forge_id}repository_type").change(function() {
+			  if($(this).val() == 3{* GITHUB *}){
+			  	$("#github_repo").show();
+			  } else {
+			  	$("#github_repo").hide();
+			  }
+			});
+		});
+	</script>
 {/block}

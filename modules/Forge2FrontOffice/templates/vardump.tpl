@@ -2,39 +2,6 @@
 
 {block name=main_content}
 
-  <style>
-
-  .json_line{
-
-  }
-
-  .json_space{
-    display: inline-block;
-    width: 20px;
-  }
-
-  .json_key{
-    color:#911C42;
-  }
-
-  .json_val{
-    color:#301C91;
-  }
-
-  .json_valnum{
-    color:#7C911C;
-  }
-
-  .json_null{
-    color:#1C916C;
-  }
-
-  .key{
-    font-weight: bold;
-  }
-
-  </style>
-
   {foreach $dump as $rest}
 
     <h2>&rarr;Rest Request&larr;</h2>

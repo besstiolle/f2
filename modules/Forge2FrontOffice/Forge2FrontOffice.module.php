@@ -93,10 +93,7 @@ class Forge2FrontOffice extends Orm
 	{
 		$this->RegisterModulePlugin(true, false);
 		$this->RestrictUnknownParams();
-		$this->SetParameterType('routing',CLEAN_STRING);
-		$this->SetParameterType('method',CLEAN_STRING);
-		//$this->SetParameterType('link_next_success',CLEAN_STRING);
-		$this->SetParameterType('_link_next_failed',CLEAN_STRING);
+
 		$this->SetParameterType('sid',CLEAN_INT);
 		$this->SetParameterType('projectId',CLEAN_INT);
 		$this->SetParameterType('projectName',CLEAN_STRING);
@@ -105,7 +102,10 @@ class Forge2FrontOffice extends Orm
 		$this->SetParameterType('show_join_request',CLEAN_INT);
 		$this->SetParameterType('description',CLEAN_STRING);
 		$this->SetParameterType('github_repo',CLEAN_STRING);
+		$this->SetParameterType('registration_reason',CLEAN_STRING);
 		$this->SetParameterType('project_type',CLEAN_INT);
+		$this->SetParameterType('repository_type',CLEAN_INT);
+		$this->SetParameterType('license_id',CLEAN_INT);
 		$this->SetParameterType('filterAlpha',CLEAN_STRING);
 
 		$this->SetParameterType('pagin_page',CLEAN_INT);
@@ -113,7 +113,6 @@ class Forge2FrontOffice extends Orm
 
 		//section "my_modules"
 		$this->SetParameterType('user_id',CLEAN_INT);
-		$this->SetParameterType('project',CLEAN_NONE);
 
 		//tracker item
 		$this->SetParameterType('type',CLEAN_INT);

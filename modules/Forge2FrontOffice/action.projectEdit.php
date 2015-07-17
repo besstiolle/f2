@@ -30,6 +30,8 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectE
 $smarty->assign('title', 'Edit project '.$project['name']);
 $smarty->assign('project', $project);
 $smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix_name']);
+$smarty->assign('enumProjectType', array_flip(Enum::ConstToArray('EnumProjectType')));
+$smarty->assign('enumProjectRepository', Enum::ConstToArray('EnumProjectRepository'));
 
 /**
    Move the Pictures 

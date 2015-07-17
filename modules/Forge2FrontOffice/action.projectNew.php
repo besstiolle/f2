@@ -15,6 +15,12 @@ if($mustStop) {return;}
 $CSRF = forge_utils::generateRandomString();
 forge_utils::putCookie('new', $CSRF);
 
+$serviceLicense = new ServiceLicense();
+$result = $serviceLicense->getAll();
+if(!$result) { return; }
+
+$licenses = $result[0];
+$defaultLicense = 101; //GLP
 
 $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectNewSend', 'post','', true, '',  array(
 				 	'CSRF' => $CSRF
@@ -22,7 +28,8 @@ $smarty->assign('form', $this->CreateFrontendFormStart($id, $returnid, 'projectN
 $smarty->assign('link_back', $root_url.'/project/list');
 $smarty->assign('enumProjectType', Enum::ConstToArray('EnumProjectType'));
 $smarty->assign('enumProjectRepository', Enum::ConstToArray('EnumProjectRepository'));
-$smarty->assign('enumProjectState', Enum::ConstToArray('EnumProjectState'));
+$smarty->assign('licenses', $licenses);
+$smarty->assign('defaultLicense', $defaultLicense);
 
 
 $smarty->assign('title', 'Create a new Project');
