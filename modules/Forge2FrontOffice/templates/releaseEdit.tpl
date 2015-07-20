@@ -45,6 +45,36 @@
 			</div>
 		</div>
 
+		<h3>Files of the Release {$release.name}</h3>
+		<div class='panel'>
+			<h4>Uploaded Files for the Release</h4>
+			{if !empty($files)}
+				<ul>
+					{foreach $files as $file}
+						<li><a class='' href="{$file['url']}"></a></li>
+					{/foreach}
+				</ul>
+			{else}
+				<p>You don't have uploaded any file</p>
+			{/if}
+			{if !empty($filesWaiting)}
+				<p>Are already on transfert : </p>
+				<ul>
+					{foreach $filesWaiting as $file}
+						<li><a class='' href="{$file['url']}"></a></li>
+					{/foreach}
+				</li>
+			{/if}
+
+			{if $max_files > 0}
+				<h4>Upload a new file for your module</h4>
+				<p>Max {$max_files} files, are accepted : tar, xml and zip files.</p>
+				<div class='avatar_zone'>
+					{JQueryFU number=$max_files accept_file_types='/\.(tar|xml|zip)$/i' dir_url=$baseurl_file dir_path=$baseurl_file clean_name="true"}
+				</div>
+			{/if}
+		</div>
+
 		</form>
 	
 	{/if}

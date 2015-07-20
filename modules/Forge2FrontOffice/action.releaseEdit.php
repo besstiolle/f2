@@ -55,6 +55,37 @@ $smarty->assign('link_back', $root_url.'/project/'.$projectId.'/'.$project['unix
 $smarty->assign('release', $release);
 $smarty->assign('packageName', $package['name']);
 
+/**
+ Get files
+ */
+
+$baseurl_file = '/uploads/projects/'.$projectId.'/release/'.$release['id'].'/file';
+$baseurl_file_tmp = '/uploads/projects_cache/'.$projectId.'/release/'.$release['id'].'/file';
+
+$smarty->assign('baseurl_file', $baseurl_file);
+$smarty->assign('baseurl_file_tmp', $baseurl_file_tmp);
+
+//Remove file on our side, we only propose visualization from the back server 
+if(is_dir($root_path.$baseurl_file)){
+	forge_utils::emptyDir($root_path.$baseurl_file, '#(.)*#', false); // should be already empty
+}
+
+$serviceFile = new ServiceFile();
+$filesWaiting = $serviceFile->getFilesWaitingForReleaseId($release['id']);
+if($filesWaiting === FALSE) { return; }
+
+$files = $serviceFile->getFilesForReleaseId($release['id']);
+if($files === FALSE) { return; }
+
+
+//$deleteFileUrl = $root_url.'/project/'.$projectId.'/'.$project['unix_name'].'/file/delete/3';
+
+//$smarty->assign('deleteFileUrl', $deleteFileUrl);
+
+$smarty->assign('filesWaiting', $filesWaiting);
+$smarty->assign('files', $files);
+$smarty->assign('max_files', max(0, 10 - count($filesWaiting) - count($files)));
+
 echo $smarty->display('releaseEdit.tpl');
 
 include('lib/inc.debug.php');
