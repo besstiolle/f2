@@ -43,20 +43,20 @@ if( !$this->_HasSufficientPermissions( 'adduser' ) ) {
 $step1_params = '';
 $step1_params_orig = '';
 if( isset($params['step1_params']) ) {
-  $step1_params_orig = $params['step1_params'];
-  $step1_params = unserialize(base64_decode($params['step1_params']));
-  unset($params['step1_params']);
+    $step1_params_orig = $params['step1_params'];
+    $step1_params = unserialize(base64_decode($params['step1_params']));
+    unset($params['step1_params']);
 }
 
 // do we want to go back
 if( isset( $params['back'] ) ) {
-  // yup we do
-  $params = $step1_params;
-  $this->myRedirect( $id, 'adduser', $returnid, $params, true );
+    // yup we do
+    $params = $step1_params;
+    $this->myRedirect( $id, 'adduser', $returnid, $params, true );
 }
 if( isset( $params['cancel'] ) ) {
-  // yup we do
-  $this->RedirectToTab( $id, 'users', $params );
+    // yup we do
+    $this->RedirectToTab( $id, 'users', $params );
 }
 
 
@@ -68,128 +68,128 @@ $parms1 = $step1_params;
 $groupprops = array();
 $groupids = array();
 foreach( $parms1 as $key => $value ) {
-  if( startswith($key,'memberof_') ) {
-    $gid = (int)substr($key,strlen('memberof_'));
-    $groupids[] = $gid;
-    
-    $relns = $this->GetGroupPropertyRelations( $gid );
-    $groupprops = RRUtils::array_merge_by_name_required( $groupprops, $relns );
-    uasort( $groupprops,array('cge_array','compare_elements_by_sortorder_key') );
-  }
+    if( startswith($key,'memberof_') ) {
+        $gid = (int)substr($key,strlen('memberof_'));
+        $groupids[] = $gid;
+
+        $relns = $this->GetGroupPropertyRelations( $gid );
+        $groupprops = RRUtils::array_merge_by_name_required( $groupprops, $relns );
+        uasort( $groupprops,array('cge_array','compare_elements_by_sortorder_key') );
+    }
 }
 $groupprops = cge_array::to_hash($groupprops,'name');
 
 // get the field info
 $fieldlist = array();
 foreach( $params as $k => $v ) {
-  if( preg_match('/^hidden_/', $k ) ) {
-    $fldname = substr( $k, strlen('hidden_'));
-    $fieldlist[$fldname] = $v;
-  }
+    if( preg_match('/^hidden_/', $k ) ) {
+        $fldname = substr( $k, strlen('hidden_'));
+        $fieldlist[$fldname] = $v;
+    }
 }
 
 // now merge form values for each of the fields
 foreach( $fieldlist as $fldname => $passed_value ) {
-  $v = '';
-  switch($defns[$fldname]['type']) {
-  case '8': // date
-    if( isset($params['input_'.$fldname.'Month']) ) {
-      $v = mktime(0,0,0,
-		  (int)$params['input_'.$fldname.'Month'],
-		  (int)$params['input_'.$fldname.'Day'],
-		  (int)$params['input_'.$fldname.'Year']);
-    }
-    break;
+    $v = '';
+    switch($defns[$fldname]['type']) {
+    case '8': // date
+        if( isset($params['input_'.$fldname.'Month']) ) {
+            $v = mktime(0,0,0,
+                        (int)$params['input_'.$fldname.'Month'],
+                        (int)$params['input_'.$fldname.'Day'],
+                        (int)$params['input_'.$fldname.'Year']);
+        }
+        break;
 
-  default:
-    if( isset($params['input_'.$fldname]) ) {
-      $v = $params['input_'.$fldname];
+    default:
+        if( isset($params['input_'.$fldname]) ) {
+            $v = $params['input_'.$fldname];
+        }
+        break;
     }
-    break;
-  }
-  if( $v != '' ) $fieldlist[$fldname] = $v;
+    if( $v != '' ) $fieldlist[$fldname] = $v;
 }
 
 // now validate
 foreach( $fieldlist as $name => $value ) {
-  // process empty required fields
-  // we don't care about empty optional ones
-  $defn =& $defns[$name];
-  $reln =& $groupprops[$name];
+    // process empty required fields
+    // we don't care about empty optional ones
+    $defn =& $defns[$name];
+    $reln =& $groupprops[$name];
 
-  if( $reln['required'] == 2 ) {
-    // required field.
-    if( $defn['type'] == 6 ) { // Image field
-      if( (!isset($_FILES[$id.'input_'.$name]) || $_FILES[$id.'input_'.$name]['size'] == 0) &&
-	  $value == '') {
-	// a required field is empty
-	$params = $step1_params;
-	$params['error'] = 1;
-	$params['message'] = $this->Lang('error_missing_required_param',$name);
-	$this->myRedirect( $id, 'do_adduser2', $returnid, $params, true );
-	return;
-      }
-    }
-    else if( $value == '' ) {
-      // a required field is empty
-      $params = $step1_params;
-      $params['error'] = 1;
-      $params['message'] = $this->Lang('error_missing_required_param',$name);
-      $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
-      return;
-    }
-  }
-  
-  // validate filled in fields
-  // and do post processing
-  if( $value != '' && $defn['type'] != 6 ) {
-    // validate unique values
-    if( $defn['force_unique'] ) {
-      // make sure that this value doesn't already exist
-      if( !$this->IsUserPropertyValueUnique(-1,$name,$value) ) {
-	$params = $step1_params;
-	$params['error'] = 1;
-	$params['message'] = $this->Lang('error_nonunique_field_value',$name,$value);
-	$this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
-	return;
-      }
+    if( $reln['required'] == 2 ) {
+        // required field.
+        if( $defn['type'] == 6 ) { // Image field
+            if( (!isset($_FILES[$id.'input_'.$name]) || $_FILES[$id.'input_'.$name]['size'] == 0) &&
+                $value == '') {
+                // a required field is empty
+                $params = $step1_params;
+                $params['error'] = 1;
+                $params['message'] = $this->Lang('error_missing_required_param',$name);
+                $this->myRedirect( $id, 'do_adduser2', $returnid, $params, true );
+                return;
+            }
+        }
+        else if( $value == '' ) {
+            // a required field is empty
+            $params = $step1_params;
+            $params['error'] = 1;
+            $params['message'] = $this->Lang('error_missing_required_param',$name);
+            $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
+            return;
+        }
     }
 
-    switch( $defn['type'] ) {
-    case 0: // text
-      // not much we can do to validate a text field.
-      break;
+    // validate filled in fields
+    // and do post processing
+    if( $value != '' && $defn['type'] != 6 ) {
+        // validate unique values
+        if( $defn['force_unique'] ) {
+            // make sure that this value doesn't already exist
+            if( !$this->IsUserPropertyValueUnique(-1,$name,$value) ) {
+                $params = $step1_params;
+                $params['error'] = 1;
+                $params['message'] = $this->Lang('error_nonunique_field_value',$name,$value);
+                $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
+                return;
+            }
+        }
 
-    case 1: // checkbox
-      // or a checkbox
-      break;
+        switch( $defn['type'] ) {
+        case 0: // text
+            // not much we can do to validate a text field.
+            break;
 
-    case 2: // email
-      // email addresses can be validated though
-      $res = $this->IsValidEmailAddress($value,-1,TRUE);
-      if( !is_array($res) || $res[0] == FALSE ) {
-	$params = $step1_params;
-	$params['error'] = 1;
-	$params['message'] = $this->Lang('error_emailalreadyused');
-	$this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
-	return;
-      }
-      break;
+        case 1: // checkbox
+            // or a checkbox
+            break;
 
-    case 3: // textarea
-      // a textarea can be validated for length.
-      break;
+        case 2: // email
+            // email addresses can be validated though
+            $res = $this->IsValidEmailAddress($value,-1,TRUE);
+            if( !is_array($res) || $res[0] == FALSE ) {
+                $params = $step1_params;
+                $params['error'] = 1;
+                $params['message'] = $this->Lang('error_emailalreadyused');
+                $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
+                return;
+            }
+            break;
 
-    case 4: // dropdown
-    case 5: // multiselect
-      // how can we validate a dropdown?
-      break;
+        case 3: // textarea
+            // a textarea can be validated for length.
+            break;
 
-    case 6: // image
-      // image types don't have a param (even if we have uploaded a file)
-      break;
+        case 4: // dropdown
+        case 5: // multiselect
+            // how can we validate a dropdown?
+            break;
+
+        case 6: // image
+            // image types don't have a param (even if we have uploaded a file)
+            break;
+        }
     }
-  }
 }
 
 
@@ -198,23 +198,27 @@ foreach( $fieldlist as $name => $value ) {
 $params = array_merge( $params, $step1_params );
 
 if( !isset($params['input_username']) || $params['input_username'] == '' ) {
-  $params['error'] = 1;
-  $params['message'] = $this->Lang('error_insufficientparams');
-  $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
-  return;
+    $params['error'] = 1;
+    $params['message'] = $this->Lang('error_insufficientparams');
+    $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
+    return;
 }
 
 // now we can actually add the user
-$ret = $this->AddUser( $params['input_username'], 
-		       $params['input_password'],
-		       $params['input_expiresdate'] );
+$ret = $this->AddUser( $params['input_username'],
+                       $params['input_password'],
+                       $params['input_expiresdate'] );
 if( $ret[0] == FALSE ) {
-  $params['error'] = 1;
-  $params['message'] = $ret[1];
-  $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
-  return;
+    $params['error'] = 1;
+    $params['message'] = $ret[1];
+    $this->myRedirect( $id, 'do_adduser2', $returnid,$params, true );
+    return;
 }
 $uid = $ret[1];
+
+// set disabled/ password change flags
+if( isset($params['input_disabled']) && $params['input_disabled'] ) $this->SetUserDisabled($uid,TRUE);
+if( isset($params['input_force_newpw']) && $params['input_force_newpw'] ) $this->ForcePasswordChange($uid,TRUE);
 
 // and add him to his groups
 foreach( $groupids as $mem ) {
@@ -231,7 +235,7 @@ $this->SetEncryptionKey($uid);
 foreach( $fieldlist as $k => $v ) {
   $defn =& $defns[$k];
   $reln =& $groupprops[$v];
-	
+
   if( $defn['type'] == 6 ) {
     // image type
     if( isset($_FILES[$id.'input_'.$k]) && $_FILES[$id.'input_'.$k]['size'] > 0 ) {

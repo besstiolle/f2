@@ -7,7 +7,11 @@
 {/if}
 
 <div class="pageoptions">
-  <p style="float: left;">{$addlink}</p>
+  <p style="float: left;">
+    {if isset($add_url)}
+      <a href="{$add_url}" title="{$mod->Lang('addprop')}">{cgimage image='icons/system/newobject.gif'} {$mod->Lang('addprop')}</a>
+    {/if}
+  </p>
   <p style="text-align: right; float: right;">{$propcount}&nbsp;{$propsfound}</p>
 </div>
 {if $propcount > 0}
@@ -34,7 +38,11 @@
                         <td>{if $prope->force_unique}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}</td>
                         <td>{if $prope->encrypt}{$mod->Lang('yes')}{/if}</td>
 			<td>{$prope->editlink|default:''}</td>
-			<td>{if isset($prope->deletelink)}{$prope->deletelink}{/if}</td>
+			<td>
+			  {if isset($prope->delete_url)}
+			    <a href="{$prope->delete_url}">{cgimage image='icons/system/delete.gif' alt=$mod->Lang('delete')}</a>
+			  {/if}
+			</td>
 		</tr>
 {/foreach}
 	</tbody>

@@ -38,42 +38,60 @@
 
 final class feu_smarty
 {
-    private $_module;
-    private $_properties;
+    private static $_module;
+    private static $_properties;
+    private function __construct() {}
 
-    public function __construct(&$module)
+    private static function _get_module()
     {
-        $this->_module =& $module;
+        if( !self::$_module ) self::$_module = \cms_utils::get_module(MOD_FRONTENDUSERS);
+        return self::$_module;
     }
 
-    function get_userid($username,$assign = '')
+    public static function get_current_userid()
     {
-        $username = trim($username);
-        $uid = null;
-        if( $username ) $uid = (int)$this->_module->GetUserID($username);
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign(trim($assign),$uid);
-            return;
-        }
+        $uid = self::_get_module()->LoggedInId();
         return $uid;
     }
 
-    static public function get_username($uid)
+    public static function get_current_username()
     {
+        return self::_get_module()->LoggedInName();
+    }
+
+    public static function get_userid($username)
+    {
+        $username = trim($username);
+        if( $username ) return (int)self::_get_module()->GetUserID($username);
+    }
+
+    public static function get_username($uid = null)
+    {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
         if( $uid < 1 ) return;
-        $mod = cms_utils::get_module(MOD_FRONTENDUSERS);
-        $uinfo = $mod->GetUserInfo($uid);
+        $uinfo = self::_get_module()->GetUserInfo($uid);
         if( !is_array($uinfo) || count($uinfo) == 0 || $uinfo[0] == FALSE ) return;
         return $uinfo[1]['username'];
     }
 
-    function get_userinfo($uid,$assign = '')
+    public static function get_email($uid = null)
     {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+        if( $uid < 1 ) return;
+        $mod = cms_utils::get_module(MOD_FRONTENDUSERS);
+        if( $mod->GetPreference('username_is_email') ) return self::get_username($uid);
+        $tmp = $mod->GetEmail($uid);
+        return $tmp;
+    }
+
+    public static function get_userinfo($uid = null)
+    {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+        if( $uid < 1 ) return;
         $uid = (int)$uid;
         if( $uid > 0 ) {
-            if( is_object($this->_module) ) {
-                $uinfo = $this->_module->GetUserInfo($uid,TRUE);
+            if( is_object(self::_get_module()) ) {
+                $uinfo = self::_get_module()->GetUserInfo($uid,TRUE);
                 if( !is_array($uinfo) || count($uinfo) == 0 ) {
                     if( $uinfo[0] == FALSE ) {
 
@@ -90,36 +108,30 @@ final class feu_smarty
                 }
             }
         }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign(trim($assign),$uinfo[1]);
-            return;
-        }
-
         return $uinfo[1];
     }
 
-    function get_users_by_groupname($groupname,$assign = '')
+    public static function get_users_by_groupname($groupname,$for_list = FALSE)
     {
         if( !empty($groupname) ) {
-            if( !is_object($this->_module) ) {
+            if( is_object(self::_get_module()) ) {
 
-                $gid = $this->_module->GetGroupID($groupname);
+                $gid = self::_get_module()->GetGroupID($groupname);
                 if( $gid ) {
-                    $usersfull = $this->_module->GetUsersInGroup($gid);
+                    $usersfull = self::_get_module()->GetUsersInGroup($gid);
 
                     $users = array();
                     foreach( $usersfull as $oneuser ) {
-                        $users[] = array('id'=>$oneuser['id'],'username'=>$oneuser['username']);
+                        if( $for_list ) {
+                            $users[$oneuser['id']] = $oneuser['username'];
+                        }
+                        else {
+                            $users[] = array('id'=>$oneuser['id'],'username'=>$oneuser['username']);
+                        }
                     }
+                    return $users;
                 }
             }
-        }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$users);
         }
     }
 
@@ -134,123 +146,145 @@ final class feu_smarty
         return $out;
     }
 
-    function get_user_expiry($uid,$assign = '')
+    public static function get_user_expiry($uid = null)
     {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+        if( $uid < 1 ) return;
+
         $res = null;
-        if( $uid > 0 ) {
-            if( is_object($this->_module) ) {
-                $res = $this->_module->GetExpiryDate($uid);
-            }
-        }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$res);
-            return;
-        }
-
+        $res = self::_get_module()->GetExpiryDate($uid);
         return $res;
     }
 
-    function user_expired($uid,$assign = '')
+    public static function user_expired($uid)
     {
         if( empty($uid) ) return;
-        if( !is_object($this->_module) ) return;
+        if( !is_object(self::_get_module()) ) return;
 
-        $res = $this->_module->IsAccountExpired($uid);
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$res);
-            return;
-        }
+        $res = self::_get_module()->IsAccountExpired($uid);
         return $res;
     }
 
-    function get_user_properties($uid,$assign = '')
+    public static function get_user_properties($uid = null)
     {
-        $res2 = null;
         try {
-            $uid = (int)$uid;
+            if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
             if( $uid < 1 ) throw new Exception('a');
-            if( empty($assign) ) throw new Exception('b');
-            if( !is_object($this->_module) ) throw new Exception('c');
 
-            $res = $this->_module->GetUserProperties($uid);
+            $res = self::_get_module()->GetUserProperties($uid);
             if( !$res ) throw new Exception('d');
 
             $res2 = array();
             foreach( $res as $one ) {
                 $res2[$one['title']] = $one['data'];
             }
+            return $res2;
         }
         catch( Exception $e ) {
         }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$res2);
-            return;
-        }
-        return $res2;
     }
 
-    function get_dropdown_text($propname,$propvalue,$assign = '')
+    public static function get_user_property($property,$uid = null)
+    {
+        try {
+            $property = trim($property);
+            if( !$property ) throw new \Exception('0');
+            if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+            if( $uid < 1 ) throw new \Exception('a');
+
+            $tmp = self::get_user_properties($uid);
+            if( isset($tmp[$property]) ) return $tmp[$property];
+        }
+        catch( \Exception $e ) {
+        }
+    }
+
+    public static function get_dropdown_text($propname,$propvalue)
     {
         $res = null;
 
         try {
-            if( !is_object($this->_module) ) throw new Exception('a');
-            if( $this->_properties == null ) {
-                $this->_properties = array();
-                $tmp = $this->_module->GetPropertyDefns();
+            if( !is_object(self::_get_module()) ) throw new Exception('a');
+            if( self::$_properties == null ) {
+                self::$_properties = array();
+                $tmp = self::_get_module()->GetPropertyDefns();
                 foreach( $tmp as $one ) {
                     if( $one['type'] == 4 || $one['type'] == 5 ) {
-                        $tmp2 = $this->_module->GetSelectOptions($one['name']);
+                        $tmp2 = self::_get_module()->GetSelectOptions($one['name']);
                         $one['options'] = array();
                         foreach( $tmp2 as $k => $v ) {
                             $one['options'][$v] = $k;
                         }
                     }
-                    $this->_properties[$one['name']] = $one;
+                    self::$_properties[$one['name']] = $one;
                 }
             }
 
-            if( !isset($this->_properties[$propname]) ) throw new Exception('b');
+            if( !isset(self::$_properties[$propname]) ) throw new Exception('b');
 
-            if( ($this->_properties[$propname]['type'] != 4 &&
-            $this->_properties[$propname]['type'] != 5) ||
-            !isset($this->_properties[$propname]['options']) ) throw new Exception('c');
+            if( (self::$_properties[$propname]['type'] != 4 && self::$_properties[$propname]['type'] != 5) ||
+                !isset(self::$_properties[$propname]['options']) ) throw new Exception('c');
 
-            if( !isset($this->_properties[$propname]['options'][$propvalue]) ) throw new Exception('d');
+            if( !isset(self::$_properties[$propname]['options'][$propvalue]) ) throw new Exception('d');
 
-            $res = $this->_properties[$propname]['options'][$propvalue];
+            $res = self::$_properties[$propname]['options'][$propvalue];
         }
         catch( Exception $e ) {
-        }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$res);
-            return;
         }
         return $res;
     }
 
-    function get_multiselect_text($propname,$propvalue,$assign = '')
+    public static function get_multiselect_text($propname,$propvalue)
     {
         $values = explode(',',$propvalue);
         $res = array();
         foreach( $values as $one ) {
-            $res[] = $this->get_dropdown_text($propname,$one);
-        }
-
-        if( $assign ) {
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign($assign,$res);
-            return;
+            $res[] = self::get_dropdown_text($propname,$one);
         }
         return $res;
+    }
+
+    public static function get_group_list()
+    {
+        $list = array_flip(self::_get_module()->GetGroupList());
+        return $list;
+    }
+
+    public static function get_user_groups($uid=null)
+    {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+        if( $uid < 1 ) return;
+
+        $groups = self::_get_module()->GetMemberGroupsArray( $uid );
+        $gns = array();
+        $gids = array();
+        if( $groups !== false ) {
+            foreach( $groups as $gid ) {
+                $gids[] = $gid['groupid'];
+                $gns[$gid['groupid']] = self::_get_module()->GetGroupName($gid['groupid']);
+            }
+        }
+        return $gns;
+    }
+
+    public static function is_user_memberof($groups,$uid=null)
+    {
+        if( $uid < 1 ) $uid = self::_get_module()->LoggedInId();
+        if( $uid < 1 ) return;
+
+        if( !is_array($groups) ) $groups = explode(',',$groups);
+        $tmp = array();
+        foreach( $groups as $grp ) {
+            $grp = trim($grp);
+            if( !$grp ) continue;
+            $tmp[] = $grp;
+        }
+        if( !count($tmp) ) return;
+
+        $groups = self::get_user_groups($uid);
+        foreach( $tmp as $one ) {
+            if( in_array($one,$groups) ) return TRUE;
+        }
     }
 }
 

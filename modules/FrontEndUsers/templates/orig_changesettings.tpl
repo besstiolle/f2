@@ -48,7 +48,7 @@
 	   {if isset($field->prompt2) && $field->prompt2}<label><input type="checkbox" class="checkbox" name="{$field->input_name2}" value="clear"/> {$field->prompt2}</label>{/if}
 	   <input type="hidden" name="{$field->input_name}" value="{$field->value}"/>
  	   <input type="file" id="{$field->input_id}" class="form-control" name="{$field->input_name}" {if $field->readonly}readonly{/if}/>
-	{elseif $field->type == 8 {* date *}
+	{elseif $field->type == 8} {* date *}
 	   {html_select_date prefix=$field->input_name start_year='-5' end_year='+10' time=$field->value}
 	{/if}
         {$field->addtext|default:''}

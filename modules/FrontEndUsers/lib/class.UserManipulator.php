@@ -152,17 +152,6 @@ abstract class UserManipulator
     return false;
   }
 
-  //! Check the supplied password and ensure it maches the one in the database
-  //!
-  //!\params username The username to test for
-  //!\params password The password to test
-  //!\return true if passwords match, false otherwise.
-  //!
-  public function CheckPassword($username,$password)
-  {
-    return false;
-  }
-
   //! Check if the user has the specified permission
   public function CheckUserPermission( $perm )
   {
@@ -222,7 +211,7 @@ abstract class UserManipulator
     return array(FALSE,"Function not implemented");
   }
 
-  public function DeletePropertyDefn( $name, $full = false )
+  public function DeletePropertyDefn( $name )
   {
     return false;
   }

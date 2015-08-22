@@ -12,7 +12,7 @@ $(document).ready(function(){
 });
 function select_all()
 {
-  cb = document.getElementsByName('{$feuactionid}selected[]');
+  cb = document.getElementsByName('{$actionid}selected[]');
   el = document.getElementById('selectall');
   st = el.checked;
   for( i = 0; i < cb.length; i++ ) {
@@ -22,7 +22,7 @@ function select_all()
 
 function confirm_delete()
 {
-  var cb = document.getElementsByName('{$feuactionid}selected[]');
+  var cb = document.getElementsByName('{$actionid}selected[]');
   var count = 0;
   for( i = 0; i < cb.length; i++ ) {
      if( cb[i].checked ) count++;
@@ -120,19 +120,21 @@ function confirm_delete()
  <div style="width: 75%; float: left;">
   <input id="feu_filterbox" type="checkbox" value="1"/><label for="feu_filterbox">{$mod->Lang('view_filter')} {if $filter_applied}({$mod->Lang('applied')}){/if}</label>&nbsp;
    <span title="{$mod->Lang('usersingroup')}">{cgimage image='users.gif' alt=""} = {$numusers}</span>&nbsp;
-   {if isset($addlink)}{$addlink}{/if}
+   {if isset($add_url)}<a href="{$add_url}" title="{$mod->Lang('title_add_user')}">{cgimage image='icons/system/newobject.gif'} {$mod->Lang('adduser')}</a>{/if}
    {if isset($import_url)}<a href="{$import_url}" title="{$mod->Lang('title_import_users')}">{cgimage image='icons/system/import.gif'} {$mod->Lang('prompt_importusers')}</a>{/if}
    {if isset($export_url)}<a href="{$export_url}" title="{$mod->Lang('title_export_users')}">{cgimage image='icons/system/export.gif'} {$mod->Lang('prompt_exportusers')}</a>{/if}
  </div>
  <div style="width: 24%; float: right; text-align: right;">
- {if isset($navigation.firstpage_url)}
-   <a href="{$navigation.firstpage_url}">{$mod->Lang('firstpage')}</a>&nbsp;
-   <a href="{$navigation.prevpage_url}">{$mod->Lang('prevpage')}</a>&nbsp;
- {/if}
- {$mod->Lang('page')} {$navigation.curpage} {$mod->Lang('prompt_of')} {$navigation.npages}
- {if isset($navigation.lastpage_url)}
-   &nbsp;<a href="{$navigation.nextpage_url}">{$mod->Lang('nextpage')}</a>
-   &nbsp;<a href="{$navigation.lastpage_url}">{$mod->Lang('lastpage')}</a>
+ {if $itemcount > 0}
+   {if isset($navigation.firstpage_url)}
+     <a href="{$navigation.firstpage_url}">{$mod->Lang('firstpage')}</a>&nbsp;
+     <a href="{$navigation.prevpage_url}">{$mod->Lang('prevpage')}</a>&nbsp;
+   {/if}
+   {$mod->Lang('page')} {$navigation.curpage} {$mod->Lang('prompt_of')} {$navigation.npages}
+   {if isset($navigation.lastpage_url)}
+     &nbsp;<a href="{$navigation.nextpage_url}">{$mod->Lang('nextpage')}</a>
+     &nbsp;<a href="{$navigation.lastpage_url}">{$mod->Lang('lastpage')}</a>
+   {/if}
  {/if}
  </div>
 </div>
@@ -154,13 +156,19 @@ function confirm_delete()
 			<th class="pageicon {literal}{sorter: false}{/literal}">&nbsp;</th>
 			<th class="pageicon {literal}{sorter: false}{/literal}">&nbsp;</th>
 			<th class="pageicon {literal}{sorter: false}{/literal}">&nbsp;</th>
+			<th class="pageicon {literal}{sorter: false}{/literal}">&nbsp;</th>
 			<th class="pageicon {literal}{sorter: false}{/literal}"><input id="selectall" type="checkbox" name="junk" onclick="select_all();"/></th>
 		</tr>
 	</thead>
 	<tbody>
 {foreach from=$items item=entry}
 		<tr>
-			<td>{$entry->username}</td>
+			<td>
+			  {if $entry->disabled}
+			     <span style="color: red;" title="{$mod->Lang('info_disabled')}">!!&nbsp;</span>
+			  {/if}
+			  {$entry->username}
+			</td>
 			<td>{$entry->created}</td>
 			<td>{$entry->expires}</td>
                         {if isset($viewprops) && isset($entry->extra)}
@@ -168,20 +176,29 @@ function confirm_delete()
                         <td>{if isset($entry->extra.$one) && $entry->extra.$one}{$entry->extra.$one}{/if}</td>
                         {/foreach}
                         {/if}
+			<td>
+			  {if $entry->disabled}
+			    <a href="{module_action_url action=admin_enable_user uid=$entry->id state=1}">{cgimage image='icons/system/false.gif' alt=$mod->Lang('enable_user')}</a>
+			  {else}
+			    <a href="{module_action_url action=admin_enable_user uid=$entry->id state=0}">{cgimage image='icons/system/true.gif' alt=$mod->Lang('disable_user')}</a>
+			  {/if}
+			</td>
 			<td>{if isset($entry->logoutlink)}{$entry->logoutlink}{/if}</td>
 			<td>{$entry->historylink|default:''}</td>
 			<td>{$entry->editlink|default:''}</td>
 			<td>{if isset($entry->deletelink)}{$entry->deletelink}{/if}</td>
-			<td><input type="checkbox" name="{$feuactionid}selected[]" value="{$entry->id}"/></td>
+			<td><input type="checkbox" name="{$actionid}selected[]" value="{$entry->id}"/></td>
 		</tr>
 {/foreach}
 	</tbody>
 </table>
 {/if}
-<div class="pageoverflow">
- <div style="float: left;"></div>
- <div style="float: right;">
-   {if isset($perm_removeusers) && $perm_removeusers == 1}<input type="submit" name="{$feuactionid}bulkdelete" value="{$mod->Lang('delete_selected')}" onclick="return confirm_delete();"/>{/if}
- </div>
-</div>
+{if $itemcount > 0}
+  <div class="pageoverflow">
+    <div style="float: left;"></div>
+    <div style="float: right;">
+      {if isset($perm_removeusers) && $perm_removeusers == 1}<input type="submit" name="{$actionid}bulkdelete" value="{$mod->Lang('delete_selected')}" onclick="return confirm_delete();"/>{/if}
+    </div>
+  </div>
+{/if}
 {$endform}

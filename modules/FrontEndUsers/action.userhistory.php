@@ -36,18 +36,10 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 if( !isset($gCms) ) exit;
+if( !$this->_HasSufficientPermissions( 'listusers' ) ) return;
 
-if( !$this->_HasSufficientPermissions( 'listusers' ) )
-  {
-    return;
-  }
-
-$userid = '';
-if (isset ($params['user_id']) && $params['user_id'] != "")
-  {
-    $userid = $params['user_id'];
-  }  
-
+$this->SetCurrentTab('userhistory');
+$userid = \cge_param::get_int($params,'user_id');
 $pagelimits = array();
 $pagelimits['5'] = 5;
 $pagelimits['10'] = 10;
@@ -77,11 +69,10 @@ $sortorders[$this->Lang('sortorder_action_desc')] = 'action DESC';
 $sortorders[$this->Lang('sortorder_action_asc')] = 'action ASC';
 $sortorders[$this->Lang('sortorder_ipaddress_desc')] = 'ipaddress DESC';
 $sortorders[$this->Lang('sortorder_ipaddress_asc')] = 'ipaddress ASC';
-if( $userid == '' )
-  {
+if( $userid == '' ) {
     $sortorders[$this->Lang('sortorder_username_desc')] = 'username DESC';
     $sortorders[$this->Lang('sortorder_username_asc')] = 'username ASC';
-  }
+}
 
 $eventtypes = array();
 $eventtypes['all'] = 'all';
@@ -89,39 +80,28 @@ $eventtypes['fail'] = 'fail';
 $eventtypes['login'] = 'login';
 $eventtypes['logout'] = 'logout';
 $eventtypes['expire'] = 'expire';
-if( isset( $params['submituserhistory'] ) )
-  {
-    if( isset( $params['input_pagelimit'] ) )
-      {
-	$this->SetPreference('userhistory_pagelimit',$params['input_pagelimit']);
-      }
-    if( isset( $params['input_sortorder'] ) )
-      {
-	$this->SetPreference('userhistory_sortorder',$params['input_sortorder']);
-      }
-    if( isset( $params['input_eventtype'] ) )
-      {
-	$this->SetPreference('userhistory_eventtype',$params['input_eventtype']);
-      }
-    if( isset( $params['input_filter_date'] ) )
-      {
-	$this->SetPreference('userhistory_date',$params['input_filter_date']);
-      }
-    if( isset( $params['input_group_ip'] ) )
-      {
-	$this->SetPreference('userhistory_group_ip',$params['input_group_ip']);
-      }
-    if( isset( $params['input_username_regex'] ) )
-      {
-	$this->SetPreference('userhistory_username_regex',$params['input_username_regex']);
-      }
-    if( $userid == '' ) 
-      {
-	$this->RedirectToTab($id,'userhistory');
-      }
-  }
-else if( isset( $params['reset'] ) )
-  {
+if( isset( $params['submituserhistory'] ) ) {
+    if( isset( $params['input_pagelimit'] ) ) {
+        $this->SetPreference('userhistory_pagelimit',$params['input_pagelimit']);
+    }
+    if( isset( $params['input_sortorder'] ) ) {
+        $this->SetPreference('userhistory_sortorder',$params['input_sortorder']);
+    }
+    if( isset( $params['input_eventtype'] ) ) {
+        $this->SetPreference('userhistory_eventtype',$params['input_eventtype']);
+    }
+    if( isset( $params['input_filter_date'] ) ) {
+        $this->SetPreference('userhistory_date',$params['input_filter_date']);
+    }
+    if( isset( $params['input_group_ip'] ) ) {
+        $this->SetPreference('userhistory_group_ip',$params['input_group_ip']);
+    }
+    if( isset( $params['input_username_regex'] ) ) {
+        $this->SetPreference('userhistory_username_regex',$params['input_username_regex']);
+    }
+    if( $userid == '' ) $this->RedirectToTab($id,'userhistory');
+}
+else if( isset( $params['reset'] ) ) {
     $this->SetPreference('userhistory_pagelimit',10);
     $this->SetPreference('userhistory_eventtype','all');
     $this->SetPreference('userhistory_date','-1'); // todo
@@ -129,7 +109,7 @@ else if( isset( $params['reset'] ) )
     $this->SetPreference('userhistory_sortorder','refdate DESC');
     $this->SetPreference('userhistory_username_regex','');
     if( $userid == '' ) $this->RedirectToTab($id,'userhistory');
-  }
+}
 
 $input_pagelimit = (int)$this->GetPreference('userhistory_pagelimit',10);
 $input_sortorder = $this->GetPreference('userhistory_sortorder','refdate DESC');
@@ -140,32 +120,22 @@ $input_username_regex = $this->GetPreference('userhistory_username_regex');
 
 
 // Add the user info to smarty
-if( $userid != '' )
-  {
+if( $userid != '' ) {
     $this->SetEncryptionKey($userid);
     $results = $this->GetUserInfo($params['user_id']);
     $userinfo = '';
-    if( $results[0] === TRUE )
-      {
-	$userinfo = $results[1];
-      }
-    foreach( $userinfo as $k => $v )
-      {
-	$smarty->assign('user_'.$k,$v);
-      }
+    if( $results[0] === TRUE ) $userinfo = $results[1];
+    foreach( $userinfo as $k => $v ) {
+        $smarty->assign('user_'.$k,$v);
+    }
     $props = $this->GetUserProperties($params['user_id']);
-    foreach( $props as $oneprop )
-      {
-	$smarty->assign('userprop_'.$oneprop['title'],$oneprop['data']);
-      }
-  }
+    foreach( $props as $oneprop ) {
+        $smarty->assign('userprop_'.$oneprop['title'],$oneprop['data']);
+    }
+}
 
 // figure out what page we're on
-$pagenumber = 1;
-if( isset( $params['pagenumber'] ) )
-  {
-    $pagenumber = (int)$params['pagenumber'];
-  }
+$pagenumber = \cge_param::get_int($params,'pagenumber',1);
 $startelement = ($pagenumber-1) * $input_pagelimit;
 
 //
@@ -173,171 +143,139 @@ $startelement = ($pagenumber-1) * $input_pagelimit;
 //
 $where = array();
 $parms = array();
-$query1 = "SELECT A.*,B.username 
-             FROM ".cms_db_prefix()."module_feusers_history A, 
+$query1 = "SELECT A.*,B.username
+             FROM ".cms_db_prefix()."module_feusers_history A,
                   ".cms_db_prefix()."module_feusers_users B
             WHERE A.userid = B.id";
-$query2 = "SELECT count(userid) as count FROM ".cms_db_prefix()."module_feusers_history";
-if( $userid != '' )
-  {
+$query2 = "SELECT COUNT(A.userid) AS count
+             FROM ".cms_db_prefix()."module_feusers_history A,
+                  ".cms_db_prefix()."module_feusers_users B
+            WHERE A.userid = B.id";
+if( $userid != '' ) {
     $where[] = 'userid = ?';
     $parms[] = $userid;
-  }
-else
-  {
+}
+else {
     // only use the username regex if the userid is empty
-    if( $input_username_regex != '' )
-      {
-	$where[] = 'username REGEXP ?';
-	$parms[] = $input_username_regex;
-      }
-  }
-if( $input_eventtype != 'all' ) 
-  {
+    if( $input_username_regex != '' ) {
+        $where[] = 'username REGEXP ?';
+        $parms[] = $input_username_regex;
+    }
+}
+if( $input_eventtype != 'all' ) {
     $where[] = 'action = ?';
     $parms[] = $input_eventtype;
-  }
-if( $input_filter_date != -1 )
-  {
+}
+if( $input_filter_date != -1 ) {
     $date = '';
-    switch( $input_filter_date )
-      {
-      case '1h':
-	$date = strtotime('1 hour ago');
-	break;
-      case '6h':
-	$date = strtotime('6 hours ago');
-	break;
-      case '12h':
-	$date = strtotime('12 hours ago');
-	break;
-      case '1d':
-	$date = strtotime('1 day ago');
-	break;
-      case '1w':
-	$date = strtotime('1 week ago');
-	break;
-      case '2w':
-	$date = strtotime('2 weeks ago');
-	break;
-      case '1m':
-	$date = strtotime('1 month ago');
-	break;
-      case '3m':
-	$date = strtotime('3 months ago');
-	break;
-      case '6m':
-	$date = strtotime('6 months ago');
-	break;
-      case '1y':
-	$date = strtotime('1 year ago');
-	break;
-      }
-    if( $date != '' )
-      {
-	$where[] = 'refdate > ?';
-	$parms[] = trim($db->DbTimeStamp($date),"'");
-      }
-  }
-if( count($where) > 0 )
-  {
+    switch( $input_filter_date ) {
+    case '1h':
+        $date = strtotime('1 hour ago');
+        break;
+    case '6h':
+        $date = strtotime('6 hours ago');
+        break;
+    case '12h':
+        $date = strtotime('12 hours ago');
+        break;
+    case '1d':
+        $date = strtotime('1 day ago');
+        break;
+    case '1w':
+        $date = strtotime('1 week ago');
+        break;
+    case '2w':
+        $date = strtotime('2 weeks ago');
+        break;
+    case '1m':
+        $date = strtotime('1 month ago');
+        break;
+    case '3m':
+        $date = strtotime('3 months ago');
+        break;
+    case '6m':
+        $date = strtotime('6 months ago');
+        break;
+    case '1y':
+        $date = strtotime('1 year ago');
+        break;
+    }
+    if( $date != '' ) {
+        $where[] = 'refdate > ?';
+        $parms[] = trim($db->DbTimeStamp($date),"'");
+    }
+}
+if( count($where) > 0 ) {
     $query1 .= ' AND '.implode(' AND ',$where);
-    $query2 .= ' AND '.implode(' AND ',$where);
-  }
-if( $input_group_ip == 1 )
-  {
+    $query1 .= ' AND '.implode(' AND ',$where);
+}
+if( $input_group_ip == 1 ) {
     $query1 .= ' GROUP BY ipaddress';
     $query2 .= ' GROUP BY ipaddress';
-  }
+}
 $query1 .= " ORDER BY ".$input_sortorder;
 $query1 .= " LIMIT $startelement,$input_pagelimit";
 
 // Now get the count, and number of pages
 $tmprow = $db->GetRow( $query2, $parms );
 $recordcount = $tmprow['count'];
-$pagecount = (int)($recordcount / $input_pagelimit);
-if( ($recordcount % $input_pagelimit) != 0 ) $pagecount++;
+$pagecount = (int)ceil($recordcount / $input_pagelimit);
 $smarty->assign('recordcount',$recordcount);
 
 // some pagination variables to smarty.
-if( $pagenumber == 1 )
-  {
+if( $pagenumber == 1 ) {
     $smarty->assign('prevpage','<');
     $smarty->assign('firstpage','<<');
-  }
-else
-  {
+}
+else {
     $smarty->assign('prevpage',
-		    $this->CreateLink($id,$params['action'],
-				      $returnid,'<',
-				      array('pagenumber'=>$pagenumber-1,
-					    'user_id'=>$userid)));
+                    $this->CreateLink($id,$params['action'], $returnid,'<',
+                                      array('pagenumber'=>$pagenumber-1, 'user_id'=>$userid,'cg_activetab'=>'userhistory')));
     $smarty->assign('firstpage',
-		    $this->CreateLink($id,$params['action'],
-				      $returnid,'<<',
-				      array('pagenumber'=>1,
-					    'user_id'=>$userid)));
-  }
-if( $pagenumber >= $pagecount )
-  {
+                    $this->CreateLink($id,$params['action'], $returnid,'<<',
+                                      array('pagenumber'=>1, 'user_id'=>$userid,'cg_activetab'=>'userhistory')));
+}
+if( $pagenumber >= $pagecount ) {
     $smarty->assign('nextpage','>');
     $smarty->assign('lastpage','>>');
-  }
-else
-  {
+}
+else {
     $smarty->assign('nextpage',
-		    $this->CreateLink($id,$params['action'],
-				      $returnid,'>',
-				      array('pagenumber'=>$pagenumber+1,
-					    'user_id'=>$userid)));
+                    $this->CreateLink($id,$params['action'], $returnid,'>',
+                                      array('pagenumber'=>$pagenumber+1, 'user_id'=>$userid,'cg_activetab'=>'userhistory')));
 
     $smarty->assign('lastpage',
-		    $this->CreateLink($id,$params['action'],
-				      $returnid,'>>',
-				      array('pagenumber'=>$pagecount,
-					    'user_id'=>$userid)));
+                    $this->CreateLink($id,$params['action'], $returnid,'>>',
+                                      array('pagenumber'=>$pagecount, 'user_id'=>$userid,'cg_activetab'=>'userhistory')));
 
-  }
+}
 $smarty->assign('pagenumber',$pagenumber);
 $smarty->assign('pagecount',$pagecount);
 $smarty->assign('oftext',$this->Lang('prompt_of'));
-
-if( $userid == '' )
-  {
-    $smarty->assign('multiuser',1);
-  }
+if( $userid == '' ) $smarty->assign('multiuser',1);
 
 // The database query
 $dbresult = $db->Execute( $query1, $parms );
 $rowarray = array();
 $rowclass = 'row1';
-while( $dbresult && !$dbresult->EOF )
-  {
+while( $dbresult && !$dbresult->EOF ) {
     $fields =& $dbresult->fields;
     $onerow = new stdClass();
-    foreach( $fields as $key => $value )
-      {
-	$onerow->$key = $value;
-      }
+    foreach( $fields as $key => $value ) {
+        $onerow->$key = $value;
+    }
 
     // fix some fields up
     $onerow->refdate = $db->UnixTimeStamp($onerow->refdate);
-    if( $onerow->ipaddress == '' )
-      {
-	$onerow->ipaddress = $this->Lang('unknown');
-      }
+    if( $onerow->ipaddress == '' ) $onerow->ipaddress = $this->Lang('unknown');
     $onerow->rowclass = $rowclass;
 
     $rowarray[] = $onerow;
     $rowclass = ($rowclass == 'row1') ? 'row2' : 'row1';
     $dbresult->MoveNext();
-  }
+}
 
-if( count($rowarray) == 0 )
-  {
-    $smarty->assign('message',$this->Lang('info_nohistorydetected'));
-  }
-
+if( count($rowarray) == 0 ) $smarty->assign('message',$this->Lang('info_nohistorydetected'));
 $smarty->assign('prompt_recordsfound',$this->Lang('prompt_recordsfound'));
 $smarty->assign('title_legend_filter',$this->Lang('filter'));
 $smarty->assign('title_legend_groupsort',$this->Lang('title_groupsort'));
@@ -348,36 +286,27 @@ $smarty->assign('reset',$this->CreateInputSubmit($id,'reset',$this->Lang('reset'
 
 $smarty->assign('prompt_pagelimit',$this->Lang('prompt_pagelimit'));
 $smarty->assign('input_pagelimit',
-		$this->CreateInputDropdown($id,'input_pagelimit',$pagelimits,
-					   -1, $input_pagelimit));
+                $this->CreateInputDropdown($id,'input_pagelimit',$pagelimits, -1, $input_pagelimit));
 
 $smarty->assign('prompt_sortorder',$this->Lang('sortby'));
 $smarty->assign('input_sortorder',
-		$this->CreateInputDropdown($id,'input_sortorder',$sortorders,
-					   -1,$input_sortorder));
-				       
+                $this->CreateInputDropdown($id,'input_sortorder',$sortorders, -1, $input_sortorder));
+
 $smarty->assign('prompt_group_ip',$this->Lang('prompt_group_ip'));
 $smarty->assign('input_group_ip',
-		$this->CreateInputDropdown($id,'input_group_ip',
-					   array($this->Lang('yes')=>1,
-						 $this->Lang('no')=>0),
-					   -1, $input_group_ip));
+                $this->CreateInputDropdown($id,'input_group_ip',
+                                           array($this->Lang('yes')=>1, $this->Lang('no')=>0), -1, $input_group_ip));
 
 $smarty->assign('prompt_username_regex',$this->Lang('userfilter'));
 $smarty->assign('input_username_regex',
-		$this->CreateInputText($id,'input_username_regex',
-				       $input_username_regex, 25));
+                $this->CreateInputText($id,'input_username_regex', $input_username_regex, 25));
 
 $smarty->assign('prompt_filter_eventtype',$this->Lang('prompt_filter_eventtype'));
 $smarty->assign('input_filter_eventtype',
-		$this->CreateInputDropdown($id,'input_eventtype',
-					   $eventtypes,
-					   -1,$input_eventtype));
+                $this->CreateInputDropdown($id,'input_eventtype', $eventtypes, -1,$input_eventtype));
 $smarty->assign('prompt_filter_date',$this->Lang('prompt_filter_date'));
 $smarty->assign('input_filter_date',
-		$this->CreateInputDropdown($id,'input_filter_date',
-					   $datelist,
-					   -1,$input_filter_date));
+                $this->CreateInputDropdown($id,'input_filter_date', $datelist,-1,$input_filter_date));
 
 $smarty->assign('title_userhistory',$this->Lang('title_userhistory'));
 $smarty->assign('for',$this->Lang('for'));

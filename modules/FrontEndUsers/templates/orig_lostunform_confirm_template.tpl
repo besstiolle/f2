@@ -1,4 +1,4 @@
 {* lost username confirm template form *}
-<p>{$premsg}</p>
+<h3>{$premsg}</h3>
 <p>{$prompt_yourusernameis}: <strong>{$username}</strong>.</p>
 <p>{$postmsg}</p>

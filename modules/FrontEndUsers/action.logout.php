@@ -39,10 +39,9 @@ if( !isset($gCms) ) exit;
 
 $username = $this->LoggedInName();
 $uid = $this->LoggedInId();
-
 $this->Logout();
 
-$this->Audit( 0, $this->Lang('friendlyname'), $this->Lang('frontenduser_logout').": $username");
+audit( '', $this->GetName, "$username logged out");
 
 $parms = array();
 $parms['username'] = $username;
@@ -50,23 +49,18 @@ $parms['id'] = $uid;
 $this->_SendNotificationEmail('OnLogout',$parms);
 
 // we're logged out
-// redirect somewhere 
+// redirect somewhere
 // todo, add more options here.
 $page = '';
 $return_url = '';
-if( isset($_SESSION['feu_prelogout_url']) )
-  {
+if( isset($_SESSION['feu_prelogout_url']) ) {
     $return_url = $_SESSION['feu_prelogout_url'];
     unset($_SESSION['feu_prelogout_url']);
-  }
-if( $return_url == '' )
-  {
+}
+if( $return_url == '' ) {
     $page = $this->GetPreference('pageid_logout');
-    if( isset( $params['returnto'] ) )
-      {
-	$page = $params['returnto'];
-      }
-  }
+    if( isset( $params['returnto'] ) ) $page = $params['returnto'];
+}
 
 $smarty->assign('username',$username);
 $page = str_replace( "{\$username}", $username, $page );
@@ -75,19 +69,14 @@ $groupname = $this->GetGroupName( $groups[0]['groupid'] );
 $smarty->assign('groupname',$groupname);
 $page = $this->ProcessTemplateFromData($page);
 
-if( $return_url != '' )
-  {
-    redirect($return_url);
-  }
-if( $page )
-  {
-    $id = ContentManager::GetPageIDFromAlias( $page );
-    if( $id )
-      {
-	$this->RedirectContent( $id );
-	return;
-      }
-  }
+if( $return_url != '' ) redirect($return_url);
+if( $page ) {
+    $id = ContentManager::get_instance()->GetPageIDFromAlias( $page );
+    if( $id ) {
+        $this->RedirectContent( $id );
+        return;
+    }
+}
 $this->RedirectContent( $returnid );
 
 ?>

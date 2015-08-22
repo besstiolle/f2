@@ -288,11 +288,19 @@ public function __get($key)
     if( $key == 'fields' && $this->_rs ) {
         $rec = feu_user_cache::get_user($this->_rs->fields['id']);
         if( $this->_query->get_webready() ) {
-            unset($rec['password']);
             $feu = cms_utils::get_module('FrontEndUsers');
+            if( $feu->GetPreference('username_is_email') ) {
+                $rec['email'] = $rec['username'];
+            }
+            unset($rec['password']);
             $defns = $feu->GetPropertyDefns();
             if( isset($rec['fprops']) ) {
                 foreach( $rec['fprops'] as &$one ) {
+                    if( !$feu->GetPreference('username_is_email') ) {
+                        if( $defns[$one['title']]['type'] == FrontEndUsers::FIELDTYPE_EMAIL && !isset($rec['email']) ) {
+                            $rec['email'] = $one['data'];
+                        }
+                    }
                     if( $defns[$one['title']]['type'] == FrontEndUsers::FIELDTYPE_IMAGE ) {
                         // get the full url.
                         $config = cmsms()->GetConfig();

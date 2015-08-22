@@ -117,7 +117,6 @@ $propdefn = array();
   }
   foreach( $tmp as $key => $rec ) {
     $rec['required'] = 0;
-    $rec['lostun'] = -1;
     $propdefn[$key] = $rec;
   }
 }
@@ -160,7 +159,6 @@ if( isset($params['group_id']) ) {
       for( $j = 0; $j < count($propdefn); $j++ ) {
 	if( $res[$i]['name'] == $propdefn[$j]['name'] ) {
 	  $propdefn[$j]['required'] = $res[$i]['required'];
-	  $propdefn[$j]['lostun'] = $res[$i]['lostunflag'];
 	  break;
 	}
       }
@@ -179,49 +177,47 @@ if( isset($params['group_id']) ) {
 
 if (isset ($params['cancel'])) $this->RedirectToTab($id, 'groups' );
 if( isset($params['moveup']) ) {
-  // update the propdefn with status values
-  for( $i = 0; $i < count($params['input_name']); $i++ ) {
-    $name = $params['input_name'][$i];
-    for( $j = 0; $j < count($propdefn); $j++ ) {
-      if( $name == $propdefn[$j]['name'] ) {
-	$propdefn[$j]['required'] = $params['input_required'][$i];
-	if( isset($params['input_lostun_'.$name]) ) $propdefn[$j]['lostun'] = $params['input_lostun_'.$name];
-	break;
-      }
+    // update the propdefn with status values
+    for( $i = 0; $i < count($params['input_name']); $i++ ) {
+        $name = $params['input_name'][$i];
+        for( $j = 0; $j < count($propdefn); $j++ ) {
+            if( $name == $propdefn[$j]['name'] ) {
+                $propdefn[$j]['required'] = $params['input_required'][$i];
+                break;
+            }
+        }
     }
-  }
-  if( isset($params['input_groupname']) ) $groupname = trim($params['input_groupname']);
-  if( isset($params['input_groupdesc']) ) $groupdesc = trim($params['input_groupdesc']);
+    if( isset($params['input_groupname']) ) $groupname = trim($params['input_groupname']);
+    if( isset($params['input_groupdesc']) ) $groupdesc = trim($params['input_groupdesc']);
 
-  // we're moving stuff up
-  // so adjust the propdefn array
-  $idx = (int)$params['moveup'] - 1;
-  swap($params['input_name'][$idx],$params['input_name'][$idx-1]);
-  reorder_by_key($propdefn,'name',$params['input_name']);
- }
+    // we're moving stuff up
+    // so adjust the propdefn array
+    $idx = (int)$params['moveup'] - 1;
+    swap($params['input_name'][$idx],$params['input_name'][$idx-1]);
+    reorder_by_key($propdefn,'name',$params['input_name']);
+}
 if( isset($params['movedown']) ) {
-  // update the propdefn with status values
-  for( $i = 0; $i < count($params['input_name']); $i++ ) {
-    $name = $params['input_name'][$i];
-    for( $j = 0; $j < count($propdefn); $j++ ) {
-      if( $name == $propdefn[$j]['name'] ) {
-	$propdefn[$j]['required'] = $params['input_required'][$i];
-	if( isset($params['input_lostun_'.$name]) ) $propdefn[$j]['lostun'] = $params['input_lostun_'.$name];
-	break;
-      }
+    // update the propdefn with status values
+    for( $i = 0; $i < count($params['input_name']); $i++ ) {
+        $name = $params['input_name'][$i];
+        for( $j = 0; $j < count($propdefn); $j++ ) {
+            if( $name == $propdefn[$j]['name'] ) {
+                $propdefn[$j]['required'] = $params['input_required'][$i];
+                break;
+            }
+        }
     }
-  }
-  if( isset($params['input_groupname']) ) $groupname = trim($params['input_groupname']);
-  if( isset($params['input_groupdesc']) ) $groupdesc = trim($params['input_groupdesc']);
+    if( isset($params['input_groupname']) ) $groupname = trim($params['input_groupname']);
+    if( isset($params['input_groupdesc']) ) $groupdesc = trim($params['input_groupdesc']);
 
-  // we're moving stuff down
-  // so adjust the propdefn array
-  $idx = (int)$params['movedown'] - 1;
-  swap($params['input_name'][$idx],$params['input_name'][$idx+1]);
-  reorder_by_key($propdefn,'name',$params['input_name']);
- }
+    // we're moving stuff down
+    // so adjust the propdefn array
+    $idx = (int)$params['movedown'] - 1;
+    swap($params['input_name'][$idx],$params['input_name'][$idx+1]);
+    reorder_by_key($propdefn,'name',$params['input_name']);
+}
 if( isset($params['submit']) ) {
-  $this->myRedirect($id,'do_addgroup',$returnid,$params);
+    $this->myRedirect($id,'do_addgroup',$returnid,$params);
 }
 
 // populate the template
@@ -280,10 +276,6 @@ foreach( $propdefn as $defn ) {
   if( $sortorder < count($propdefn) ) {
     $onerow->movedown_idx = $sortorder;
     $onerow->movedown = $this->CGCreateInputSubmit($id,'movedown',$sortorder,'','icons/system/sort_down.gif');
-  }
-
-  if( $defn['encrypt'] == 0 && ($defn['type'] == 0 || $defn['type'] == 2 || $defn['type'] == 4) ) {
-      $onerow->askinlostun = $this->CreateInputCheckbox( $id, 'input_lostun_'.$defn['name'], 1, $defn['lostun'] );
   }
 
   $rowarray[] = $onerow;

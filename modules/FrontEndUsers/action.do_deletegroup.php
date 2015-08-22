@@ -39,24 +39,22 @@ if( !isset($gCms) ) exit;
 if( !$this->_HasSufficientPermissions( 'removegroups' ) ) return;
 
 if (!isset ($params['group_id']) || $params['group_id'] == "") {
-  $this->_DisplayErrorPage ($id, $params, $returnid,
-			    $this->Lang ('error_insufficientparams'));
-  return;
-}  
+    $this->_DisplayErrorPage ($id, $params, $returnid, $this->Lang ('error_insufficientparams'));
+    return;
+}
 
 $group = $this->GetGroupInfo( $params['group_id'] );
 if( !isset($group['id']) && $group[0] == FALSE ) {
-  $this->_DisplayErrorPage ($id, $params, $returnid, $group[1] );
-  return;
+    $this->_DisplayErrorPage ($id, $params, $returnid, $group[1] );
+    return;
 }
 
 $query = new feu_user_query();
 $query->add_and_opt(feu_user_query_opt::MATCH_GROUPID,$group['id']);
 $rs = $query->execute();
 if( $rs->get_found_rows() > 0 ) {
-  $this->_DisplayErrorPage ($id, $params, $returnid,
-			    $this->Lang ('error_notemptygroup'));
-  return;
+    $this->_DisplayErrorPage ($id, $params, $returnid, $this->Lang ('error_notemptygroup'));
+    return;
 }
 
 $ret = $this->DeleteGroupFull( $params['group_id'] );

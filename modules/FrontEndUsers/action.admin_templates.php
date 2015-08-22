@@ -96,6 +96,7 @@ echo $this->SetTabHeader( 'logintemplate', $this->Lang('login_template'));
 echo $this->SetTabHeader( 'logouttemplate', $this->Lang('logout_template'));
 echo $this->SetTabHeader( 'changesettings_template', $this->Lang('changesettings_template'));
 echo $this->SetTabHeader( 'forgotpassword_template', $this->Lang('forgotpassword_template'));
+echo $this->SetTabHeader( 'force_newpw_template', $this->Lang('force_newpw_template'));
 echo $this->SetTabHeader( 'lostusername_template', $this->Lang('lostusername_template'));
 echo $this->SetTabHeader( 'view_user', $this->Lang('viewuser_template'));
 echo $this->SetTabHeader( 'reset_session', $this->Lang('resetsession_template'));
@@ -116,6 +117,10 @@ echo $this->EndTab();
 
 echo $this->StartTab('forgotpassword_template',$params);
 _DisplayAdminForgotPasswordTemplateTab( $this, $id, $params, $returnid );
+echo $this->EndTab();
+
+echo $this->StartTab('force_newpw_template');
+include(__DIR__.'/function.admin_force_newpw_template.php');
 echo $this->EndTab();
 
 echo $this->StartTab('lostusername_template',$params);

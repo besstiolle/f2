@@ -77,8 +77,8 @@ if( $consumer->has_capability(feu_auth_consumer::CAPABILITY_CHANGEUSERNAME) ) {
 // check if the user is allowed to change his password
 if( $consumer->has_capability(feu_auth_consumer::CAPABILITY_CHANGEPASSWD) ) {
     // change this password
-    $password = html_entity_decode(trim($params['feu_input_password']));
-    $repeat   = html_entity_decode(trim($params['feu_input_repeatpassword']));
+    $password = cms_html_entity_decode(trim($params['feu_input_password']));
+    $repeat   = cms_html_entity_decode(trim($params['feu_input_repeatpassword']));
     if( $password != $repeat && $password != '') {
         $params['error'] = 1;
         $params['message'] = $this->Lang('error_passwordmismatch');

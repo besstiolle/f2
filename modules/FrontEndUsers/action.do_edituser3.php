@@ -230,12 +230,12 @@ if( isset($params['step1_params']) ) {
 }
 
 // now find out which groups he's a member of
-$username = '';
-if( isset( $params['input_username'] ) ) $username = $params['input_username'];
-$password = '';
-if( isset( $params['input_password'] ) && $params['input_password'] != '' ) $password = $params['input_password'];
+$disabled = (int) cge_utils::get_param($params,'input_disabled');
+$force_newpw = (int) cge_utils::get_param($params,'input_force_newpw');
+$username = trim(cge_utils::get_param($params,'input_username'));
+$password = trim(cge_utils::get_param($params,'input_password'));
 $expiresdate = strtotime('+10 years', time());
-if( isset( $params['input_expiresdate'] ) ) $expiresdate = $params['input_expiresdate'];
+$expiresdate = cge_utils::get_param($params,'input_expiresdate',$expiresdate);
 
 // and Set the user
 $ret = $this->SetUser( $user_id, $username, $password, $expiresdate );
@@ -245,6 +245,8 @@ if( $ret[0] == false ) {
     $this->myRedirect( $id, 'do_edituser2', $returnid, $params, true );
     return;
 }
+$this->SetUserDisabled( $user_id, $disabled );
+$this->ForcePasswordChange( $user_id, $force_newpw );
 
 // remove any user temp code that may exist...
 $this->RemoveUserTempCode($user_id);
@@ -298,6 +300,8 @@ foreach( $fieldlist as $k => $v ) {
 
 // and we're done
 // send the event
+$this->add_history($user_id,'settings changed by administrator');
+audit($user_id,$this->GetName(),'User settings changed by administrator');
 $event_params = array();
 $event_params['name'] = $username;
 $event_params['id'] = $user_id;

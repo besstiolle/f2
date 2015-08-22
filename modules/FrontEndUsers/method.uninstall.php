@@ -38,17 +38,11 @@
 
 $db = $this->GetDb();
 $dict = NewDataDictionary( $db );
-$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_users" );
-$dict->ExecuteSQLArray($sqlarray);
-$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_groups" );
-$dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_loggedin" );
 $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_belongs" );
 $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_properties" );
-$dict->ExecuteSQLArray($sqlarray);
-$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_propdefn" );
 $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_dropdowns" );
 $dict->ExecuteSQLArray($sqlarray);
@@ -59,9 +53,12 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_history" );
 $dict->ExecuteSQLArray($sqlarray);
 
-$db->DropSequence( cms_db_prefix()."module_feusers_users_seq" );
-$db->DropSequence( cms_db_prefix()."module_feusers_groups_seq" );
-$db->DropSequence( cms_db_prefix()."module_feusers_properties_seq" );
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_propdefn" );
+$dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_groups" );
+$dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_feusers_users" );
+$dict->ExecuteSQLArray($sqlarray);
 
 // templates
 $this->DeleteTemplate();

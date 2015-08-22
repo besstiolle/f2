@@ -41,16 +41,14 @@ $this->SetCurrentTab('auth');
 
 $query = 'SELECT count(id) FROM '.cms_db_prefix().'module_feusers_users';
 $nusers = $db->GetOne($query);
-if( $nusers > 0 && isset($params['pwsalt']) )
-  {
+if( $nusers > 0 && $this->GetPreference('use_usersalt') && isset($params['pwsalt']) ) {
     $oldsalt = $this->GetPreference('pwsalt');
-    if( $oldsalt != $params['pwsalt'] )
-      {
-	$this->SetError($this->Lang('error_adjustsalt'));
-	$this->RedirectToTab($id, 'auth', '', 'admin_settings');
-	return;
-      }
-  }
+    if( $oldsalt != $params['pwsalt'] ) {
+        $this->SetError($this->Lang('error_adjustsalt'));
+        $this->RedirectToTab($id, 'auth', '', 'admin_settings');
+        return;
+    }
+}
 
 $this->SetPreference('pwsalt',trim($params['pwsalt']));
 

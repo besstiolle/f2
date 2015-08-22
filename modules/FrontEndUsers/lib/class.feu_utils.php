@@ -72,12 +72,6 @@ final class feu_utils
         return self::get_std_consumer();
     }
 
-    public static function generate_random_printable_string($len = 10)
-    {
-        $o1 = new Random("23456789ABCDEFGHJKMNPQRSTUVWXYZ");
-        return $o1->get($len);
-    }
-
     public static function get_userlist($none = null)
     {
         static $list;

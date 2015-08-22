@@ -37,69 +37,41 @@
 #END_LICENSE
 if( !isset($gCms) ) exit;
 if( !$this->_HasSufficientPermissions( 'removeusers' ) ) return;
+$this->SetCurrentTab('users');
 
-if (!isset ($params['user_id']) || $params['user_id'] == "") {
-    $this->_DisplayErrorPage ($id, $params, $returnid,
-                              $this->Lang ('error_insufficientparams'));
+$user_id = \cge_param::get_int($params,'user_id');
+if( $user_id < 1 ) {
+    $this->SetError($this->Lang('error_insufficientparams'));
+    $this->RedirectToTab($id);
     return;
 }
 
 $user = $this->GetUserInfo( $params['user_id'] );
-if( !is_array($user) || $user[0] == FALSE )
-  {
-    $this->_DisplayErrorPage ($id, $params, $returnid, $this->Lang('error_usernotfound') );
+if( !is_array($user) || $user[0] == FALSE ) {
+    $this->SetError($this->Lang('error_usernotfound'));
+    $this->RedirectToTab($id);
     return;
-  }
+}
 
 // Get all of the property definitions, if they're of type 6
 // and the property is not empty, then we may
 // have to delete a file as well.
 $defns = $this->GetPropertyDefns();
-$props = $this->GetUserProperties( $params['user_id'] );
 $prop_ary = array();
 $destDir1 = $gCms->config['uploads_path'].DIRECTORY_SEPARATOR;
 $destDir1 .= $this->GetPreference('image_destination_path','feusers').DIRECTORY_SEPARATOR;
-if( $props )
-  {
-    foreach( $defns as $onedefn )
-      {
-	if( $onedefn['type'] != 6 ) continue;
-
-	foreach( $props as $oneprop )
-	  {
-	    if( $oneprop['title'] != $onedefn['name'] ) continue;
-
-	    // found a match, we have a type 6 field.
-	    if( $oneprop['data'] == '' ) continue;
-
-	    // and one with a value too.
-	    $file1 = $destDir1.$oneprop['data'];
-	    @unlink( $file1 );
-	  }
-      }
-	foreach ($props as $one_prop)
-	{
-		$prop_ary[$one_prop['title']] = $one_prop['data'];
-	}
-  }
-
 $ret = $this->DeleteUserFull( $params['user_id'] );
-if( $ret[0] == FALSE )
-  {
-    $this->_DisplayErrorPage ($id, $params, $returnid, $ret[1] );
+if( $ret[0] == FALSE ) {
+    $this->SetError($ret[1]);
+    $this->RedirectToTab($id);
     return;
-  }
+}
 
 // send an event
-$parms = array();
-$parms['id'] = $params['user_id'];
-$parms['username'] = $user[1]['username'];
-$parms['props'] = $prop_ary;
-$this->SendEvent( 'OnDeleteUser', $parms );
 $this->_SendNotificationEmail('OnDeleteUser',$parms);
 
 // and log it
-$this->Audit( 0, $this->Lang('friendlyname'),'Deleted User '.$params['user_id']);
+audit( '', $this->GetName(),'Deleted User '.$params['user_id']);
 
 $this->RedirectToTab($id, 'users' );
 

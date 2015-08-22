@@ -143,6 +143,7 @@ final class feu_user_cache
           $uinfo = $db->GetArray($uquery);
           foreach($uinfo as $rec) {
               unset($rec['password']);
+              unset($rec['salt']);
               self::$_users[$rec['id']] = $rec;
           }
       }

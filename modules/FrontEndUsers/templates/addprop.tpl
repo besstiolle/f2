@@ -28,13 +28,13 @@
   </div>
   {/foreach}
   {/if}
-{if isset($input_force_unique)}
+{if isset($input_force_unique) && $defn.type != 6}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_force_unique')}:</p>
     <p class="pageinput">{$input_force_unique}</p>
   </div>
 {/if}
-{if $defn.type != 2}
+{if $defn.type != 2 && $defn.type != 6}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_encrypt')}:</p>
     <p class="pageinput">{$input_encrypt}<br/>{$mod->Lang('info_encrypt')}</p>

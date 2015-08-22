@@ -38,67 +38,62 @@
 if( !isset($gCms) ) exit;
 
 $uid = (int)$this->LoggedInId();
-if( isset($params['uid']) ) $uid = (int)$params['uid'];
-if( !$uid ) return;
-
-
-$smarty->assign_by_ref('feu',$this);
-// Here we get a union (yep, a union) of all of the user
-// properties and display them along with the values
-$userinfo = $this->GetUserInfo($uid);
-if( $userinfo[0] === FALSE ) {
-  $this->_DisplayErrorPage( $id, $params, $returnid, $userinfo[1]);
-  return;
-}
-$smarty->assign('userinfo',$userinfo[1]);
-$smarty->assign('email_address',$this->GetEmail($uid));
-
+$uid = \cge_param::get_int($params,'uid',$uid);
+if( $uid < 1 ) return;
+$tmp = $this->GetUserInfo($uid);
+if( $tmp[0] === FALSE ) return;
+$user_info = $tmp[1];
+$tmp = null;
 $groups = $this->GetMemberGroupsArray( $uid );
 if( !$groups ) return;
+
+$tpl = $this->CreateSmartyTemplate('feusers_viewuser');
+$tpl->assign('userinfo',$user_info);
+$tpl->assign('email_address',$this->GetEmail($uid));
 
 // now we have the groups, we build a union of all of the groups properties
 $prop2 = array();
 foreach( $groups as $grprecord )
 {
-  $gid = $grprecord['groupid'];
-  $proprelations = $this->GetGroupPropertyRelations( $gid );
-  $prop2 = RRUtils::array_merge_by_name_required( $prop2, $proprelations );
-  uasort( $prop2, array('cge_array','compare_elements_by_sortorder_key') );
+    $gid = $grprecord['groupid'];
+    $proprelations = $this->GetGroupPropertyRelations( $gid );
+    $prop2 = RRUtils::array_merge_by_name_required( $prop2, $proprelations );
+    uasort( $prop2, array('cge_array','compare_elements_by_sortorder_key') );
 }
 
 // now we merge in all of the property definitions
 $defns = $this->GetPropertyDefns();
 $prop3 = array();
 foreach( $prop2 as $oneprop ) {
-  foreach( $defns as $onedefn ) {
-    if( $onedefn['name'] == $oneprop['name'] ) {
-      $oneprop['prompt'] = $onedefn['prompt'];
-      $oneprop['type'] = $onedefn['type'];
-      break;
+    foreach( $defns as $onedefn ) {
+        if( $onedefn['name'] == $oneprop['name'] ) {
+            $oneprop['prompt'] = $onedefn['prompt'];
+            $oneprop['type'] = $onedefn['type'];
+            break;
+        }
     }
-  }
-  $prop3[] = $oneprop;
+    $prop3[] = $oneprop;
 }
 
 // And now merge in the values
 $userprops = $this->GetUserProperties($uid);
 $propsbyname = array();
 foreach( $prop3 as $oneprop ) {
-  if( is_array($userprops) ) {
-    foreach( $userprops as $oneval ) {
-      if( $oneprop['name'] == $oneval['title'] && isset($oneval['data']) && !empty($oneval['data']) ) {
-	$oneprop['data'] = $oneval['data'];
-	break;
-      }
+    if( is_array($userprops) ) {
+        foreach( $userprops as $oneval ) {
+            if( $oneprop['name'] == $oneval['title'] && isset($oneval['data']) && !empty($oneval['data']) ) {
+                $oneprop['data'] = $oneval['data'];
+                break;
+            }
+        }
     }
-  }
 
-  if( isset($oneprop['data']) ) $propsbyname[$oneprop['name']] = $oneprop;
+    if( isset($oneprop['data']) ) $propsbyname[$oneprop['name']] = $oneprop;
 }
 
-$smarty->assign('user_properties',$propsbyname);
+$tpl->assign('user_properties',$propsbyname);
+$tpl->display();
 
-echo $this->CGProcessTemplate('feusers_viewuser');
 #
 # EOF
 #

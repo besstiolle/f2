@@ -70,6 +70,7 @@ class FrontEndUsersManipulator extends UserManipulator
         return TRUE;
     }
 
+
     function SetEncryptionKey($uid = -1,$force = FALSE )
     {
         global $CMS_ADMIN_PAGE;
@@ -121,22 +122,45 @@ class FrontEndUsersManipulator extends UserManipulator
 
     function ExpireTempCodes($expirycode)
     {
-        $db = $this->GetDb();
-        $expires = strtotime( $expirycode );
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE created > ?";
-        $dbresult = $db->Execute( $q, array( $expires ) );
-        if( !$dbresult ) return false;
-        return true;
+        $db = \cge_utils::get_db();
+        try {
+            $db->BeginTrans();
+            $expires = strtotime( $expirycode );
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE created > ?";
+            $db->Execute( $q, array( $expires ) );
+            $db->CommitTrans();
+            return TRUE;
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit('',$mod->GetName(),'Could expire temp codes ');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return FALSE;
+        }
     }
 
     function RemoveUserTempCode( $uid )
     {
-        if( !$uid ) return false;
-        $db = $this->GetDb();
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ?";
-        $dbresult = $db->Execute( $q, array( $uid ) );
-        if( !$dbresult ) return false;
-        return true;
+        $db = \cge_utils::get_db();
+        try {
+            $uid = (int) $uid;
+            if( $uid < 1 ) return false;
+            $db->BeginTrans();
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ?";
+            $db->Execute( $q, array( $uid ) );
+            $db->CommitTrans();
+            return TRUE;
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit($uid,$mod->GetName(),'Could remove temp code');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return FALSE;
+        }
     }
 
 
@@ -144,34 +168,37 @@ class FrontEndUsersManipulator extends UserManipulator
     {
         if( !$uid ) return false;
         $db = $this->GetDb();
-        $q = "SELECT * FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ?";
-        $dbresult = $db->Execute( $q, array( $uid ));
-        if( $dbresult == FALSE || $dbresult->RecordCount() == 0 ) return array(FALSE,$db->ErrorMsg());
-        $row = $dbresult->FetchRow();
-        return array(TRUE,$row);
+        $q = "SELECT * FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ? ORDER BY created DESC";
+        $dbresult = $db->GetRow( $q, array( $uid ));
+        if( is_array($dbresult) && count($dbresult) ) return $dbresult['code'];
     }
 
 
-    function SetUserTempCode( $uid, $code, $replace=false )
+    function SetUserTempCode( $uid, $code )
     {
-        if( !$uid ) return false;
-        $db = $this->GetDb();
-        $q = "INSERT INTO ".cms_db_prefix()."module_feusers_tempcode VALUES(?,?,?)";
-        $dbresult = $db->Execute( $q, array( $uid, $code,
-        trim($db->DBTimeStamp(time()),"'") ) );
+        $uid = (int) $uid;
+        $code = trim($code);
+        if( $uid < 1 || !$code ) return FALSE;
+        $db = \cge_utils::get_db();
 
-        if( $dbresult == false ) {
-            if ($replace) {
-                $q = "update ".cms_db_prefix()."module_feusers_tempcode set code=?, created=? WHERE userid=?";
-                $dbresult = $db->Execute( $q, array($code,
-                trim($db->DBTimeStamp(time()),"'"),$uid ) );
-                if ($dbresult == false) return false;
-            }
-            else {
-                return false;
-            }
+        try {
+            $db->BeginTrans();
+            $q = 'DELETE FROM '.cms_db_prefix().'module_feusers_tempcode WHERE uerid = ?';
+            $db->Execute($q);
+
+            $q = "INSERT INTO ".cms_db_prefix()."module_feusers_tempcode VALUES(?,?,NOW())";
+            $db->Execute( $q, array( $uid, $code ) );
+            $db->CommitTrans();
+            return TRUE;
         }
-        return true;
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit($uid,$mod->GetName(),'Could set temp code');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return FALSE;
+        }
     }
 
 
@@ -181,43 +208,54 @@ class FrontEndUsersManipulator extends UserManipulator
 
         if( $maxlength == 0 ) $maxlength = $length;
         $q = "UPDATE ".cms_db_prefix()."module_feusers_propdefn
-          SET name = ?, prompt = ?, type = ?, length = ?, maxlength = ?, attribs = ?, force_unique = ?, encrypt = ?
-          WHERE name = ?";
+              SET name = ?, prompt = ?, type = ?, length = ?, maxlength = ?, attribs = ?, force_unique = ?, encrypt = ?
+              WHERE name = ?";
         $dbresult = $db->Execute( $q, array( $newname, $prompt, $type, $length, $maxlength, $attribs, $force_unique, $encrypt, $name ));
         if( !$dbresult ) return false;
         return true;
     }
 
 
-    function DeletePropertyDefn( $name, $full = FALSE )
+    function DeletePropertyDefn( $name )
     {
-        $db = $this->GetDb();
+        $db = \cge_utils::get_db();
+        try {
+            $db->BeginTrans();
+            $this->DeleteSelectOptions($name);
 
-        if( $full ) {
             $q = 'DELETE FROM '.cms_db_prefix().'module_feusers_properties WHERE title = ?';
-            $dbr = $db->Execute($q,array($name));
+            $db->Execute($q,array($name));
 
             $query = 'SELECT group_id,sort_key FROM '.cms_db_prefix().'module_feusers_grouppropmap WHERE name = ?';
-            $dbr = $db->GetArray($query,array($name));
+            $db->GetArray($query,array($name));
 
             if( is_array($dbr) && count($dbr) ) {
                 $q = 'UPDATE '.cms_db_prefix().'module_feusers_grouppropmap
-              SET sort_key = sort_key - 1
-              WHERE group_id = ? AND sort_key > ?';
+                          SET sort_key = sort_key - 1
+                          WHERE group_id = ? AND sort_key > ?';
                 foreach( $dbr as $row ) {
                     $db->Execute($query,array($row['group_id'],$row['sort_key']));
                 }
             }
 
             $q = 'DELETE FROM '.cms_db_prefix().'module_feusers_grouppropmap WHERE name = ?';
-            $dbr = $db->GetArray($query,array($name));
+            $db->Execute($q,array($name));
 
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_propdefn WHERE name=?";
+            $db->Execute( $q, array( $name ) );
+
+            $db->CommitTrans();
+            return true;
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit('',$mod->GetName(),'Could not delete property '.$name);
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return FALSE;
         }
 
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_propdefn WHERE name=?";
-        $dbresult = $db->Execute( $q, array( $name ) );
-        if( !$dbresult ) return false;
-        return true;
     }
 
 
@@ -314,24 +352,43 @@ class FrontEndUsersManipulator extends UserManipulator
 
     function DeleteAllGroupPropertyRelations( $grpid )
     {
-        $db = $this->GetDb();
-
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap WHERE group_id = ?";
-        $dbresult = $db->Execute( $q, array( $grpid ));
-        if( !$dbresult ) return array(FALSE,$db->ErrorMsg());
-        return array(TRUE);
+        $db = \cge_utils::get_db();
+        try {
+            $db->BeginTrans();
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap WHERE group_id = ?";
+            $db->Execute( $q, array( $grpid ));
+            $db->CommitTrans();
+            return array(TRUE);
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit('',$mod->GetName(),'Could not delete all group property relations');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
     function DeleteGroupPropertyRelation( $grpid, $propname )
     {
-        $db = $this->GetDb();
-
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap
-          WHERE name = ? AND group_id = ?";
-        $dbresult = $db->Execute( $q, array( $propname, $grpid ));
-        if( !$dbresult ) return array(FALSE,$db->ErrorMsg());
-        return array(TRUE);
+        $db = \cge_utils::get_db();
+        try {
+            $db->BeginTrans();
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap WHERE name = ? AND group_id = ?";
+            $db->Execute( $q, array( $propname, $grpid ));
+            $db->CommitTrans();
+            return array(TRUE);
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit('',$mod->GetName(),'Could not delete group property relation');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
@@ -390,8 +447,8 @@ class FrontEndUsersManipulator extends UserManipulator
 
         $db = $this->getDb();
         $query = "INSERT INTO ".cms_db_prefix()."module_feusers_dropdowns
-			(order_id, option_name, option_text, control_name)
-			VALUES " . $insert_vals;
+    			  (order_id, option_name, option_text, control_name)
+			      VALUES " . $insert_vals;
         $dbresult = $db->Execute($query);
         if( $dbresult == false ) return array(FALSE, $db->ErrorMsg());
 
@@ -403,12 +460,24 @@ class FrontEndUsersManipulator extends UserManipulator
 
     function DeletePropertyDefns()
     {
-        $db = $this->GetDb();
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_propdefn";
-        $dbresult = $db->Execute( $q );
-        if( $dbresult == false ) return array(FALSE,$db->ErrorMsg());
-        $this->_cached_propdefn = null;
-        return array(TRUE);
+        $db = \cge_utils::get_db();
+        try {
+            $defns = $this->GetPropertyDefns();
+            foreach( $defns as $name => $rec ) {
+                $this->DeletePropertyDefn($name);
+            }
+            $this->_cached_propdefn = null;
+            $db->CommitTrans();
+            return array(TRUE);
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit('',$mod->GetName(),'Could not delete all property definitions');
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
@@ -462,6 +531,7 @@ class FrontEndUsersManipulator extends UserManipulator
 
             for( $i = 0; $i < count($data); $i++ ) {
                 if( isset($data[$i]['extra']) ) $data[$i]['extra'] = unserialize($data[$i]['extra']);
+                if( isset($data[$i]['attribs']) ) $data[$i]['extra'] = unserialize($data[$i]['attribs']);
                 $this->_cached_propdefns[$data[$i]['name']] = $data[$i];
             }
         }
@@ -484,15 +554,16 @@ class FrontEndUsersManipulator extends UserManipulator
         return $this->_cached_propdefns;
     }
 
-/**
- * Returns select options as a simple or a 2 dimensional array
- *
- * @param String $controlname - name of the dropdown as in the propdefn table
- * @param int $dim - dimension of the array
- * 	if $dim == 1, returns a 1 dimensional array text=>name
- *    if $dim == 2, returns a 2 dimensional array, each item being an
- * 		array with properties 'option_name', 'option_text', 'control_name'.
- */
+
+    /**
+     * Returns select options as a simple or a 2 dimensional array
+     *
+     * @param String $controlname - name of the dropdown as in the propdefn table
+     * @param int $dim - dimension of the array
+     * 	if $dim == 1, returns a 1 dimensional array text=>name
+     *    if $dim == 2, returns a 2 dimensional array, each item being an
+     * 		array with properties 'option_name', 'option_text', 'control_name'.
+     */
     function GetSelectOptions( $controlname, $dim=1 )
     {
         if( !$this->_multiselect_options ) {
@@ -524,7 +595,18 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-    function Login( $username, $password, $groups = '', $md5pw = false, $force_logout = false)
+    /**
+     * Log the user into the site.
+     * This checks the user password, and preferences about duplicate logins and otehr things then marks the user
+     * as logged in with the appropriate database change.  It does not send events.
+     *
+     * @param string $username
+     * @param string $password The plaintext password
+     * @param string $groups A comma separated list of group names that the user must be a member of.
+     * @param string $ignored
+     * @param bool $force_logout Optionally force the user to logout before logging him in again.
+     */
+    function Login( $username, $password, $groups = '', $ignored = false, $force_logout = false)
     {
         $error = '';
         $uid = -1;
@@ -533,7 +615,7 @@ class FrontEndUsersManipulator extends UserManipulator
         $mod = $this->GetModule();
         $config = $gCms->GetConfig();
 
-        if( !$this->CheckPassword( $username, $password, $groups, $md5pw ) ) {
+        if( !$this->CheckPassword( $username, $password, $groups ) ) {
             $uid = $this->GetUserID( $username );
             if( !$uid ) $uid = -1;
             $error = $mod->Lang('error_loginfailed');
@@ -542,13 +624,14 @@ class FrontEndUsersManipulator extends UserManipulator
         }
         else {
             $uid = $this->GetUserID( $username );
+            if( !$uid ) return array(FALSE,$mod->Lang('error_usernotfound'));
             if( $force_logout ) $this->Logout($uid);
 
             if( $this->IsAccountExpired( $uid ) ) {
                 return array(FALSE,$mod->Lang('error_accountexpired'));
             }
             else if( $mod->GetPreference('allow_repeated_logins') == 0 ) {
-// make sure this user isn't already logged in
+                // make sure this user isn't already logged in
                 $q = "SELECT * FROM ".cms_db_prefix()."module_feusers_loggedin WHERE USERID = ?";
                 $dbresult = $db->Execute( $q, array( $uid ) );
                 if( $dbresult && $dbresult->RecordCount() ) {
@@ -561,11 +644,11 @@ class FrontEndUsersManipulator extends UserManipulator
         $this->__reset();
         $this->_set_saved_logindetails($uid);
 
-// and add history info
+        // and add history info
         $this->add_history($uid,'login');
 
-// send the event.
-        $ip = cge_utils::get_real_ip();
+        // send the event.
+        $ip = \cge_utils::get_real_ip();
         $module = $this->GetModule();
         $module->SendEvent('OnLogin',array('id'=>$uid,'username'=>$username,'ip'=>$ip));
 
@@ -573,17 +656,13 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-    function FeusersManipulator( $the_module )
-    {
-        parent::UserManipulator( $the_module );
-    }
-
-
-// userid api function
-// returns true/false
+    // userid api function
+    // returns true/false
     function AssignUserToGroup( $uid, $gid )
     {
-        if( !$uid ) return false;
+        $uid = (int) $uid;
+        $gid = (int) $gid;
+        if( $uid < 1 || $gid < 1 ) return false;
         // validate the user id
         if( !$this->UserExistsByID( $uid ) ) return false;
 
@@ -634,30 +713,63 @@ class FrontEndUsersManipulator extends UserManipulator
 // returns an array
     function DeleteUserFull( $id )
     {
-        // log the user out
-        $this->LogoutUser( $id );
+        $db = \cge_utils::get_db();
+        try {
+            $id = (int) $id;
+            if( $id < 1 ) return array(FALSE,'Invalid UID');
+            $res = $this->GetUserInfo($id);
+            if( !is_array($res) || $res[0]== FALSE ) return FALSE;
+            $username = $res[1]['username'];
 
-        // delete user properties
-        $this->DeleteAllUserPropertiesFull( $id );
+            // log the user out
+            $this->LogoutUser( $id );
 
-        // delete user from groups
-        $ret = $this->RemoveUserFromGroup( $id, '' );
-        if( $ret[0] == false ) return $ret;
+            $db->BeginTrans();
 
-        // delete user record
-        $db = $this->GetDb();
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_users WHERE id = ?";
-        $dbresult = $db->Execute( $q, array( $id ) );
-        if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+            // delete user properties
+            $this->DeleteAllUserPropertiesFull( $id );
 
-        // and delete anything from the tempcodes table too
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ?";
-        $dbresult = $db->Execute( $q, array( $id ) );
-        if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+            // delete user from groups
+            $ret = $this->RemoveUserFromGroup( $id, '' );
+            if( $ret[0] == false ) return $ret;
 
-        $this->_useridbyname = array();
-        feu_user_cache::del_user($id);
-        return array( TRUE, "" );
+            // delete the user history
+            $q = 'DELETE FROM '.cms_db_prefix().'module_feusers_history WHERE userid = ?';
+            $dbresult = $db->Execute( $q, array( $id ) );
+            if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+
+            // delete user record
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_users WHERE id = ?";
+            $dbresult = $db->Execute( $q, array( $id ) );
+            if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+
+            // and delete anything from the tempcodes table too
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_tempcode WHERE userid = ?";
+            $dbresult = $db->Execute( $q, array( $id ) );
+            if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+
+            $this->_useridbyname = array();
+            feu_user_cache::del_user($id);
+            $db->CommitTrans();
+
+            // send the event
+            $parms = array();
+            $parms['id'] = $uid;
+            $parms['username'] = $username;
+            $mod = $this->GetModule();
+            $mod->SendEvent( 'OnDeleteUser', $parms );
+
+            $mod->_SendNotificationEmail('OnDeleteUser',$parms);
+            return array( TRUE, "" );
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit($id,$mod->GetName(),'Problem deleting user: '.$e->GetMessage());
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
@@ -853,11 +965,11 @@ class FrontEndUsersManipulator extends UserManipulator
         $q = '';
         $parms = array();
         if( $groupid == '' || $groupid < 0 ) {
-            $q = "SELECT count(id) as num FROM ".cms_db_prefix()."module_feusers_users";
+            $q = "SELECT count(id) as num FROM ".cms_db_prefix()."module_feusers_users WHERE coalesce(disabled,0) = 0";
         }
         else {
             $q = "SELECT count(id) as num FROM ".cms_db_prefix()."module_feusers_users,".
-                cms_db_prefix()."module_feusers_belongs WHERE id=userid AND groupid = ?";
+                cms_db_prefix()."module_feusers_belongs WHERE id=userid AND groupid = ? AND coalesce(disabled,0) = 0";
             $parms[] = $groupid;
         }
 
@@ -1013,7 +1125,7 @@ class FrontEndUsersManipulator extends UserManipulator
         else {
             // get the users first email address.
             $q = 'SELECT data FROM '.cms_db_prefix().'module_feusers_propdefn,'.
-                cms_db_prefix().'module_feusers_properties WHERE name=title AND type=2 AND userid = ? AND expires > NOW()';
+                cms_db_prefix().'module_feusers_properties WHERE name=title AND type=2 AND userid = ?';
             $result = $db->GetOne( $q, array( $uid ) );
         }
         return $result;
@@ -1084,21 +1196,34 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
-// returns an array
+    // userid api function
+    // returns an array
     function RemoveUserFromGroup( $uid, $gid )
     {
-        if( !$uid ) return array( FALSE ); // todo, return error message
-        $db = $this->GetDb();
-        $parms = array( $uid );
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_belongs WHERE userid = ?";
-        if( $gid != '' ) {
-            $q .= " AND groupid = ?";
-            array_push( $parms, $gid );
+        $uid = (int) $uid;
+        $gid = (int) $gid;
+        $db = \cms_utils::get_db();
+        try {
+            if( $gid < 1 || $uid < 1 ) return array(FALSE);
+            $db->BeginTrans();
+            $parms = array( $uid );
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_belongs WHERE userid = ?";
+            if( $gid != '' ) {
+                $q .= " AND groupid = ?";
+                $parms[] = $gid;
+            }
+            $db->Execute( $q, $parms );
+            $db->CommitTrans();
+            return array( TRUE );
         }
-        $dbresult = $db->Execute( $q, $parms );
-        if( $dbresult == false ) return array( FALSE, $db->ErrorMsg() );
-        return array( TRUE );
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit($uid,$mod->GetName(),'Could not remove user from group '.$gid);
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
@@ -1129,23 +1254,75 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
+    function EncryptPassword( $uid, $plain_password )
+    {
+        if( !$this->use_usersalt() ) {
+            return md5($plain_password.$this->get_salt());
+        }
+        else {
+            $db = cmsms()->GetDb();
+            $salt = $db->GetOne('SELECT salt FROM '.cms_db_prefix().'module_feusers_users WHERE id = ?',array($uid));
+            if( !$salt ) throw new \LogicException('Using user salted passwords, but no salt set for this user (or the user could not be found)');
+            return sha1($plain_password.$salt);
+        }
+    }
+
     function SetUserPassword( $uid, $password )
     {
+        $uid = (int) $uid;
+        $password = trim((string) $password);
+        if( $uid < 1 || !$password ) return array(FALSE,$mod->Lang('error_invalidparams'));
+
         $mod = $this->GetModule();
         if( !$uid ) return array(FALSE,$mod->Lang('error_invalidparams'));
         $db = $this->GetDb();
+
+        $pw = $this->EncryptPassword($uid,$password);
         $q = "UPDATE ".cms_db_prefix()."module_feusers_users SET password = ? WHERE id = ?";
-        $dbresult = $db->Execute( $q, array( md5($password.$this->get_salt()), $uid ));
+        $dbresult = $db->Execute( $q, array( $pw, $uid ));
         if( !$dbresult ) return array(FALSE,$db->ErrorMsg());
 
         feu_user_cache::del_user($uid);
         return array(TRUE,"");
     }
 
+    function SetUserDisabled( $uid, $flag = TRUE )
+    {
+        $uid = (int) $uid;
+        $flag = (bool) $flag;
+        if( $uid < 1 ) throw new \LogicException('Invalid uid passed to '.__METHOD__);
 
-// userid api function
-// returns array
-    function SetUser( $uid, $username, $password, $expires = false, $do_md5 = true )
+        $db = $this->GetDb();
+        $query = 'UPDATE '.cms_db_prefix().'module_feusers_users SET disabled = ? WHERE id = ?';
+        $dbr = $db->Execute($query,array($flag,$uid));
+        if( !$dbr ) throw new \LogicException('problem setting uid '.$uid.' to disabled');
+
+        if( $flag ) {
+            $this->LogoutUser($uid,'user disabled');
+        }
+        else {
+            $this->add_history($uid,'user enabled');
+        }
+    }
+
+    function ForcePasswordChange( $uid, $flag = TRUE )
+    {
+        $uid = (int) $uid;
+        $flag = (bool) $flag;
+        if( $uid < 1 ) throw new \LogicException('Invalid uid passed to '.__METHOD__);
+
+        $db = $this->GetDb();
+        $query = 'UPDATE '.cms_db_prefix().'module_feusers_users SET force_newpw = ? WHERE id = ?';
+        $dbr = $db->Execute($query,array($flag,$uid));
+        if( !$dbr ) throw new \LogicException('problem setting uid '.$uid.' to disabled');
+
+        if( $flag ) $this->add_history($uid,'user must reset password at next login');
+    }
+
+
+    // userid api function
+    // returns array
+    function SetUser( $uid, $username, $password, $expires = false )
     {
         if( !$uid ) return array(FALSE,"");
         $db = $this->GetDb();
@@ -1162,17 +1339,8 @@ class FrontEndUsersManipulator extends UserManipulator
         $dbresult = '';
         $parms = array();
         $q = "UPDATE ".cms_db_prefix()."module_feusers_users SET username = ?";
-
         $parms[] = $username;
-        if( trim( $password ) != '' ) {
-            $q .= ", password = ?";
-            if( $do_md5 ) {
-                $parms[] = md5($password.$this->get_salt());
-            }
-            else {
-                $parms[] = $password;
-            }
-        }
+
         if( $expires != false ) {
             $q .= ", expires = ?";
             $parms[] = trim($db->DBTimeStamp($expires),"'");
@@ -1180,8 +1348,12 @@ class FrontEndUsersManipulator extends UserManipulator
         $q .= " WHERE id = ?";
         $parms[] = $uid;
         $dbresult = $db->Execute( $q, $parms );
-
         if( $dbresult == false ) return array( FALSE, $db->ErrorMsg() );
+
+        if( $password ) {
+            $res = $this->SetUserPassword($uid, $password);
+            if( !$res[0] ) return $res;
+        }
 
         $this->_useridbyname = array();
         feu_user_cache::del_user($uid);
@@ -1190,16 +1362,15 @@ class FrontEndUsersManipulator extends UserManipulator
         return array( TRUE, $uid );
     }
 
-
-/**
- * Set the user group memberships
- * does not alter any user properties.
- * does not validate group ids, but does validate uid
- *
- * @param int userid
- * @param array array of integer group ids
- * @return array (status,msg)
- */
+    /**
+     * Set the user group memberships
+     * does not alter any user properties.
+     * does not validate group ids, but does validate uid
+     *
+     * @param int userid
+     * @param array array of integer group ids
+     * @return array (status,msg)
+     */
     function SetUserGroups( $uid, $grpids )
     {
         if( !$uid ) return array(FALSE,"");
@@ -1230,8 +1401,8 @@ class FrontEndUsersManipulator extends UserManipulator
         return $this->AssignUserToGroup($uid,$gid);
     }
 
-// userid api function
-// returns true/false
+    // userid api function
+    // returns true/false
     function SetUserProperties( $uid, $props )
     {
         if( !$uid ) return FALSE;
@@ -1258,8 +1429,8 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
-// returns true/false
+    // userid api function
+    // returns true/false
     function UserExistsByID( $uid )
     {
         if( !$uid ) return false;
@@ -1268,8 +1439,8 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
-// returns an array or false
+    // userid api function
+    // returns an array or false
     function GetUserProperties($uid)
     {
         if( !$uid ) return false;
@@ -1280,8 +1451,8 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
-// returns an array of records or false
+    // userid api function
+    // returns an array of records or false
     function GetMemberGroupsArray($userid)
     {
         $auth_consumer = feu_utils::get_auth_consumer();
@@ -1314,7 +1485,7 @@ class FrontEndUsersManipulator extends UserManipulator
 // end of rc functions
 //
 
-// userid api function
+    // userid api function
     function GetUserProperty($title,$defaultvalue=false)
     {
         $userid=$this->LoggedInId();
@@ -1323,7 +1494,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function GetUserPropertyFull($title,$userid, $defaultvalue=false)
     {
         if ($userid===false) return false;
@@ -1341,7 +1512,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function IsUserPropertyValueUnique($uid,$title,$data)
     {
         $db = $this->GetDb();
@@ -1361,7 +1532,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function SetUserProperty($title,$data)
     {
         $userid=$this->LoggedInId();
@@ -1383,18 +1554,15 @@ class FrontEndUsersManipulator extends UserManipulator
             $data = base64_encode(cge_encrypt::encrypt($this->_encryption_key,$data));
         }
 
-        if( $defn['force_unique'] && !$this->IsUserPropertyValueUnique($userid,$title,$data) ) {
-            return FALSE;
-        }
+        if( $defn['force_unique'] && !$this->IsUserPropertyValueUnique($userid,$title,$data) ) return FALSE;
 
-        $db=$this->GetDB();
+        $db = $this->GetDB();
         $q="SELECT * FROM ".cms_db_prefix()."module_feusers_properties WHERE title=? AND userid=?";
         $p=array($title,$userid);
         $r=$db->Execute($q,$p);
         if (!$r || ($r->NumRows()==0)) {
-            $newid=$db->GenID(cms_db_prefix()."module_feusers_properties_seq");
-            $q="INSERT INTO ".cms_db_prefix()."module_feusers_properties (id,userid,title,data) VALUES (?,?,?,?)";
-            $p=array($newid,$userid,$title,$data);
+            $q="INSERT INTO ".cms_db_prefix()."module_feusers_properties (userid,title,data) VALUES (?,?,?)";
+            $p=array($userid,$title,$data);
             $r=$db->Execute($q,$p);
         } else {
             $row=$r->FetchRow();
@@ -1408,7 +1576,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// delete all occurances of the userproperty by name
+    // delete all occurances of the userproperty by name
     function DeleteUserPropertyByName( $title )
     {
         $db = $this->GetDB();
@@ -1421,7 +1589,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function DeleteUserProperty($title,$all=false)
     {
         $userid=$this->LoggedInId();
@@ -1430,7 +1598,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function DeleteUserPropertyFull($title,$userid,$all=false)
     {
         $db=$this->GetDB();
@@ -1445,36 +1613,49 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function DeleteAllUserProperties()
     {
         return $this->DeleteUserProperty("",true);
     }
 
 
-// userid api function
+    // userid api function
     function DeleteAllUserPropertiesFull($userid)
     {
         return $this->DeleteUserPropertyFull("",$userid,true);
     }
 
 
-// userid api function
-    function CheckPassword($username,$password,$groups = '',$md5pw = false)
+    protected function use_usersalt()
+    {
+        $mod = $this->GetModule();
+        return (int) $mod->GetPreference('use_usersalt',0);
+    }
+
+    public function CheckPassword($username,$password,$groups = '')
     {
         $db = $this->GetDb();
-        $q="SELECT u.* FROM ".cms_db_prefix()."module_feusers_users u";
+        $q="SELECT u.id FROM ".cms_db_prefix()."module_feusers_users u";
         if ($groups != '') {
             $q .= ' INNER JOIN '.cms_db_prefix().'module_feusers_belongs b ON u.id = b.userid INNER JOIN '.cms_db_prefix().'module_feusers_groups g ON g.id = b.groupid ';
         }
-        $q .= ' WHERE u.username=? AND u.password=?';
-        $p = '';
-        if( $md5pw ) {
-            $p=array($username,$password);
+        $where = $parms = array();
+        $where[] = 'u.username = ?'; $parms[] = $username;
+        $where[] = 'COALESCE(u.disabled,0) = 0';
+
+        if( !$this->use_usersalt() ) {
+            $where[] = 'u.password = ?';
+            $tmp = md5(trim($password).$this->get_salt());
+            $parms[] = $tmp;
         }
         else {
-            $p=array($username,md5(trim($password).$this->get_salt()));
+            $q2 = 'SELECT U.salt FROM '.cms_db_prefix().'module_feusers_users U WHERE username = ?';
+            $salt = $db->GetOne($q2,array($username));
+            $where[] = 'u.password = ?';
+            $parms[] = sha1($password.$salt);
         }
+
         if ($groups != '') {
             //split the string on the commas
             $groups = explode(',',$groups);
@@ -1482,23 +1663,23 @@ class FrontEndUsersManipulator extends UserManipulator
                 $groups[$i] = $db->qstr(trim($groups[$i]));
             }
             $groups = '('.implode(',',$groups).')';
-            $q .= ' AND g.groupname IN '.$groups;
+            $where[] = 'g.groupname IN '.$groups;
         }
-        $result=$db->Execute($q,$p);
-        if ($result && $result->RecordCount()) return true;
+
+        $q .= ' WHERE '.implode(' AND ',$where);
+        $result=$db->GetOne($q,$parms);
+        if( $result > 0 ) return true;
         return false;
     }
 
-
-// userid api function
+    // userid api function
     function LoggedInName()
     {
         $userid=$this->LoggedInId();
         if ($userid) return $this->GetUserName($userid); else return "";
     }
 
-
-// userid api function
+    // userid api function
     function Logout($uid = '',$message = 'logout')
     {
         $gCms = cmsms();
@@ -1645,9 +1826,7 @@ class FrontEndUsersManipulator extends UserManipulator
 
                     // set his groups.
                     $dflt_groups = $this->GetDfltGroups();
-                    if( is_array($dflt_groups) && count($dflt_groups) ) {
-                        $res = $this->SetUserGroups($uid,$dflt_groups);
-                    }
+                    if( is_array($dflt_groups) && count($dflt_groups) ) $res = $this->SetUserGroups($uid,$dflt_groups);
 
                     // now set a property.
                     if( $useprop ) {
@@ -1691,11 +1870,11 @@ class FrontEndUsersManipulator extends UserManipulator
         return $data;
     }
 
-/**
- * NOT FOR EXTERNAL USE
- *
- * @internal
- */
+    /**
+     * NOT FOR EXTERNAL USE
+     *
+     * @internal
+     */
     public function _std_LoggedInId()
     {
         $sessionid = session_id();
@@ -1712,7 +1891,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function LoggedIn()
     {
         if( !$this->LoggedInId() ) return false;
@@ -1720,13 +1899,13 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-/**
- * Determine if the user id is a member of the group(s) specified.
- *
- * @param integer userid
- * @param mixed integer (positive) group id, or an array of positive integer group ids.
- * @return boolean
- */
+    /**
+     * Determine if the user id is a member of the group(s) specified.
+     *
+     * @param integer userid
+     * @param mixed integer (positive) group id, or an array of positive integer group ids.
+     * @return boolean
+     */
     function MemberOfGroup($userid,$groupid)
     {
         if( $userid < 1 ) return FALSE;
@@ -1749,7 +1928,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function GetUserName($userid)
     {
         $row = feu_user_cache::get_user($userid);
@@ -1758,7 +1937,7 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
+    // userid api function
     function GetUserID($username)
     {
         if( !is_array($this->_useridbyname) ) $this->_useridbyname = array();
@@ -1766,6 +1945,7 @@ class FrontEndUsersManipulator extends UserManipulator
             $db = $this->GetDb();
             $q = "SELECT id FROM ".cms_db_prefix()."module_feusers_users WHERE username = ?";
             $uid = (int) $db->GetOne($q,array($username));
+            if( $uid < 1 ) return;
             $this->_useridbyname[$username] = $uid;
             return $uid;
         }
@@ -1773,8 +1953,8 @@ class FrontEndUsersManipulator extends UserManipulator
     }
 
 
-// userid api function
-// returns array
+    // userid api function
+    // returns array
     function AddGroup( $name, $description )
     {
         $db = $this->GetDb();
@@ -1789,10 +1969,10 @@ class FrontEndUsersManipulator extends UserManipulator
             return array(FALSE,$module->Lang('error_groupname_exists'));
         }
 
-        $grpid = $db->GenID( cms_db_prefix()."module_feusers_groups_seq" );
-        $q = "INSERT INTO ".cms_db_prefix()."module_feusers_groups VALUES (?,?,?)";
-        $dbresult = $db->Execute( $q, array( $grpid, $name, $description ) );
+        $q = "INSERT INTO ".cms_db_prefix()."module_feusers_groups (groupname,groupdesc) VALUES (?,?)";
+        $dbresult = $db->Execute( $q, array( $name, $description ) );
         if( !$dbresult ) return array(FALSE,$db->ErrorMsg());
+        $grpid = $db->Insert_ID();
         unset($this->_groupinfo_cache);
         return array(TRUE,$grpid);
     }
@@ -1800,7 +1980,7 @@ class FrontEndUsersManipulator extends UserManipulator
 
 // userid api function
 // returns array
-    function AddUser( $name, $password, $expires, $do_md5 = true, $nonstd = FALSE )
+    function AddUser( $name, $password, $expires, $nonstd = FALSE )
     {
         $db = $this->GetDb();
 
@@ -1811,20 +1991,23 @@ class FrontEndUsersManipulator extends UserManipulator
             return array(FALSE,$module->Lang('error_username_exists'));
         }
 
-        // generate the sequence
-        $uid = $db->GenID( cms_db_prefix()."module_feusers_users_seq" );
-
-        $pwtxt = $password;
-        if( $do_md5 == true ) $pwtxt = md5($password.$this->get_salt());
+        // generate the salt.
+        $salt = md5(time().$name.$expires.__FILE__);
 
         // insert the record
-        $q = "INSERT INTO ".cms_db_prefix().
-            "module_feusers_users (id,username,password,createdate,expires,nonstd) VALUES (?,?,?,?,?,?)";
-        $dbresult = $db->Execute( $q, array( $uid, $name, $pwtxt,
-        trim($db->DbTimeStamp(time()),"'"),
-        trim($db->DbTimeStamp($expires),"'"),
-        $nonstd ) );
+        $q = "INSERT INTO ".cms_db_prefix()."module_feusers_users (username,createdate,expires,nonstd,salt) VALUES (?,?,?,?,?)";
+        $dbresult = $db->Execute( $q, array( $name,
+                                             trim($db->DbTimeStamp(time()),"'"),
+                                             trim($db->DbTimeStamp($expires),"'"),
+                                             $nonstd, $salt ) );
         if( !$dbresult ) return array(FALSE,$db->ErrorMsg());
+        $uid = $db->Insert_ID();
+
+        // set the password
+        $res = $this->SetUserPassword($uid,$password);
+        if( !$res[0] ) return $res;
+
+        $this->_useridbyname = array();
         return array(TRUE,$uid);
     }
 
@@ -1852,27 +2035,35 @@ class FrontEndUsersManipulator extends UserManipulator
 // returns an array
     function DeleteGroupFull( $id )
     {
-        $db = $this->GetDB();
-        $result = array();
+        $db = \cge_utils::get_db();
+        try {
+            $db->BeginTrans();
 
-        // delete all property relations from this group
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap WHERE group_id = ?";
-        $dbresult = $db->Execute( $q, array( $id ) );
-        if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+            // delete all property relations from this group
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_grouppropmap WHERE group_id = ?";
+            $db->Execute( $q, array( $id ) );
 
-        // delete all indication that anybody is a member
-        // of this group
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_belongs WHERE groupid = ?";
-        $dbresult = $db->Execute( $q, array( $id ) );
-        if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+            // delete all indication that anybody is a member
+            // of this group
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_belongs WHERE groupid = ?";
+            $db->Execute( $q, array( $id ) );
 
-        // and then delete the group
-        $q = "DELETE FROM ".cms_db_prefix()."module_feusers_groups WHERE id = ?";
-        $dbresult = $db->Execute( $q, array( $id ) );
-        if( !$dbresult ) return array( FALSE, $db->ErrorMsg() );
+            // and then delete the group
+            $q = "DELETE FROM ".cms_db_prefix()."module_feusers_groups WHERE id = ?";
+            $db->Execute( $q, array( $id ) );
 
-        $this->_groupinfo_cache = null;
-        return array( TRUE, '' );
+            $db->CommitTrans();
+            $this->_groupinfo_cache = null;
+            return array( TRUE, '' );
+        }
+        catch( \Exception $e ) {
+            $db->RollbackTrans();
+            $mod = $this->GetModule();
+            audit($id,$mod->GetName(),'Problem Deleting Group: '.$e->GetMessage());
+            debug_to_log(__METHOD__);
+            debug_to_log($e->GetMessage());
+            return array(FALSE,$e->GetMessage());
+        }
     }
 
 
@@ -1944,20 +2135,9 @@ class FrontEndUsersManipulator extends UserManipulator
 // old userid api function
     function DeleteUser($id)
     {
-        $db = $this->GetDb();
-        if (isset($_GET[$id."userid"])) {
-            $userid=str_replace("'",'_',$_GET[$id."userid"]);
-        }
-        else {
-            return;
-        }
-        $q="DELETE FROM ".cms_db_prefix()."module_feusers_users WHERE id='$userid'";
-        $dbresult=$db->Execute($q);
-        $q="DELETE FROM ".cms_db_prefix()."module_feusers_belongs WHERE userid='$userid'";
-        $dbresult=$db->Execute($q);
-
-        $this->_useridbyname = array();
-        feu_user_cache::del_user($userid);
+        $res = $this->DeleteUserFull($id);
+        if( $res[0] ) return TRUE;
+        return;
     }
 
     protected function GetDfltGroups()

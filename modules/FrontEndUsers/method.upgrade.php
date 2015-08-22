@@ -380,4 +380,151 @@ if( version_compare($oldversion,'1.21.16') < 0 ) {
 if( version_compare($oldversion,'1.23.5') < 0 ) {
     $this->RemoveEventHandler('Core','ContentPostRender');
 }
+
+if( version_compare($oldversion,'1.28') < 0 ) {
+    $sqlarray = $dict->AddcolumnSQL(cms_db_prefix()."module_feusers_users","disabled I1, salt C(32), force_newpw I1");
+    $dict->ExecuteSQLArray( $sqlarray );
+
+    $tpl = file_get_contents(__DIR__.'/templates/orig_force_newpw_form.tpl');
+    $this->SetTemplate('force_newpw_template',$tpl);
+}
+
+if( version_compare($oldversion,'1.30') < 0 ) {
+    // gonna use innodb now.
+    $db = \cge_utils::get_db();
+    try {
+        $tables = array();  // ignore seq tables
+        $tables[] = cms_db_prefix().'module_feusers_users';
+        $tables[] = cms_db_prefix().'module_feusers_groups';
+        $tables[] = cms_db_prefix().'module_feusers_loggedin';
+        $tables[] = cms_db_prefix().'module_feusers_belongs';
+        $tables[] = cms_db_prefix().'module_feusers_propdefn';
+        $tables[] = cms_db_prefix().'module_feusers_dropdowns';
+        $tables[] = cms_db_prefix().'module_feusers_grouppropmap';
+        $tables[] = cms_db_prefix().'module_feusers_properties';
+        $tables[] = cms_db_prefix().'module_feusers_tempcode';
+        $tables[] = cms_db_prefix().'module_feusers_history';
+        $sql_i = "ALTER TABLE %s ENGINE=InnoDB";
+        foreach( $tables as $one ) {
+            $sql = sprintf($sql_i,$one);
+            $dbr = $db->Execute($sql);
+        }
+
+        $db->BeginTrans();
+
+        // get a list of all of the user ids that are in this history table, but not in the
+        // users table.
+        $query = 'SELECT A.userid FROM '.cms_db_prefix().'module_feusers_history A
+                  LEFT JOIN '.cms_db_prefix().'module_feusers_users B ON A.userid = B.id
+                  WHERE B.id IS NULL';
+        $del_userids = $db->GetCol($query);
+        $del_userids = array_unique($del_userids);
+        if( count($del_userids) ) {
+            $str = implode(',',$del_userids);
+            if( $str ) {
+                $query = 'DELETE FROM '.cms_db_prefix().'module_feusers_history WHERE userid IN ('.$str.')';
+                $db->Execute($query);
+            }
+        }
+
+        // get a list of all of the properties that are not in the propdefn table (clean up the properties table)
+        $query = 'SELECT A.id FROM '.cms_db_prefix().'module_feusers_properties A
+                  LEFT JOIN '.cms_db_prefix().'module_feusers_propdefn B ON A.title = B.name
+                  WHERE B.name IS NULL';
+        $del_propids = $db->GetCol($query);
+        if( count($del_propids) ) {
+            $str = implode(',',$del_userids);
+            if( $str ) {
+                $query = 'DELETE FROM '.cms_db_prefix().'module_feusers_properties WHERE id IN ('.$str.')';
+                $db->Execute($query);
+            }
+        }
+
+        // get a list of all of the properties that are not in the grouppropmap table (clean up the grouppropmap table)
+        $query = 'SELECT A.name FROM '.cms_db_prefix().'module_feusers_grouppropmap  A
+                  LEFT JOIN '.cms_db_prefix().'module_feusers_propdefn B ON A.name = B.name
+                  WHERE B.name IS NULL';
+        $del_grpprop = $db->GetCol($query);
+        if( count($del_grpprop) ) {
+            $query = 'DELETE FROM '.cms_db_prefix().'module_feusers_grouppropmap WHERE name = ?';
+            for( $i = 0, $n = count($del_grpprop); $i < $n; $i++ ) {
+                $tmp1 = $del_grpprop[$i];
+                $db->Execute($query,array($tmp1));
+            }
+        }
+
+        $db->CommitTrans();
+
+        // delete everything from the history
+        // setup foreign key relationships
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_belongs ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_loggedin ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_belongs ADD FOREIGN KEY (groupid) REFERENCES '.cms_db_prefix().'module_feusers_groups (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_dropdowns ADD FOREIGN KEY (control_name) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_grouppropmap ADD FOREIGN KEY (group_id) REFERENCES '.cms_db_prefix().'module_feusers_groups (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_grouppropmap ADD FOREIGN KEY (name) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties ADD FOREIGN KEY (title) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_tempcode ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+        $db->Execute($sql);
+        $sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_history ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+        $db->Execute($sql);
+
+        // get rid of the users seq table.
+        try {
+            $val = $db->GenID( cms_db_prefix().'module_feusers_users_seq');
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_users MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT';
+            $db->Execute($query);
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_users AUTO_INCREMENT = ?';
+            $db->Execute($query,array($val));
+            $db->DropSequence( cms_db_prefix()."module_feusers_users_seq" );
+        }
+        catch( \Exception $e ) {
+            // silently ignore, incase this is already done.
+        }
+
+        // get rid of the groups seq table
+        try {
+            $val = $db->GenID( cms_db_prefix().'module_feusers_groups_seq');
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_groups MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT';
+            $db->Execute($query);
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_groups AUTO_INCREMENT = ?';
+            $db->Execute($query,array($val));
+            $db->DropSequence( cms_db_prefix()."module_feusers_groups_seq" );
+        }
+        catch( \Exception $e ) {
+            // silently ignore, incase this is already done.
+        }
+
+        // get rid of the properties seq table
+        try {
+            $val = $db->GenID( cms_db_prefix().'module_feusers_properties_seq');
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT';
+            $db->Execute($query);
+            $query = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties AUTO_INCREMENT = ?';
+            $db->Execute($query,array($val));
+            $db->DropSequence( cms_db_prefix()."module_feusers_properties_seq" );
+        }
+        catch( \Exception $e ) {
+            // silently ignore, incase this is already done.
+        }
+
+
+    }
+    catch( \Exception $e ) {
+        die($db->sql.' '.$db->ErrorMsg());
+        debug_to_log($db->sql);
+        debug_to_log($e->GetMessage());
+        audit('',$this->GetName(),'Upgrade Failed: '.$e->GetMessage());
+        return $e->GetMessage();
+    }
+}
 ?>

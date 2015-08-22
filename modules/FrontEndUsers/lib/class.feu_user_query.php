@@ -187,6 +187,7 @@ class feu_user_query
 
   public function set_result_type($type)
   {
+      // currently not used in the resultset, may remove
     switch( $type ) {
     case self::RESULT_TYPE_ID:
     case self::RESULT_TYPE_LIST:

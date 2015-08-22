@@ -38,50 +38,58 @@
 
 // Get the start date
 $date = '-1';
-switch( $params['input_clearuserhistory'] )
-  {
-  case '1h':
+switch( $params['input_clearuserhistory'] ) {
+case '1h':
     $date = strtotime('1 hour ago');
     break;
-  case '6h':
+case '6h':
     $date = strtotime('6 hours ago');
     break;
-  case '12h':
+case '12h':
     $date = strtotime('12 hours ago');
     break;
-  case '1d':
+case '1d':
     $date = strtotime('1 day ago');
     break;
-  case '1w':
+case '1w':
     $date = strtotime('1 week ago');
     break;
-  case '2w':
+case '2w':
     $date = strtotime('2 weeks ago');
     break;
-  case '1m':
+case '1m':
     $date = strtotime('1 month ago');
     break;
-  case '3m':
+case '3m':
     $date = strtotime('3 months ago');
     break;
-  case '6m':
+case '6m':
     $date = strtotime('6 months ago');
     break;
-  case '1y':
+case '1y':
     $date = strtotime('1 year ago');
     break;
-  }
+}
 
-$db =& $this->GetDb();
-$query = "DELETE FROM ".cms_db_prefix()."module_feusers_history";
-$parms = array();
-if( $date != -1 )
-  {
-    $query .= " WHERE refdate < ?";
-    $parms[] = trim($db->DBTimeStamp($date),"'");
-  }
+$db = \cge_utils::get_db();
+try {
+    $db->BeginTrans();
+    $query = "DELETE FROM ".cms_db_prefix()."module_feusers_history";
+    $parms = array();
+    if( $date != -1 )  {
+        $query .= " WHERE refdate < ?";
+        $parms[] = trim($db->DBTimeStamp($date),"'");
+    }
 
-$db->Execute( $query, $parms );
-$this->RedirectToTab($id,'admin');
+    $db->Execute( $query, $parms );
+    $db->CommitTrans();
+    $this->RedirectToTab($id,'admin');
+}
+catch( \Exception $e ) {
+    $db->RollbackTrans();
+    audit('',$this->GetName(),'Problem clearing user history');
+    debug_to_log(__METHOD__);
+    debug_to_log($e->GetMessage();)
+}
 // EOF
 ?>

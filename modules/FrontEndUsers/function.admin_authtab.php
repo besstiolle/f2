@@ -88,7 +88,7 @@ $query = 'SELECT count(id) FROM '.cms_db_prefix().'module_feusers_users';
 $db = cmsms()->GetDb();
 $nusers = $db->GetOne($query);
 $smarty->assign('total_user_count',$nusers);
-$smarty->assign('pwsalt',$this->GetPreference('pwsalt'));
+if( !$this->GetPreference('use_usersalt') ) $smarty->assign('pwsalt',$this->GetPreference('pwsalt'));
 
 $cgecom = cge_utils::get_module('CGEcommerceBase');
 $selfreg = cge_utils::get_module('SelfRegistration');

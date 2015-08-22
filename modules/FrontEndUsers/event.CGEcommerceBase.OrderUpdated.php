@@ -78,7 +78,7 @@ for( $s = 0; $s < $order_obj->count_destinations(); $s++ ) {
       break;
 
     case 'expire':
-      $this->SetUser($uid,$uinfo['username'],$uinfo['password'],time()-3600,false);
+      $this->SetUser($uid,$uinfo['username'],$uinfo['password'],time()-3600);
       $this->Audit($uid,$this->GetName(),
 		   sprintf('Expired user %s because order %d was deleted',$uinfo['username'],$order_id));
       break;

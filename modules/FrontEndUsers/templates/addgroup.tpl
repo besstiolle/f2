@@ -33,13 +33,12 @@
       <th>{$typetext}</th>
       <th>{$mod->Lang('encrypted')}</th>
       <th>{$fieldstatustext}</th>
-      <th>{$usedinlostuntext}</th>
       <th class="pageicon"></th>
       <th class="pageicon"></th>
     </tr>
   </thead>
   <tbody>
-  {foreach from=$props item='prope'}
+  {foreach $props as $prope}
     {cycle values="row1,row2" assign='rowclass'}
     <tr class="{$rowclass}" onmouseover="this.className='{$rowclass}hover';" onmouseout="this.className='{$rowclass}';">
       <td>{$prope->hidden}{$prope->name}</td>
@@ -47,7 +46,6 @@
       <td>{$prope->type}</td>
       <td>{if $prope->encrypted}<span info="{$mod->Lang('info_encrypted')}" style="color: red; font-weight: bold;">{$mod->Lang('yes')}</span>{/if}</td>
       <td>{$prope->required}</td>
-      <td>{$prope->askinlostun|default:''}</td>
       <td>
         {if isset($prope->moveup_idx)}
           <button name="{$actionid}moveup" title="{$mod->Lang('move_up')}" value="{$prope->moveup_idx}">{$img_up}</button>
@@ -55,7 +53,7 @@
       </td>
       <td>
         {if isset($prope->movedown_idx)}
-          <button name="{$actionid}movedown" title="{$mod->Lang('move_down')}" value="{$prope->moveup_idx}">{$img_down}</button>
+          <button name="{$actionid}movedown" title="{$mod->Lang('move_down')}" value="{$prope->movedown_idx}">{$img_down}</button>
         {/if}
       </td>
     </tr>

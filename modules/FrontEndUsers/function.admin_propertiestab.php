@@ -48,56 +48,57 @@ $keys = array_keys($this->types);
 
 $defns = $this->GetPropertyDefns();
 if( is_array($defns) ) {
-  foreach( $defns as $defn ) {
-    $attribs = '';
-    if( $defn['attribs'] ) $attribs = unserialize($defn['attribs']);
-    
-    $propgroups = $this->GetPropertyGroupRelations($defn['name']);
-    
-    $onerow = new StdClass();
-    if( $this->_HasSufficientPermissions('editprop') && !isset($defn['extra']['module']) ) {
-      $onerow->name = $this->CreateLink( $id, 'addprop', $returnid, $defn['name'],array('propname' => $defn['name']));
-    }
-    else {
-      $onerow->name = $defn['name'];
-      if( isset($defn['extra']['module']) ) {
-	$onerow->name .= '&nbsp;<em title="'.$this->Lang('title_propmodule').'">('.$defn['extra']['module'].')</em>';
-      }
-    }
-    $onerow->encrypt = $defn['encrypt'];
-    $onerow->prompt = $defn['prompt'];
-    $onerow->type = $this->Lang($keys[$defn['type']]);
-    $onerow->length = $defn['length'];
-    $onerow->force_unique = $defn['force_unique'];
-    $onerow->rowclass = $rowclass;
-    $is_moduleprop = 0;
-    if( isset($defn['extra']) && isset($defn['extra']['module']) &&
-	$defn['extra']['module'] != '' ) {
-      $tmp = cms_utils::get_module($defn['extra']['module']);
-      if( is_object($tmp) ) {
-	$is_moduleprop = 1;
-      }
-    }
+    foreach( $defns as $defn ) {
+        $can_delete = TRUE;
+        $propgroups = $this->GetPropertyGroupRelations($defn['name']);
+        if( count($propgroups) ) {
+            foreach( $propgroups as $rec ) {
+                if( $rec['required'] > 1 ) {
+                    $can_delete = FALSE;
+                    break;
+                }
+            }
+        }
 
-    if( $this->_HasSufficientPermissions('editprop') && !isset($defn['extra']['module']) ) {
-      $onerow->editlink =
-	$this->CreateLink ($id, 'addprop', $returnid,
-			   $themeObject->DisplayImage('icons/system/edit.gif',$this->Lang ('edit'), '', '', 'systemicon'),
-			   array('propname' => $defn['name']));
-      
-      if( count($propgroups) == 0 && !$is_moduleprop ) {
-	$onerow->deletelink =
-	  $this->CreateLink ($id, 'do_deleteprop', $returnid,
-			     $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang ('delete'), '', '', 'systemicon'),
-			     array('propname' => $defn['name'], 'proptype' => $defn['type']), 
-			     $this->Lang('confirm_delete_prop'));
-      }
+        $onerow = new StdClass();
+        if( $this->_HasSufficientPermissions('editprop') && !isset($defn['extra']['module']) ) {
+            $onerow->name = $this->CreateLink( $id, 'addprop', $returnid, $defn['name'],array('propname' => $defn['name']));
+        }
+        else {
+            $onerow->name = $defn['name'];
+            if( isset($defn['extra']['module']) ) {
+                $onerow->name .= '&nbsp;<em title="'.$this->Lang('title_propmodule').'">('.$defn['extra']['module'].')</em>';
+            }
+        }
+        $onerow->encrypt = $defn['encrypt'];
+        $onerow->prompt = $defn['prompt'];
+        $onerow->type = $this->Lang($keys[$defn['type']]);
+        $onerow->length = $defn['length'];
+        $onerow->force_unique = $defn['force_unique'];
+        $onerow->rowclass = $rowclass;
+        $is_moduleprop = 0;
+        if( isset($defn['extra']) && isset($defn['extra']['module']) &&
+            $defn['extra']['module'] != '' ) {
+            $tmp = cms_utils::get_module($defn['extra']['module']);
+            if( is_object($tmp) ) $is_moduleprop = 1;
+        }
+
+        if( $this->_HasSufficientPermissions('editprop') && !isset($defn['extra']['module']) ) {
+            $onerow->editlink =
+                $this->CreateLink ($id, 'addprop', $returnid,
+                                   $themeObject->DisplayImage('icons/system/edit.gif',$this->Lang ('edit'), '', '', 'systemicon'),
+                                   array('propname' => $defn['name']));
+
+            if( $can_delete && !$is_moduleprop ) {
+                $onerow->delete_url = $this->create_url($id,'admin_deleteprop',$returnid,
+                                                        array('propname' => $defn['name'], 'proptype' => $defn['type']));
+            }
+        }
+
+        $rowarray[] = $onerow;
+        ($rowclass == "row1" ? $rowclass = "row2" : $rowclass = "row1");
     }
-    
-    $rowarray[] = $onerow;
-    ($rowclass == "row1" ? $rowclass = "row2" : $rowclass = "row1");
-  }
- }
+}
 
 $smarty->assign('nametext',$this->Lang('name'));
 $smarty->assign('lengthtext',$this->Lang('length'));
@@ -108,13 +109,9 @@ $smarty->assign('propcount', count($rowarray));
 $smarty->assign('propsfound',$this->Lang('propsfound'));
 
 if( $this->_HasSufficientPermissions('addprop') ) {
-  // todo, add a permission check around this
-  // maybe create an "edit frontenduser properties" permission
-  $smarty->assign('addlink', 
-		  $this->CreateLink($id,'addprop',$returnid,$themeObject->DisplayImage('icons/system/newobject.gif',
-										       $this->Lang('addprop'),'','','systemicon'),
-				    array(), '', false, false, '').' '.
-		  $this->CreateLink( $id, 'addprop', $returnid, $this->Lang('addprop'), array(), '', false,false));
+    // todo, add a permission check around this
+    // maybe create an "edit frontenduser properties" permission
+    $smarty->assign('add_url',$this->create_url($id,'addprop',$returnid));
 }
 
 echo $this->ProcessTemplate('propertiesform.tpl');

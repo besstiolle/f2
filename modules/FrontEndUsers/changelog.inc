@@ -318,8 +318,10 @@
 </li>
 <li>1.8.5 - May, 2010
   <ul>
-  <li>Adds the returnlast parameter to allow returning back to the previous url on login or logout.</li>
-  <li>Fixes the reset to defaults button in the lost username template(s) form.</li>
+    <li>Adds the returnlast parameter to allow returning back to the previous url on login or logout.</li>
+    <li>Fixes the reset to defaults button in the lost username template(s) form.</li>
+  </ul>
+</li>
 <li>1.9 - May, 2010
   <ul>
     <li>Adds the ability to specify unique fields.</li>
@@ -584,5 +586,73 @@
      <li>Minor template fixes.</li>
      <li>Improvements to password strength checks.</li>
    </ul>
+</li>
+<li>1.26.x
+	<ul>
+	<li>Pages of type 'protected content' will now only generate 403 errors if unauthorized access is detected.
+	   <p>This is to solve potential security issues.  Users will need to create a system page to handle 403 errors in a graceful way.</p>
+        </li>
+        <li>Remove captcha and other protected page options as any unauthorized access now will result in 403 errors.</li>
+        <li>more methods to feu_smarty.</li>
+	</ul>
+</li>
+<li>1.26.x
+	<ul>
+	<li>Adds {$feu_smarty->get_group_list()}</li>
+	</ul>
+</li>
+
+<li>1.28.x
+  <div class="information"><strong>Note:</strong> This version of FEU has undergone signficant changes.  There may be some compatibility problems.</div>
+  <ul>
+	<li>Removed the CheckPassword method in anticpation of adding proper seeding.</li>
+	<lI>Added FrontEndUsers::get_email() and a few minor methods.</li>
+	<li>Template Cleanups and rewrites:
+	   <p><strong>Note:</strong> Some templates may need to be rebuilt, though the changes should be minor.  Mostly the templates have just been converted to use bootstrap styles.</p>
+	</li>
+	<li>Stronger password encryption:
+	  <p>Now, on new installs a salt is generated and stored for each user account.  This individual salt is used when verifying a users password.
+	     This is for new installs only, and should have no bearing on existing websites doing an upgrade.  However, if you are using selfreg you MUST also upgrade the selfreg module.</p>
+	</li>
+	<li>Adds new EncryptPassword method.</li>
+	<li>Adds ability for an admin to force a password reset.</li>
+	<li>Adds ability to disable a user account without changing their password.</li>
+        <li>Numerous minor bug fixes.</li>
+        <li>Now utilize smarty scopes to reduce variable name conflicts, and be more memory efficient (hopefully).</li>
+	<li>1.28.3 - minor API changes for use in selfref.</li>
+  </ul>
+</li>
+<li>1.29
+	<div class="information"><strong>Note:</strong> This version of FEU has undergone significant changes.  There may be some compatibility problems.</div>
+	<ul>
+	<li><strong>Important:</strong> Re-factored the feu_smarty stuff for CMSMS 2.0 compatibility.  This meant removing the assign parameter, and making all methods static.
+	  <p>i.e: <code>{$feu_smarty->get_user_properties($uid,'props')}</code> must now be called like: <code>{$props=feu_smarty::get_user_properties($uid)}</code></p>
+	  <p><strong>Note:</strong> parameters for some methods has changed.  please review the help.</p>
+	</li>
+	<li>Re-implement methods from CustomContent into feu_smarty... with some more power.</li>
+	<li>Adds the feu_protect plugin.</li>
+	</ul>
+</li>
+<li>1.30
+	<div class="information"><strong>Note:</strong> This version of FEU has undergone significant changes.  There may be some compatibility problems.</div>
+	<ul>
+	<li>Complete rewrite of forgotten password functionality.  This involved changing all of the templates for forgotten password, so you will need to reset your templates.</li>
+	<li>Converts all tables to use innodb, and now enforces some foreign key relationships.
+	<p>This helps ensure database integrity,  and allows third party modules using the FEU API to create more foreign key relationships.</p>
+	<p>If a third party module creates a foreign key relationship to the users table, and data exists in the third party table keyed to an existing FEU account then those users cannot be deleted via the FEU admin until the third party data is erased.</p>
+	</li>
+	<li>Adds the ability to delete a property (as long as it is not a module property, or a hidden/required member of any group.</li>
+	<li>Get rid of sequence tables.</li>
+	<li>Rewrite the login functionality from scratch.</li>
+	<li>Removed the noinline parameter.</li>
+	<li>Added the inline parameter for the login form only.  Links from the logout form (i.e: to logout, and to change settings will be done non-inline)</li>
+	<li>form=silent/action=silent now outputs stuff to global smarty scope (note variable names have changed, see the {$feu_data} array).</li>
+	<li>Fixes the delete user stuff.</li>
+	<li>Now send the ondeleteuser event from within the api functions.</li>
+	<li>Moved all of the forms into their own actions.... deprecated the form parameter.</li>
+	<li>Now support specifying different templates for login, logout, changesettings, and forgotpw actions.</li>
+	<li>Completely rewrite the lost username functionality.  It now just asks for as much information as possible, and uses that information to try to find a unique user account.</li>
+	<li>Numerous bug fixes.</li>
+	</ul>
 </li>
 </ul>

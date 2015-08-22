@@ -44,20 +44,22 @@ if( version_compare(phpversion(),'5.4.3') < 0 ) {
 $db = $this->GetDb();
 $dict = NewDataDictionary($db);
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysql' => 'TYPE=InnoDB');
 
 //User list
 $flds = "
-         id I KEY,
-         username C(80) NOT NULL,
-         password C(32) NOT NULL,
+         id I KEY AUTO NOTNULL,
+         username C(80) NOTNULL,
+         password C(64) NOTNULL,
          createdate ".CMS_ADODB_DT.",
          expires    ".CMS_ADODB_DT.",
-         nonstd   I1
+         nonstd   I1,
+         disabled I1,
+         salt     C(32),
+         force_newpw I1
         ";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix()."module_feusers_users", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
-$db->CreateSequence( cms_db_prefix()."module_feusers_users_seq" );
 
 //Group list
 $flds = "
@@ -67,7 +69,6 @@ $flds = "
 	    ";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix()."module_feusers_groups", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
-$db->CreateSequence( cms_db_prefix()."module_feusers_groups_seq" );
 
 // loggedin
 $flds = "
@@ -89,8 +90,8 @@ $dict->ExecuteSQLArray( $sqlarray );
 //property definition
 $flds = "
          name      C(40) KEY,
-         prompt    C(255) NOT NULL,
-         type      C(20) NOT NULL,
+         prompt    C(255) NOTNULL,
+         type      C(20) NOTNULL,
          length    I,
          maxlength I,
          attribs   C(255),
@@ -104,9 +105,9 @@ $dict->ExecuteSQLArray( $sqlarray );
 //dropdown select options
 $flds = "
          order_id		I,
-         option_name	C(40) NOT NULL,
-         option_text	C(255) NOT NULL,
-         control_name	C(40) NOT NULL;
+         option_name	C(40) NOTNULL,
+         option_text	C(255) NOTNULL,
+         control_name	C(40) NOTNULL;
         ";
 $sqlarray = $dict->CreateTableSql(cms_db_prefix()."module_feusers_dropdowns", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
@@ -117,7 +118,7 @@ $flds = "
          name    C(40) KEY,
          group_id I KEY,
          sort_key I,
-         required I NOT NULL,
+         required I NOTNULL,
          lostunflag I
         ";
 $sqlarray = $dict->CreateTableSql(cms_db_prefix()."module_feusers_grouppropmap", $flds, $taboptarray );
@@ -126,34 +127,34 @@ $dict->ExecuteSQLArray( $sqlarray );
 //user properties
 $flds = "
 	     id I KEY,
-	     userid I,
-	     title C(100),
+	     userid I NOTNULL,
+	     title C(100) NOTNULL,
 	     data X2
 	    ";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix()."module_feusers_properties", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
-$db->CreateSequence( cms_db_prefix()."module_feusers_properties_seq" );
+//$db->CreateSequence( cms_db_prefix()."module_feusers_properties_seq" );
 
 // forgotten password stuff
 $flds = "
 	     userid I KEY,
-         code C(25),
+         code C(25) NOTNULL,
          created ".CMS_ADODB_DT;
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix()."module_feusers_tempcode", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
 
 // login history stuff
 $flds = "
-         userid I,
-	     sessionid C(32),
-         action C(32),
+         userid I NOTNULL,
+	     sessionid C(32) NOTNULL,
+         action C(32) NOTNULL,
          refdate ".CMS_ADODB_DT.",
          ipaddress C(20)";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix()."module_feusers_history", $flds, $taboptarray );
 $dict->ExecuteSQLArray( $sqlarray );
 
 // indexes
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'feu_idx_username',cms_db_prefix().'module_feusers_belongs','groupid');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'feu_idx_belongs',cms_db_prefix().'module_feusers_belongs','groupid');
 $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'feu_idx_username',cms_db_prefix().'module_feusers_users','username');
 $dict->ExecuteSQLArray($sqlarray);
@@ -166,6 +167,27 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'feu_idx_proptitle',cms_db_prefix().'module_feusers_properties','title');
 $dict->ExecuteSQLArray($sqlarray);
 
+// setup foreign key relationships
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_belongs ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_loggedin ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_belongs ADD FOREIGN KEY (groupid) REFERENCES '.cms_db_prefix().'module_feusers_groups (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_dropdowns ADD FOREIGN KEY (control_name) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_grouppropmap ADD FOREIGN KEY (group_id) REFERENCES '.cms_db_prefix().'module_feusers_groups (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_grouppropmap ADD FOREIGN KEY (name) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_properties ADD FOREIGN KEY (title) REFERENCES '.cms_db_prefix().'module_feusers_propdefn (name)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_tempcode ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+$db->Execute($sql);
+$sql = 'ALTER TABLE '.cms_db_prefix().'module_feusers_history ADD FOREIGN KEY (userid) REFERENCES '.cms_db_prefix().'module_feusers_users (id)';
+$db->Execute($sql);
 
 // templates
 $fn = __DIR__.'/templates/orig_loginform.tpl';
@@ -216,6 +238,9 @@ if( file_exists( $fn ) ) {
     $this->SetTemplate('feusers_resetsession',$template);
 }
 
+$tpl = file_get_contents(__DIR__.'/templates/orig_force_newpw_form.tpl');
+$this->SetTemplate('force_newpw_template',$tpl);
+
 // preferences
 $this->SetPreference('min_passwordlength', 6);
 $this->SetPreference('max_passwordlength', 20);
@@ -243,13 +268,14 @@ $this->SetPreference('username_is_email',1);
 $this->SetPreference('passwordfldlength', 20);
 $this->SetPreference('usernamefldlength', 40);
 $this->SetPreference('allow_repeated_logins',0);
-$this->SetPreference('image_destination_path','feusers');
+$this->SetPreference('image_destination_path','_feusers');
 $this->SetPreference('allowed_image_extensions','.gif,.png,.jpg');
 $this->SetPreference('notification_subject',$this->Lang('feu_event_notification'));
 $this->SetPreference('expireage_months',60);
 
-$config = cmsms()->GetConfig();
-$this->SetPreference('pwsalt',substr(str_shuffle(md5(time().$config['root_url'].__FILE__)),0,5));
+//$config = cmsms()->GetConfig();
+//$this->SetPreference('pwsalt',substr(str_shuffle(md5(time().$config['root_url'].__FILE__)),0,5));
+$this->SetPreference('use_usersalt',1);
 
 // Events
 $this->CreateEvent( 'OnLogin' );

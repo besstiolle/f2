@@ -16,7 +16,7 @@
     <p class="pagetext">{$mod->Lang('prompt_auto_create_unknown')}:</p>
     <p class="pageinput">
       {cge_yesno_options prefix=$actionid name='auto_create_unknown' selected=$auto_create_unknown}
-      <br/> 
+      <br/>
       {$mod->Lang('info_auto_create_unknown')}
     </p>
   </div>
@@ -85,19 +85,19 @@
   <legend>{$mod->Lang('notification_settings')}:</legend>
   <div class="pageoverflow">
     <p class="pagetext">{$prompt_notifications}:</p>
-    <p class="pageinput">{$input_notifications}</p>        
+    <p class="pageinput">{$input_notifications}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">{$prompt_notification_address}:</p>
-    <p class="pageinput">{$input_notification_address}</p>        
+    <p class="pageinput">{$input_notification_address}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">{$prompt_notification_subject}:</p>
-    <p class="pageinput">{$input_notification_subject}</p>        
+    <p class="pageinput">{$input_notification_subject}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">{$prompt_notification_template}:</p>
-    <p class="pageinput">{$input_notification_template}</p>        
+    <p class="pageinput">{$input_notification_template}</p>
   </div>
 </fieldset>
 
@@ -111,24 +111,6 @@
       </select>
       <br/>
       {$mod->Lang('info_pagetype_groups')}
-    </p>
-  </div>
-  <div class="pageoverflow">
-    <p class="pagetext">{$mod->Lang('pagetype_action')}:</p>
-    <p class="pageinput">
-      <select name="{$actionid}pagetype_action">
-        {html_options options=$pagetype_action_opts selected=$pagetype_action}
-      </select>
-      <br/>
-      {$mod->Lang('info_pagetype_action')}
-    </p>
-  </div>
-  <div class="pageoverflow">
-    <p class="pagetext">{$mod->Lang('pagetype_redirectto')}:</p>
-    <p class="pageinput">
-      {$pagetype_redirectto}
-      <br/>
-      {$mod->Lang('info_pagetype_redirectto')}
     </p>
   </div>
 </fieldset>

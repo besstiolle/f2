@@ -39,29 +39,35 @@ if( !isset( $gCms ) ) return;
 if( !isset( $params['job']) ) return;
 if( !isset( $params['uids']) ) return;
 
-
 $job = trim($params['job']);
-switch( $job )
-  {
-  case 'delete':
-    {
-      $i = 0;
-      if( !$this->_HasSufficientPermissions('removeusers') ) return;
-      $sel = unserialize($params['uids']);
-      if( !is_array($sel) ) return;
-      foreach( $sel as $oneuid )
-	{
-	  $this->DeleteUserFull( $oneuid );
-	  $i++;
-	  if( $i >= 250 ) break;
-	}
+switch( $job ) {
+case 'delete':
+    if( !$this->_HasSufficientPermissions('removeusers') ) return;
+    try {
+        $sel = unserialize($params['uids']);
+        if( !is_array($sel) || !count($sel) ) return;
+        $db->BeginTrans();
+        $i = 0;
+        foreach( $sel as $oneuid ) {
+            $this->DeleteUserFull( $oneuid );
+            $i++;
+            if( $i >= 250 ) break;
+        }
+        $db->CommitTrans();
+    }
+    catch( \Exception $e ) {
+        $db->RollbackTrans();
+        audit('',$this->GetName(),'Failed bulk delete');
+        debug_to_log(__FILE__);
+        debug_to_log($e->GetMessage());
+        $this->SetError($e->GetMessage());
     }
     break;
 
-  default:
+default:
     // invalid job
     return;
-  }
+}
 
 $this->RedirectToTab( $id, 'users' );
 

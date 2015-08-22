@@ -177,10 +177,16 @@ foreach( $properties as $prop ) {
 
   case 4: // dropdown
     $onerow->control = $this->CreateInputDropdown($id, 'input_'.$prop['name'], $seloptions,-1, $val);
+    $onerow->seloptions = $seloptions;
+    $onerow->selected = $selected;
+    $onerow->name = $id.'input_'.$prop['name'];
     break;
 
   case 5: // multiselect
     $onerow->control = $this->CreateInputSelectList($id, 'input_'.$prop['name'].'[]', $seloptions, $selected, $defn['length']);
+    $onerow->seloptions = $seloptions;
+    $onerow->selected = $selected;
+    $onerow->name = $id.'input_'.$prop['name'];
     break;
 
   case 6: // image
@@ -205,6 +211,9 @@ foreach( $properties as $prop ) {
 
   case 7: // radio button group
     $onerow->control = $this->CreateInputRadioGroup($id, 'input_'.$prop['name'], $seloptions, $val, '', '<br/>');
+    $onerow->seloptions = $seloptions;
+    $onerow->selected = $selected;
+    $onerow->name = $id.'input_'.$prop['name'];
     break;
 
   case 8: // date

@@ -86,18 +86,6 @@ class feu_protected_page extends Content
         }
     }
 
-    // no match.  begin gross ugly hack
-    // there should be a callback for this.
-    /*
-    if( isset($_REQUEST['mact']) && strpos($_REQUEST['mact'],$feu->GetName()) === FALSE ) {
-        $mact = explode(',',$_REQUEST['mact']);
-        $_mid = $mact[1];
-        $str = $_mid.'returnid';
-        if( isset($_REQUEST[$str]) && $_REQUEST[$str] == $this->Id() ) {
-            unset($_REQUEST['mact']);
-        }
-    }
-    */
     return FALSE;
   }
 
@@ -118,36 +106,12 @@ class feu_protected_page extends Content
   {
     parent::SetProperties();
     $this->RemoveProperty('cachable',false);
-    $captcha = cms_utils::get_module('Captcha');
     if( version_compare(CMS_VERSION,'1.98') < 0 ) {
         $this->AddContentProperty('__feu_groups__',1);
-        if( is_object($captcha) ) $this->AddContentProperty('__feu_captcha__',2);
     }
     else {
       $this->AddProperty('__feu_groups__',1,self::TAB_FEU);
-      if( is_object($captcha) ) $this->AddProperty('__feu_captcha__',1,self::TAB_FEU);
     }
-  }
-
-  public function Show($param = '')
-  {
-    $smarty = cmsms()->GetSmarty();
-    $feu = cms_utils::get_module(MOD_FRONTENDUSERS);
-    if( !$feu ) throw new \RuntimeException('Protected page requested, but could not get FEU module');
-
-    $action = $feu->GetPreference('pagetype_action','showlogin');
-    $smarty->assign('show_what',$param,TRUE);
-    $auth = $this->_isAuthorized()?1:0;
-    if( $auth ) $smarty->assign('output',parent::Show($param));
-    $smarty->assign('feu_authorized',$auth,TRUE);
-    $smarty->assign('action',$action,TRUE);
-    $smarty->assign('feu_page',$feu->GetPreference('pagetype_redirectto',-1),TRUE);
-    $this->_getData();
-    $smarty->assign('docaptcha',1,TRUE);
-    if( isset($this->_data['captcha']) && $this->_data['captcha'] == 0 ) $smarty->assign('docaptcha',0,TRUE);
-
-    $tpl = file_get_contents($feu->GetModulePath().'/templates/protectedcontent.tpl');
-    return $feu->ProcessTemplateFromData($tpl);
   }
 
   public function IsPermitted()
@@ -194,13 +158,6 @@ class feu_protected_page extends Content
     $tmp[] = $opt;
     $ret[] = $tmp;
 
-    $captcha = $feu->GetModuleInstance('Captcha');
-    if( is_object($captcha) ) {
-      $val = (isset($this->_data['captcha']))?$this->_data['captcha']:1;
-      $tmp = array($feu->Lang('enable_captcha').':');
-      $tmp[] = $feu->CreateInputYesNoDropdown('','__feu_captcha__',$val).'<br/>'.$feu->Lang('info_enable_captcha');
-      $ret[] = $tmp;
-    }
     return $ret;
   }
 
@@ -226,7 +183,6 @@ class feu_protected_page extends Content
     else if( isset($this->_data['groups']) ) {
       unset($this->_data['groups']);
     }
-    if( isset($params['__feu_captcha__']) ) $this->_data['captcha'] = $params['__feu_captcha__'];
     parent::FillParams($params,$editing);
     $this->SetCachable(false);
   }
@@ -271,16 +227,6 @@ class feu_protected_page extends Content
           $opt .= '</select><br/>'.$feu->Lang('info_contentpage_grouplist');
           $tmp[] = $opt;
           return $tmp;
-
-      case '__feu_captcha__':
-          $captcha = $feu->GetModuleInstance('Captcha');
-          if( is_object($captcha) ) {
-              $val = (isset($this->_data['captcha']))?$this->_data['captcha']:1;
-              $tmp = array($feu->Lang('enable_captcha').':');
-              $tmp[] = $feu->CreateInputYesNoDropdown('','__feu_captcha__',$val).'<br/>'.$feu->Lang('info_enable_captcha');
-              return $tmp;
-          }
-          break;
 
       default:
           return parent::display_single_element($one,$adding);

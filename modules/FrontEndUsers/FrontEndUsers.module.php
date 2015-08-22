@@ -86,15 +86,14 @@ final class FrontEndUsers extends CGExtensions
 
         global $CMS_ADMIN_PAGE;
         if( !isset($CMS_ADMIN_PAGE) ) {
-            require_once(__DIR__."/lib/class.feu_smarty.php" );
-            $smarty = cmsms()->GetSmarty();
+            $smarty = Smarty_CMS::get_instance();
             if( !$smarty ) return;
-            $obj = new feu_smarty($this);
-            $smarty->assign('feu_smarty',$obj);
+            $smarty->registerClass('feu_smarty','feu_smarty');
+            $smarty->registerPlugin('block','feu_protect','feu_smarty_plugins::feu_protect');
         }
         $this->AddImageDir('icons');
 
-        $contentops = cmsms()->GetContentOperations();
+        $contentops = ContentOperations::get_instance();
         $obj = new CmsContentTypePlaceholder();
         $obj->class = 'feu_protected_page';
         $obj->type  = strtolower($obj->class);
@@ -129,33 +128,23 @@ final class FrontEndUsers extends CGExtensions
         return $this->usermanip;
     }
 
-    /**
-     * Generate a random, printable string
-     *
-     * @deprecated
-     */
-    public function GenerateRandomPrintableString( $len = 10 )
-    {
-        return feu_utils::generate_random_printable_string($len);
-    }
 
     function GetName() { return 'FrontEndUsers'; }
-    function GetVersion() { return '1.25.1'; }
+    function GetVersion() { return '1.30'; }
     function HasContentType() { return TRUE; }
     function IsPluginModule() { return TRUE; }
     function AllowAutoInstall() { return FALSE; }
     function AllowAutoUpgrade() { return FALSE; }
     function LazyLoadAdmin() { return TRUE; }
-    function MinimumCMSVersion() { return '1.11.10'; }
+    function MinimumCMSVersion() { return '1.12'; }
     function GetAdminDescription () { return $this->Lang ('moddescription'); }
     function GetAdminSection () { return 'usersgroups'; }
-    function GetDependencies() { return array( 'CGExtensions' => '1.44.2' ); }
+    function GetDependencies() { return array( 'CGExtensions' => '1.48','CGSimpleSmarty' => '1.9' ); }
     function GetEventDescription ( $eventname ) { return $this->Lang('event_info_'.$eventname ); }
     function GetEventHelp ( $eventname ) { return $this->Lang('event_help_'.$eventname ); }
     function GetFriendlyName () { return $this->Lang('friendlyname'); }
     function HasAdmin () { return TRUE; }
     function InstallPostMessage() { return $this->Lang('postinstallmessage'); }
-    function GetHelp() { return file_get_contents(__DIR__.'/help.inc'); }
     function GetAuthor() { return 'calguy1000'; }
     function GetAuthorEmail() { return 'calguy1000@hotmail.com'; }
     function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
@@ -175,27 +164,29 @@ final class FrontEndUsers extends CGExtensions
         $this->RestrictUnknownParams();
         $this->RegisterModulePlugin();
         $this->SetParameterType('code',CLEAN_STRING);
-        $this->SetParameterType('form',CLEAN_STRING);
+        $this->SetParameterType('form',CLEAN_STRING); // deprecated
         $this->SetParameterType('returnto',CLEAN_STRING);
         $this->SetParameterType('only_groups',CLEAN_STRING);
         $this->SetParameterType('nocaptcha',CLEAN_INT);
-        $this->SetParameterType('input_username',CLEAN_STRING);
-        $this->SetParameterType('input_password',CLEAN_STRING);
-        $this->SetParameterType('input_repeatpassword',CLEAN_STRING);
-        $this->SetParameterType('error',CLEAN_INT);
-        $this->SetParameterType('message',CLEAN_STRING);
+        $this->SetParameterType('input_username',CLEAN_STRING); // deprecated
+        $this->SetParameterType('input_password',CLEAN_STRING); // deprecated
+        $this->SetParameterType('input_repeatpassword',CLEAN_STRING); // deprecated
+        $this->SetParameterType('error',CLEAN_INT); // deprecated
+        $this->SetParameterType('message',CLEAN_STRING); // deprecated
         $this->SetParameterType('lostun_group',CLEAN_STRING);
-        $this->SetParameterType('input_captcha',CLEAN_STRING);
-        $this->SetParameterType('submit',CLEAN_STRING);
-        $this->SetParameterType('cancel',CLEAN_STRING);
-        $this->SetParameterType('input_returnto',CLEAN_INT);
-        $this->SetParameterType('input_uid',CLEAN_INT);
-        $this->SetParameterType('input_code',CLEAN_STRING);
-        $this->SetParameterType('skipformdisplay',CLEAN_INT);
+        $this->SetParameterType('input_captcha',CLEAN_STRING); // deprecated
+        $this->SetParameterType('submit',CLEAN_STRING); // deprecated
+        $this->SetParameterType('cancel',CLEAN_STRING); // deprecated
+        $this->SetParameterType('input_code',CLEAN_STRING); // deprecated
         $this->SetParameterType('uid',CLEAN_INT);
         $this->SetParameterType('checkonly',CLEAN_INT);
         $this->SetParameterType('returnlast',CLEAN_INT);
-        $this->SetParameterType('noinline',CLEAN_INT);
+        $this->SetParameterType('inline',CLEAN_INT);
+        $this->SetParameterType('logouttemplate',CLEAN_STRING);
+        $this->SetParameterType('logintemplate',CLEAN_STRING);
+        $this->SetParameterType('changesettingtemplate',CLEAN_STRING);
+        $this->SetParameterType('forgotpwtemplate',CLEAN_STRING);
+        $this->SetParameterType('lostuntemplate',CLEAN_STRING);
         $this->SetParameterType(CLEAN_REGEXP.'/feu_.*/',CLEAN_STRING);
 
         $this->RegisterRoute('/[fF]eu\/verify\/(?P<returnid>[0-9]+)\/(?P<uid>[0-9]+)\/(?P<code>.*?)$/',array('action'=>'verifycode'));
@@ -208,56 +199,6 @@ final class FrontEndUsers extends CGExtensions
 
     function InitializeAdmin()
     {
-        $this->CreateParameter('returnlast','',$this->Lang('help_returnlast'));
-        $this->CreateParameter('noinline','',$this->Lang('help_noinline'));
-    }
-
-    private function _ExportLoggedInUserVariables($id,&$params,$returnid)
-    {
-        // replace {$username} with the user name
-        $uid = $this->LoggedInId();
-        if( !$uid ) return;
-        $username = $this->LoggedInName();
-
-        // replace {$groupname} with the first groupname we can find that matches
-        $smarty = cmsms()->GetSmarty();
-        $groups = $this->GetMemberGroupsArray( $uid );
-        $groupname = $this->GetGroupName( $groups[0]['groupid'] );
-
-        $smarty->assign('userid', $uid);
-        $smarty->assign('username', $username );
-        $smarty->assign('link_logout', $this->CreateLink($id,"logout",$returnid, $this->Lang('logout')));
-        $prettyurl_logout = 'feu/logout/'.$returnid;
-        $logout_feu = $this->CreateLink($id, 'logout', $returnid, '', array(), '', true, false, '', false, $prettyurl_logout);
-        $smarty->assign('url_logout', $logout_feu);
-
-        $page = $this->ProcessTemplateFromData($this->GetPreference('pageid_changesettings'));
-        if( $page ) {
-            $pageid = ContentManager::get_instance()->GetPageIDFromAlias( $page );
-            if( $pageid == false ) {
-                $smarty->assign('link_changesettings','<!-- Error could not determine page from alias/id -->');
-            }
-            else {
-                $smarty->assign('link_changesettings',
-                $this->CreateLink($id,'default',$pageid,$this->Lang('prompt_changesettings'),array('form'=>'changesettings')));
-                //nuno-dev-Pretty Url's
-                $prettyurl_changesettings = 'feu/edit/'.$pageid;
-                $changesettings_feu = $this->CreateLink($id, 'default', $pageid, '', array('form'=>'changesettings'), '',
-                true, false, '', false, $prettyurl_changesettings);
-                $smarty->assign('url_changesettings',$changesettings_feu);
-            }
-        }
-        else {
-            $smarty->assign('link_changesettings', $this->CreateLink($id,'default',$returnid, $this->Lang('prompt_changesettings'), array('form'=>'changesettings')));
-            //nuno-dev-Pretty Url's
-            $prettyurl_changesettings = 'feu/edit/'.$returnid;
-            $changesettings_feu = $this->CreateLink($id, 'default', $returnid,  '', array('form'=>'changesettings'), '', true, false, '', false, $prettyurl_changesettings);
-            $smarty->assign('url_changesettings',$changesettings_feu);
-        }
-        $props = $this->GetUserProperties( $this->LoggedInId() );
-        foreach( $props as $p ) {
-            $smarty->assign($p['title'],$p['data']);
-        }
     }
 
     function get_tasks()
@@ -269,6 +210,40 @@ final class FrontEndUsers extends CGExtensions
         }
         $tmp = null;
         return $tmp;
+    }
+
+	public function get_pretty_url($id,$action,$returnid='',$params=array(),$inline=false)
+    {
+        if( $action == 'default' ) {
+            $form = \cge_param::get_string($params,'form');
+            switch( $form ) {
+            case 'forgotpw':
+                $action = 'forgotpw';
+                break;
+            case 'login':
+                $action = 'login';
+                break;
+
+            case 'lostusername':
+                $action = 'lostusername';
+                break;
+
+            case 'changesettings':
+                return "feu/edit/$returnid";
+            }
+        }
+
+        if( $action == 'forgotpw') {
+            return "feu/forgot/$returnid";
+        } else if( $action == 'lostusername' ) {
+            return "feu/lostusername/$returnid";
+        } elseif( $action == 'logout' ) {
+            $returnto = \cge_param::get_string($params,'returnto');
+            $returnlast = \cge_param::get_bool($params,'returnlast');
+            $prelogout_url = \cge_param::get_string($params,'feu_prelogout_url');
+            if( $returnto || ($returnlast && $prelogout_url) ) return;
+            return "feu/logout/$returnid";
+        }
     }
 
     protected function _HasSufficientPermissions( $perm = '' )
@@ -419,48 +394,9 @@ final class FrontEndUsers extends CGExtensions
         echo $this->ProcessTemplate('error.tpl');
     }
 
-    protected function _DoUserAction( $id, &$params, $returnid )
-    {
-        $gCms = cmsms();
-        $form = 'login';
-        if( isset($params['form']) ) $form = $params['form'];
-
-        if( !isset($params['form'])) {
-            $uid = $this->LoggedInId();
-            if( $uid <= 0 ) {
-                $form = 'login';
-            }
-            else {
-                $form = 'logout';
-            }
-        }
-
-        $auth_consumer = feu_utils::get_auth_consumer();
-        switch( $form ) {
-        case 'login':
-            include __DIR__.'/function.user_loginform.php';
-            break;
-        case 'logout':
-            include __DIR__.'/function.user_logoutform.php';
-            break;
-        case 'lostusername':
-            include(__DIR__.'/function.default_lostusernameform.php');
-            break;
-        case 'forgotpw':
-            include(__DIR__.'/function.user_forgotpassword.php');
-            break;
-        case 'changesettings':
-            include(__DIR__.'/function.user_changesettings.php');
-            break;
-        case 'silent':
-            $this->_ExportLoggedInUserVariables( $id, $params, $returnid );
-            break;
-        }
-    }
-
     protected function _DisplayAdminUserPage( $id, &$params, $returnid )
     {
-        $smarty = cmsms()->GetSmarty();
+        $smarty = Smarty_CMS::get_instance();
         // populate the template
         $editing = 0;
         $hidden = array();
@@ -469,6 +405,7 @@ final class FrontEndUsers extends CGExtensions
         $repeatpassword = '';
         $expires = '';
         $uinfo = null;
+        $smarty->assign('origparams',$params);
 
         if( isset($params['returnto']) ) $hidden['returnto'] = $params['returnto'];
         if( isset( $params['action'] ) && ($params['action'] == 'edituser'|| $params['action'] == 'do_edituser1' ) ) {
@@ -495,6 +432,8 @@ final class FrontEndUsers extends CGExtensions
         if( isset($params['message']) ) $smarty->assign('message',$params['message']);
 
         if( $this->GetPreference('use_randomusername',0) == 1 ) $username = $this->GenerateRandomUsername();
+        $disabled = (int) cge_utils::get_param($params,'input_disabled');
+        $force_newpw = (int) cge_utils::get_param($params,'input_force_newpw');
         if( isset($params['input_username']) )  $username = trim($params['input_username']);
         if( isset($params['input_password']) ) $password = trim($params['input_password']);
         if( isset($params['input_repeatpassword']) ) $repeatpassword = trim($params['input_repeatpassword']);
@@ -511,6 +450,10 @@ final class FrontEndUsers extends CGExtensions
             $smarty->assign('username_readonly',1);
         }
         $smarty->assign('prompt_username',$auth_consumer->get_username_prompt());
+        $smarty->assign('unfldlen',$this->GetPreference('usernamefldlength'));
+        $smarty->assign('max_unfldlen',$this->GetPreference('max_usernamelength'));
+        $smarty->assign('pwfldlen',$this->GetPreference('passwordfldlength'));
+        $smarty->assign('max_pwfldlen',$this->GetPreference('max_passwordlength'));
         $smarty->assign('input_username', $this->CreateInputText($id, 'input_username',$username,
                                                                  $this->GetPreference('usernamefldlength'),
                                                                  $this->GetPreference('max_usernamelength'),
@@ -524,8 +467,8 @@ final class FrontEndUsers extends CGExtensions
         $smarty->assign('prompt_password',$this->Lang('password'));
         $smarty->assign('input_password',
         $this->CreateInputPassword($id, 'input_password', $password,
-        $this->GetPreference('passwordfldlength'),
-        $this->GetPreference('max_passwordlength'),
+                                   $this->GetPreference('passwordfldlength'),
+                                   $this->GetPreference('max_passwordlength'),
         $addtext));
         $smarty->assign('prompt_repeatpassword',$this->Lang ('repeatpassword'));
         $smarty->assign('input_repeatpassword',
@@ -604,32 +547,34 @@ final class FrontEndUsers extends CGExtensions
             unset($params['feu_enc']);
         }
 
-        $smarty = cmsms()->GetSmarty();
-        $smarty->assign('feuactionid',$id);
-        $smarty->assign('feuactionparams',$params);
-        $smarty->assign('mod',$this);
-        $smarty->assign($this->GetName(),$this);
+        if( $action == 'default' ) {
+            $form = \cge_param::get_string($params,'form','login');
+            switch( $form ) {
+            case 'login':
+            case 'forgotpw':
+            case 'silent':
+            case 'changesettings':
+            case 'lostusername':
+                $action = $form;
+                break;
+
+            case 'logout':
+                $action = 'logoutform';
+                break;
+
+            default:
+                throw new \LogicExcception("$form is an invalid value for the form parameter");
+            }
+        }
 
         switch ($action) {
         case 'changesettings_url':
             break;
 
-        case 'changesettings':
-            $params['form'] = $action;
-            $this->_DoUserAction( $id, $params, $returnid );
-            break;
-
-        case 'lostusername':
-        case 'forgotpw':
-            $params['form'] = $action;
-            $this->_DoUserAction( $id, $params, $returnid );
-            break;
-
-        case "default":
-            $this->_DoUserAction( $id, $params, $returnid );
-            break;
-
         case 'edituser':
+            // hack till this stuff is in a proper action.
+            $smarty = \Smarty_CMS::get_instance();
+            $smarty->assign('mod',$this);
             if( $this->_HasSufficientPermissions( 'editusers' ) ) {
                 $this->_DisplayAdminEditUserStep1Page( $id, $params, $returnid );
             }
@@ -638,39 +583,6 @@ final class FrontEndUsers extends CGExtensions
             }
             break;
 
-        case 'admin_bulkactions':
-        case 'admin_importgroup':
-        case 'admin_exportgroup':
-        case 'admin_logout':
-        case 'admin_setviewuser_template':
-        case 'admin_setlostun_template':
-        case 'addgroup':
-        case 'adduser':
-        case 'addprop':
-        case 'defaultadmin':
-        case 'do_deleteprop':
-        case 'do_deletegroup':
-        case 'do_login':
-        case 'do_adduser1':
-        case 'do_adduser3':
-        case 'do_deleteuser':
-        case 'do_addgroup':
-        case 'do_edituser3':
-        case 'do_userchangesettings':
-        case 'do_forgotpw':
-        case 'do_setprefs':
-        case 'do_edituser1':
-        case 'do_admintasks':
-        case 'do_lostusername':
-        case 'do_verifycode':
-        case 'logout':
-        case 'userhistory':
-        case 'verifycode':
-        case 'viewuser':
-        case 'do_edituser2':
-        case 'do_adduser2':
-        case 'do_setforgotpwtemplate':
-        case 'do_setlogintemplate':
         default:
             parent::DoAction($action,$id,$params,$returnid);
             break;
@@ -702,6 +614,8 @@ final class FrontEndUsers extends CGExtensions
 
         // populate the params with the appropriate stuff
         // that we just loaded
+        $params['input_force_newpw'] = $user['force_newpw'];
+        $params['input_disabled'] = $user['disabled'];
         $params['input_username'] = $user['username'];
         $params['input_expiresdate'] = $user['expires'];
         $userprops = '';
@@ -785,6 +699,10 @@ final class FrontEndUsers extends CGExtensions
         return 1;
     }
 
+    /**
+     * @internal
+     * @deprecated
+     */
     function myRedirect( $id, $action, $returnid, $params = array(), $ignore_returnto = false )
     {
         // find any parameter values that are arrays
@@ -822,18 +740,23 @@ final class FrontEndUsers extends CGExtensions
     }
 
 
-    function GetHeaderHTML()
+    /**
+     * @internal
+     */
+    public function GetHeaderHTML()
     {
+        $txt = parent::GetHeaderHTML();
         $tmpl =<<<EOT
 {JQueryTools action='require' lib='tablesorter,JQueryTools'}
 {JQueryTools action='placemarker'}
 EOT;
 
-    $obj = cms_utils::get_module('JQueryTools','1.2');
-    if( is_object($obj) ) {
-        $smarty = cmsms()->GetSmarty();
-        return $smarty->fetch('string:'.$tmpl);
-    }
+        $obj = cms_utils::get_module('JQueryTools','1.2');
+        if( is_object($obj) ) {
+            $smarty = Smarty_CMS::get_instance();
+            $txt .= $smarty->fetch('string:'.$tmpl);
+        }
+        return $txt;
     }
 
 
@@ -850,7 +773,24 @@ EOT;
     }
 
 
-    protected function get_upload_dirname($uid)
+    /**
+     * @internal
+     */
+    public function is_allowed_upload($srcfile)
+    {
+        $allowed_extensions=$this->GetPreference('allowed_image_extensions','.gif,.png,.jpg');
+        $tmp = explode( ',', $allowed_extensions);
+
+        foreach( $tmp as $ext ) {
+            if( endswith( $srcfile, $ext ) ) return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * @internal
+     */
+    public function get_upload_dirname($uid)
     {
         $gCms = cmsms();
         $config = $gCms->GetConfig();
@@ -859,42 +799,45 @@ EOT;
     }
 
 
+    /**
+     * @internal
+     */
+    public function get_upload_filename($uid,$fldname,$srcfile)
+    {
+        // get the filename only, not the directory
+        $ext = strchr($srcfile,'.');
+        return $uid.'_'.$fldname.$ext;
+    }
+
+    /**
+     * @internal
+     */
     protected function ManageImageUpload($id, $fldprefix, $fldname, $uid)
     {
         $gCms = cmsms();
 
         if( !isset($_FILES[$id.$fldprefix.$fldname]) || !isset( $_FILES ) ) return array(false,$this->Lang('error_missing_upload'));
 
-        $file =& $_FILES[$id.$fldprefix.$fldname];
+        $file = $_FILES[$id.$fldprefix.$fldname];
         if( !isset($file['name']) || !isset($file['size']) || $file['size'] == 0 ) return array(false,$this->Lang('error_problem_upload'));
 
         if (!isset ($file['type'])) $file['type'] = '';
         if (!isset ($file['size'])) $file['size'] = '';
-        if (!isset ($file['tmp_name'])) $file['tmp_name'] = '';
+        if (!isset ($file['tmp_name'])) return array(false,$this->Lang('error_problem_upload'));
         $file['name'] =
             preg_replace('/[^a-zA-Z0-9\.\$\%\'\`\-\@\{\}\~\!\#\(\)\&\_\^]/', '',
             str_replace (array (' ', '%20'), array ('_', '_'), $file['name']));
 
         // check the filename
-        $allowed_extensions=$this->GetPreference('allowed_image_extensions','.gif,.png,.jpg');
-        $tmp = explode( ',', $allowed_extensions);
-        if( !is_array($tmp) ) return array(false,$this->Lang('error_invalidfileextension'));
-        $found = false;
-        foreach( $tmp as $ext ) {
-            if( endswith( $file['name'], $ext ) ) {
-                $found = true;
-                break;
-            }
-        }
-        if( !$found ) return array(false,$this->Lang('error_invalidfileextension'));
+        if( !$this->is_allowed_upload($file['name']) ) return array(false,$this->Lang('error_invalidfileextension'));
 
         // set the destination name
-        $ext = strchr($file['name'],'.');
-        $destname = $uid.'_'.$fldname.$ext;
+        $destname = $this->get_upload_filename($uid,$fldname,$file['name']);
 
         // Create the destination directory if necessary
         $destDir = $this->get_upload_dirname($uid);
-        @mkdir($destDir);
+        @mkdir($destDir,0777,TRUE);
+        @touch($destdir.'/index.html');
         if( !is_writable( $destDir ) ) return array(false,$this->Lang('error_destinationnotwritable'));
         @cms_move_uploaded_file($file['tmp_name'], cms_join_path($destDir,$destname));
 
@@ -942,9 +885,22 @@ EOT;
         return $tmp;
     }
 
+    /**
+     * @internal
+     */
     public function SetPostLoginURL($url)
     {
         if( $url ) $this->session_put('postlogin_url',$url);
+    }
+
+    /**
+     * @internal
+     */
+    public function GetPostLoginURL()
+    {
+        $out = $this->session_get('postlogin_url');
+        $this->session_clear('post_loginurl');
+        return $out;
     }
 
     //////////////////////////////////////////
@@ -985,10 +941,10 @@ EOT;
     }
 
 
-    function AddUser( $name, $password, $expires, $do_md5 = true )
+    function AddUser( $name, $password, $expires )
     {
         $this->_load();
-        return $this->usermanip->AddUser( $name, $password, $expires, $do_md5 );
+        return $this->usermanip->AddUser( $name, $password, $expires );
     }
 
 
@@ -996,13 +952,6 @@ EOT;
     {
         $this->_load();
         return $this->usermanip->AssignUserToGroup( $uid, $gid );
-    }
-
-
-    function CheckPassword($username,$password,$groups = '',$md5pw = false)
-    {
-        $this->_load();
-        return $this->usermanip->CheckPassword($username,$password,$groups,$md5pw);
     }
 
 
@@ -1035,10 +984,10 @@ EOT;
     }
 
 
-    function DeletePropertyDefn( $name, $full = FALSE )
+    function DeletePropertyDefn( $name )
     {
         $this->_load();
-        return $this->usermanip->DeletePropertyDefn( $name, $full );
+        return $this->usermanip->DeletePropertyDefn( $name );
     }
 
 
@@ -1388,6 +1337,12 @@ EOT;
         return $this->usermanip->IsValidUsername( $username, $check, $uid );
     }
 
+    function CheckPassword($username, $password, $groups = '')
+    {
+        $this->_load();
+        return $this->usermanip->CheckPassword($username, $password, $groups);
+    }
+
     function Login( $username, $password, $groups = '', $md5pw = false, $force_logout = false)
     {
         $this->_load();
@@ -1468,16 +1423,34 @@ EOT;
         return $this->usermanip->SetGroup( $gid, $name, $desc );
     }
 
+    function EncryptPassword( $uid, $plain_password )
+    {
+        $this->_load();
+        return $this->usermanip->EncryptPassword( $uid, $plain_password );
+    }
+
     function SetUserPassword( $uid, $password )
     {
         $this->_load();
         return $this->usermanip->SetUserPassword( $uid, $password );
     }
 
-    function SetUser( $uid, $username, $password, $expires = false, $do_md5 = true )
+    function SetUserDisabled( $uid, $flag = TRUE )
     {
         $this->_load();
-        return $this->usermanip->SetUser( $uid, $username, $password, $expires, $do_md5 );
+        $this->usermanip->SetUserDisabled($uid,$flag);
+    }
+
+    function ForcePasswordChange( $uid, $flag = TRUE )
+    {
+        $this->_load();
+        $this->usermanip->ForcePasswordChange($uid,$flag);
+    }
+
+    function SetUser( $uid, $username, $password, $expires = false )
+    {
+        $this->_load();
+        return $this->usermanip->SetUser( $uid, $username, $password, $expires );
     }
 
     function SetUserGroups( $uid, $grpids )
@@ -1592,7 +1565,7 @@ EOT;
     }
 
 
-    function GetContentBlockInput($blockName,$value,$params,$adding = false, ContentBase $content_obj)
+    function GetContentBlockInput($blockName,$value,$params,$adding = false)
     {
         switch( $params['selecttype'] ) {
         case 'groupselect':
@@ -1606,7 +1579,22 @@ EOT;
         return FALSE;
     }
 
-    function GetContentBlockValue($blockName,$blockParams,$inputParams, ContentBase $content_obj)
+    /** for 2.0 **/
+    function GetContentBlockFieldInput($blockName,$value,$params,$adding = false,ContentBase $content_obj)
+    {
+        switch( $params['selecttype'] ) {
+        case 'groupselect':
+            $tmp1 = array();
+            $tmp = $this->GetGroupList();
+            $groups = array_merge($tmp1,$tmp);
+            $value = explode(',', trim($value));
+            return $this->CreateInputSelectList('',$blockName . '[]',$groups,$value);
+            break;
+        }
+        return FALSE;
+    }
+
+    function GetContentBlockValue($blockName,$blockParams,$inputParams)
     {
         if( isset($blockParams['selecttype']) ) {
             if( isset($inputParams[$blockName]) ) {
@@ -1621,7 +1609,34 @@ EOT;
         return '';
     }
 
-    function ValidateContentBlockValue($blockName,$value,$blockParams, ContentBase $content_obj)
+    /** for 2.0 **/
+    function GetContentBlockFieldValue($blockName,$blockParams,$inputParams,ContentBase $content_obj)
+    {
+        if( isset($blockParams['selecttype']) ) {
+            if( isset($inputParams[$blockName]) ) {
+                $val = $inputParams[$blockName];
+                if (is_array($val)) {
+                    $val = implode(',', $val);
+                    return $val;
+                }
+            }
+            return '-1';
+        }
+        return '';
+    }
+
+    function ValidateContentBlockValue($blockName,$value,$blockParams)
+    {
+        switch($blockParams['selecttype']) {
+        case 'groupselect':
+            break;
+        }
+        return '';
+    }
+
+
+    /** for 2.0 **/
+    function ValidateContentBlockFieldValue($blockName,$value,$blockParams,ContentBase $content_obj)
     {
         switch($blockParams['selecttype']) {
         case 'groupselect':

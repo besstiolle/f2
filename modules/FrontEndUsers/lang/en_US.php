@@ -1,4 +1,37 @@
 <?php
+$lang['error_lostun_badpassword'] = 'Sorry... but the password you provided is incorrect.';
+$lang['error_lostun_usernotfound'] = 'Sorry... given the information you provided... we could not find your user account';
+$lang['error_lostun_nodata'] = 'You did not enter sufficient data into the lost username form for us to be able to find your account in our database.';
+$lang['info_lostun_textfield'] = 'If you can recall a portion of the text for this field please enter it here (minimum of 4 characters not including whitespace)';
+$lang['info_lostun_textarea'] = 'If you can recall some of the text you may have entered in this field, please enter a portion of it here.  This will create a substring search.  You must enter at least 4 characters.';
+$lang['info_lostun_email'] = 'If there are multiple email addresses associated with your account, try to enter at least one of them here.  This can aide in uniquely identifying you';
+$lang['info_lostusername'] = '<p>So... you seem to have forgotten or lost the username or email address you used to login to this account with.  Don\'t Fret, we can help.</p><p>Enter as much information as possible into this form, and we will see if we can uniquely identify you and find you your login name.</p>';
+$lang['error_youareabot'] = 'Hmmm... it looks like you may be a bot, or trying something nefarious...';
+$lang['error_deleteprop'] = 'An error occurred deleting the property';
+$lang['error_action_notconfirmed'] = 'Oops.  It looks like you failed to confirm an important action.';
+$lang['msg_confirm_deleteprop'] = 'You must select &quot;Yes&quot; in the confirmation box to confirm that you wish to delete this property.';
+$lang['prompt_confirm_deleteprop'] = 'Are you sure you want to delete this property?';
+$lang['warn_deleteprop'] = '<strong>Use Caution</strong> Deleting a property will delete any data associated with any users for this property.  It will also remove this property from all group relations.';
+$lang['hdr_deleteprop'] = 'Delete Property';
+$lang['msg_cancelled'] = 'Operation cancelled';
+$lang['error_delete_propdefn'] = 'Sorry, but this property cannot be deleted.  As it is associated as required, or hidden with one or more user groups.  Only optional/off properties can be deleted.';
+$lang['title_add_user'] = 'Create a new user account';
+$lang['info_password_reset'] = 'Your password has successfully been reset.  Please login to continue.';
+$lang['error_passwordnotchanged'] = 'Please ensure you change your password to a new value, and verify that it is correct.';
+$lang['msg_force_newpw'] = 'Welcome to the system.  For security purposes, please specify a new password.';
+$lang['lbl_template'] = 'Template';
+$lang['info_force_newpw_template'] = 'This template is used to display the form to force the user to change his password.';
+$lang['force_newpw_template'] = 'Force New Password Template';
+$lang['prompt_force_newpw'] = 'Force this user to reset his password at the next login';
+$lang['prompt_disabled'] = 'Is this account disabled?';
+$lang['msg_user_state_changed'] = 'User state changed';
+$lang['info_disabled'] = 'This user account is disabled, preventing login';
+$lang['enable_user'] = 'Enable this user account';
+$lang['disable_user'] = 'Disable this user account and ensure that the user is logged out';
+$lang['error_accountdisabled'] = 'We are sorry, but this account appears to have been disabled.  Please contact site administrators to resolve this issue';
+$lang['title_forgotpw'] = 'Forgotten Password';
+$lang['verify_identity'] = 'Verify your identity';
+$lang['403error'] = 'Generate a 403 Error';
 $lang['prompt_enhancedpw'] = 'Require a strong password';
 $lang['info_enhancedpw'] = 'If enabled, passwords will require at least one uppercase alphabetic character and one digit.';
 $lang['prompt_pwrequiredchars'] = 'Require one of these characters in the password';
@@ -124,8 +157,9 @@ $lang['error_user_nonunique_field_value'] = 'The value specified for %s is alrea
 $lang['unique'] = 'Unique';
 $lang['error_nonunique_field_value'] = 'The value specified for %s (%s) is not unique';
 $lang['prompt_force_unique'] = 'Force values of this property to be unique across all user accounts';
-$lang['help_returnlast'] = 'Used with the login and logout forms, this parameter if specified will indicate that the user should be returned to the page (by url) that the user was viewing before the action occurred.  This parameter will override the redirect preferences, and the returnto parameter.';
-$lang['help_noinline'] = 'Used with one of the forms, this parameter specifies that the forms should not be placed inline, instead the resulting output after form submission will replace the default content block';
+$lang['help_returnto'] = 'Used witht he login and logout forms, this parameter indicates a page id or alias that the user should be returned to after the operation is complete.  This will override the returnlast and the redirection preferences.';
+$lang['help_returnlast'] = 'Used with the login and logout forms, this parameter if specified will indicate that the user should be returned to the page (by url) that the user was viewing before the action occurred.  This parameter will override the redirect preferences, but not the returnto parameter.';
+$lang['help_inline'] = 'Used with the login forms/action, this parameter indicates that the result of the form should replace its own tag on the same page...  this will have no effect if returnto, returnlast, or some redirection preferences are set resulting in a redirection to a different page.';
 $lang['title_reset_session'] = 'Login Session Timeout Warning';
 $lang['msg_reset_session'] = 'Your login session is about to expire, please click "&quot;Ok&quot; to confirm your activity on this website.';
 $lang['ok'] = 'Ok';
@@ -152,7 +186,6 @@ $lang['redirection_settings'] = 'Redirection Settings';
 $lang['general_settings'] = 'General Settings';
 $lang['session_settings'] = 'Session and Cookie Settings';
 $lang['field_settings'] = 'Field Settings';
-$lang['error_lostun_nonrequired'] = 'The lostusername flag can only be used on required fields';
 $lang['prop_textarea_wysiwyg'] = 'Allow use of wysiwyg on this text area';
 $lang['editing_user'] = 'Editing User';
 $lang['noinline'] = 'Do not inline forms';
@@ -176,7 +209,7 @@ $lang['OnUpdateUser'] = 'On User Settings Changed';
 $lang['OnCreateGroup'] = 'On User Group Created';
 $lang['OnDeleteGroup'] = 'On User Group Deleted';
 
-$lang['lostunconfirm_premsg'] = 'The lost login details functionality has successfully completed.  We have found a unique username that matches the details you entered.';
+$lang['lostunconfirm_premsg'] = 'Woot! We found you!. Given the details you entered, we were able to find your (and only yours) login name.';
 $lang['your_username_is'] = 'Your username is';
 $lang['lostunconfirm_postmsg'] = 'We recommend you record this information in a secure, but retrievable location.';
 $lang['prompt_after_change_settings'] = 'PageID/Alias to jump to after change settings';
@@ -288,7 +321,7 @@ $lang['info_importusersfileformat2'] = '
     <p>Image are fields who\'s column name matches a property of type Image.  If this field is not empty then the filename specified in these columns must exist in image destination path as specified in the FEU preferences..  If the image does not exist, and the field is required, then the record will fail.</p></li>
 </ul>
 <h5>Notes</h5>
-<p>The import process is a memory and database intensive routie.  It is subject to the limitations imposed by the host provider, such as memory limitations, processing time, file size upload, and safe mode restrictions.  Any one of these limitations may cause the import to fail. Therefore it is advisable to ensure that import files are smaller in size, and simpler in nature.</p>
+<p>The import process is a memory and database intensive routine.  It is subject to the limitations imposed by the host provider, such as memory limitations, processing time, file size upload, and safe mode restrictions.  Any one of these limitations may cause the import to fail. Therefore it is advisable to ensure that import files are smaller in size, and simpler in nature.</p>
 <p>Though every effort has been made to ensure that database corruption will not occur, it is advisable to perform a database backup before doing a user import.</p>
 <p>The Export data is the same format as needed for import.  However it may provide extra fields that are not required for import.</p>
 <h5>Example</h5>
@@ -326,7 +359,6 @@ $lang['event_help_OnDeleteUser'] = '
 <ul>
 <li><em>username</em> - The user name</li>
 <li><em>id</em> - The user id</li>
-<li><em>props</em> - A hash filled with the properties of the user</li>
 </ul>
 ';
 $lang['event_help_OnCreateUser'] = '
@@ -466,7 +498,7 @@ $lang['remove1month'] = 'Remove all entries more than a month old';
 $lang['removeall'] = 'Remove all entries';
 $lang['areyousure'] = 'Are you sure?';
 $lang['error_invalidcode'] = 'An invalid code has been entered, please try again';
-$lang['error_tempcodenotfound'] = 'A temporary code for your user id could not be found in the database';
+$lang['error_tempcodenotfound'] = 'Sorry, It appears that the temporary code you received for resetting your password is now invalid (temporary codes can only be used once).  Please try again.';
 $lang['forgotpassword_verifytemplate'] = 'Template used to display verification form';
 $lang['forgotpassword_emailtemplate'] = 'Template used for forgotten password email';
 $lang['error_resetalreadysent'] = 'Either yourself or someone else has already triggered a password reset operation for this account.  Check your email, you may have further instructions on how to reset your password in your inbox';
@@ -478,7 +510,7 @@ $lang['prompt_link'] = 'Clicking on the following link will take you to the webs
 $lang['lostpassword_emailsubject'] = 'Lost Password';
 $lang['error_nomailermodule'] = 'Could not find the CMSMailer module';
 $lang['info_forgotpwmessagesent'] = 'An email has been sent to %s with instructions as to how to reset your password.  Thank you';
-$lang['lostpw_message'] = 'So you forgot or lost your password. Well, type your username in here, and if we can find you we will send you an email with instructions on how to reset it';
+$lang['lostpw_message'] = 'So you forgot or lost your password. Well, enter the required information into this form, and if we can find you we will send you an email with instructions on how to reset it.';
 $lang['forgotpassword_template'] = 'Forgot Password Templates';
 $lang['lostusername_template'] = 'Lost Username Template';
 $lang['error_propnotfound'] = 'Property %s not found';
@@ -539,7 +571,7 @@ $lang['msg_currentlyloggedinas'] = 'Welcome';
 $lang['logout'] = 'Sign out';
 $lang['prompt_newgroupname'] = 'Use this group name';
 $lang['prompt_changesettings'] = 'Change My Settings';
-$lang['error_loginfailed'] = 'Login failed - Invalid username or password?';
+$lang['error_loginfailed'] = 'Login failed.  This probably means that you entered an invalid username or password.  But your account may have also expired or been disabled by an administrator.  Please double check your login credentials, and if they are correct you may need to contact the site administrator.';
 $lang['login'] = 'Sign in';
 $lang['prompt_signin_button'] = 'Sign in button label';
 $lang['prompt_username'] = 'Username';
@@ -551,7 +583,6 @@ $lang['forgotpw'] = 'Forgot Your Password?';
 $lang['lostusername'] = 'Forgot Your Login Details?';
 $lang['defaults'] = 'Defaults';
 $lang['template'] = 'Template';
-$lang['error_usernotfound'] = 'User ID not found';
 $lang['error_usernametaken'] = 'That username (%s) is already in use';
 $lang['prompt_smtpvalidate'] = 'Use SMTP to validate email addresses?';
 $lang['prompt_minpwlen'] = 'Minimum Password Length';
@@ -565,8 +596,8 @@ $lang['prompt_dfltgroup'] = 'Default Group for new users';
 $lang['changesettings_template'] = 'Change Settings Template';
 $lang['error_passwordmismatch'] = 'Passwords Do not match';
 $lang['error_invalidusername'] = 'Invalid Username';
-$lang['error_invalidpassword'] = 'Invalid Password';
-$lang['error_usernotfound'] = 'Could not find information for this user';
+$lang['error_invalidpassword'] = 'Invalid Password.  Your password may be too short, too long, or not strong enough for this system.  See the websites password policy for more information.';
+$lang['error_usernotfound'] = 'Sorry, something has gone wrong.  We could not find any information for the specified user';
 $lang['edituser'] = 'Edit User';
 $lang['valid'] = 'Valid';
 $lang['username'] = 'Username';

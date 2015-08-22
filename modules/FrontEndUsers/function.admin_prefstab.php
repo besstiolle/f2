@@ -59,9 +59,9 @@ $smarty->assign('input_randomusername',
 $smarty->assign('input_expireage',
 		$this->CreateInputDropdown($id,'input_expireage',$months,-1,
                                           $this->GetPreference('expireage_months',120)));
-   
+
 $smarty->assign('prompt_sessiontimeout', $this->Lang('prompt_sessiontimeout'));
-$smarty->assign('input_sessiontimeout', 
+$smarty->assign('input_sessiontimeout',
 		$this->CreateInputText($id, 'input_sessiontimeout',
 				       $this->GetPreference('user_session_expires'), 6, 6 ));
 
@@ -147,7 +147,7 @@ if( $num )
 		      $this->CreateInputSubmit($id,'input_remove1week',
 					       $this->Lang('remove1week'),
 					       'onclick="return confirm(\''.$this->Lang('areyousure').'\')"'));
-      
+
       $smarty->assign('input_remove1month',
 		      $this->CreateInputSubmit($id,'input_remove1month',
 					       $this->Lang('remove1month'),
@@ -162,12 +162,6 @@ $tmp = explode(',',$this->GetPreference('pagetype_groups',''));
 $smarty->assign('pagetype_groups',$tmp);
 $groups1 = $this->GetGroupList();
 $smarty->assign('all_groups',array_flip($groups1));
-$tmp = array('showlogin'=>$this->Lang('showloginform'),'redirect'=>$this->Lang('redirect'));
-$smarty->assign('pagetype_action_opts',$tmp);
-$smarty->assign('pagetype_action',$this->GetPreference('pagetype_action','showlogin'));
-$contentops = cmsms()->GetContentOperations();
-$smarty->assign('pagetype_redirectto',
-		$contentops->CreateHierarchyDropdown(-1,$this->GetPreference('pagetype_redirectto'),$id.'pagetype_redirectto',TRUE));
 
 $smarty->assign('endform',$this->CreateFormEnd());
 echo $this->ProcessTemplate('adminprefs.tpl');

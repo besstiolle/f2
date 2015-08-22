@@ -195,20 +195,17 @@ class RRUtils
 
   static public function myCreateInputHidden( $id, $name, $value='', $addtext='', $delim=',')
   {
-    if( is_array( $value ) )
-      {
-	$val = RRUtils::implode_with_key( $value );
-      }
-    else
-      {
-	$val = $value;
-      }
+    if( is_array( $value ) ) {
+          $val = RRUtils::implode_with_key( $value );
+    }
+    else {
+        $val = $value;
+    }
     $val = str_replace('"', '&quot;', $val);
     $text = '<input type="hidden" name="'.$id.$name.'" value="'.$val.'"';
-    if ($addtext != '')
-      {
-	$text .= ' '.$addtext;
-      }
+    if ($addtext != '') {
+        $text .= ' '.$addtext;
+    }
     $text .= " />\n";
     return $text;
   }

@@ -65,173 +65,176 @@ $propname = '';
 # Read Parameters
 #
 if( isset($params['cancel']) ) {
-  $this->RedirectToTab($id, 'properties' );
-  return;
+$this->RedirectToTab($id, 'properties' );
+return;
 }
 if( isset($params['propname']) ) {
-  $propname = trim($params['propname']);
-  $title = $this->Lang('editprop',$propname);
-  $defn = $this->GetPropertyDefn($propname);
-  if( $defn == FALSE ) {
-    $parms = array();
-    $parms['error'] = 1;
-    $parms['mesage'] = $this->Lang('error_propnotfound');
-    $this->RedirectToTab($id,'properties',$parms);
-    return;
-  }
-  $tmp = $this->GetSelectOptions($propname);
-  if( $tmp ) {
-    foreach( $tmp as $key => $val ) {
-      if( $key == $val ) {
-	$seloptions .= "$val\n";
-      }
-      else {
-	$seloptions .= "$key=$val\n";
-      }
+    $propname = trim($params['propname']);
+    $title = $this->Lang('editprop',$propname);
+    $defn = $this->GetPropertyDefn($propname);
+    if( $defn == FALSE ) {
+        $parms = array();
+        $parms['error'] = 1;
+        $parms['mesage'] = $this->Lang('error_propnotfound');
+        $this->RedirectToTab($id,'properties',$parms);
+        return;
     }
-  }
-  if( isset($defn['attribs']) && !empty($defn['attribs']) ) {
-    $attribs = unserialize($defn['attribs']);
-  }
+    $tmp = $this->GetSelectOptions($propname);
+    if( $tmp ) {
+        foreach( $tmp as $key => $val ) {
+            if( $key == $val ) {
+                $seloptions .= "$val\n";
+            }
+            else {
+                $seloptions .= "$key=$val\n";
+            }
+        }
+    }
+    if( isset($defn['attribs']) && !empty($defn['attribs']) ) {
+        $attribs = unserialize($defn['attribs']);
+    }
 }
 
 if( isset($params['input_type']) ) {
-  $defn['type'] = (int)$params['input_type'];
+    $defn['type'] = (int)$params['input_type'];
 }
 if( isset($params['input_length']) ) {
-  $defn['length'] = (int)$params['input_length'];
+    $defn['length'] = (int)$params['input_length'];
 }
 if( isset($params['input_maxlength']) ) {
-  $defn['maxlength'] = (int)$params['input_maxlength'];
+    $defn['maxlength'] = (int)$params['input_maxlength'];
 }
 if( isset($params['input_name']) ) {
-  $defn['name'] = strtolower(trim($params['input_name']));
-  $defn['name'] = munge_string_to_url($defn['name']);
-  $defn['name'] = str_replace('-','_',$defn['name']);
+    $defn['name'] = strtolower(trim($params['input_name']));
+    $defn['name'] = munge_string_to_url($defn['name']);
+    $defn['name'] = str_replace('-','_',$defn['name']);
 }
 if( isset($params['input_prompt']) ) {
-  $defn['prompt'] = trim($params['input_prompt']);
+    $defn['prompt'] = trim($params['input_prompt']);
 }
 if( isset($params['input_force_unique']) ) {
-  $defn['force_unique'] = (int)$params['input_force_unique'];
+    $defn['force_unique'] = (int)$params['input_force_unique'];
 }
 if( isset($params['input_encrypt']) ) {
-  $defn['encrypt'] = (int)$params['input_encrypt'];
+    $defn['encrypt'] = (int)$params['input_encrypt'];
 }
 if( isset($params['input_seloptions']) ) {
-  $seloptions = $params['input_seloptions'];
+    $seloptions = $params['input_seloptions'];
 }
 if (isset($params['input_radiooptions'])) {
-  $seloptions = $params['input_radiooptions'];
+    $seloptions = $params['input_radiooptions'];
 }
 foreach( $params as $key => $value ) {
-  if( startswith($key,'input_attrib_') ) {
-    $attrib = substr($key,13);
-    $attribs[$attrib] = $value;
-  }
+    if( startswith($key,'input_attrib_') ) {
+        $attrib = substr($key,13);
+        $attribs[$attrib] = $value;
+    }
 }
 if( isset($params['submit']) ) {
-  if( empty($defn['name']) || empty($defn['prompt']) ) {
-    $status = 'error';
-    $message = $this->Lang('error_invalidparams');
-  }
-
-  if( empty($status) && $seloptions ) {
-    $options = array();
-    $tmp = explode("\n", $seloptions);
-    foreach( $tmp as $one ) {
-      $one = trim($one);
-      if( !empty($one) ) {
-	$options[] = $one;
-      }
-    }
-  }
-
-  if( empty($status) ) {
-    switch($defn['type']) {
-    case '0': /* text */
-    case '6': /* image */
-      break; 
-    case '2': /* email */
-      // email fields cannot be encrypted.
-      $defn['encrypt'] = 0;
-      break;
-    case 1:   /* checkbox */
-      $defn['length'] = 1;
-      break;
-    case 3:   /* textarea */
-      $defn['length'] = 255;
-      break;
-    case 4:
-    case 5: 
-      $defn['length'] = count($options);
-      break;
-    case 7: /* radiobuttons */
-      $defn['length'] = count($options);
-      break;
-    case 8: /* date */
-    default:
-      $defn['length'] = 1;
-      break;
-    }
-    
-    if( (($defn['type'] == 0 || $defn['type'] == 2) && ( $defn['length'] < 1 || $defn['length'] > 255 || $defn['maxlength'] < 1 || $defn['maxlength'] > 1024 || $defn['maxlength'] < $defn['length'] )) ||
-	    (($defn['type'] == 4 || $defn['type'] == 5 || $defn['type'] == 7) && $seloptions == '' ) ||
-	    (($defn['type'] == 6) && ($defn['length'] < 10 || $defn['length'] > 1024))
-	){
-      $status = 'error';
-      $message = $this->Lang('error_invalidparams');
-    }
-  }
-
-  if( empty($status) && isset($options) && $options ) {
-    if( !empty($propname) ) {
-      $this->DeleteSelectOptions($propname);
+    if( empty($defn['name']) || empty($defn['prompt']) ) {
+        $status = 'error';
+        $message = $this->Lang('error_invalidparams');
     }
 
-    $tmp = $this->AddSelectOptions($defn['name'],$options);
-    if( !$tmp[0] ) {
-      $status = 'error';
-      $message = $tmp[1];
+    if( empty($status) && $seloptions ) {
+        $options = array();
+        $tmp = explode("\n", $seloptions);
+        foreach( $tmp as $one ) {
+            $one = trim($one);
+            if( !empty($one) ) {
+                $options[] = $one;
+            }
+        }
     }
-  }
 
-  if( empty($status) ) {
-    $defn['attribs'] = serialize($attribs);
-  }
+    if( empty($status) ) {
+        switch($defn['type']) {
+        case '0': /* text */
+            break;
+        case '6': /* image */
+            $defn['length'] = 255;
+            $defn['encrypt'] = 0;
+            break;
+        case '2': /* email */
+            // email fields cannot be encrypted.
+            $defn['encrypt'] = 0;
+            break;
+        case 1:   /* checkbox */
+            $defn['length'] = 1;
+            break;
+        case 3:   /* textarea */
+            $defn['length'] = 255;
+            break;
+        case 4:
+        case 5:
+            $defn['length'] = count($options);
+            break;
+        case 7: /* radiobuttons */
+            $defn['length'] = count($options);
+            break;
+        case 8: /* date */
+        default:
+            $defn['length'] = 1;
+            break;
+        }
 
-  if( empty($status) ) {
-    if( !empty($propname) ) {
-      $tmp = $this->SetPropertyDefn( $propname, $defn['name'], $defn['prompt'], $defn['type'], $defn['length'], $defn['maxlength'], $defn['attribs'], $defn['force_unique'], $defn['encrypt'] );
+        if( (($defn['type'] == 0 || $defn['type'] == 2) && ( $defn['length'] < 1 || $defn['length'] > 255 || $defn['maxlength'] < 1 || $defn['maxlength'] > 1024 || $defn['maxlength'] < $defn['length'] )) ||
+            (($defn['type'] == 4 || $defn['type'] == 5 || $defn['type'] == 7) && $seloptions == '' ) ||
+            (($defn['type'] == 6) && ($defn['length'] < 10 || $defn['length'] > 1024))
+            ){
+            $status = 'error';
+            $message = $this->Lang('error_invalidparams');
+        }
     }
-    else {
-      // New property
-      $tmp = $this->AddPropertyDefn( $defn['name'], $defn['prompt'], $defn['type'], $defn['length'], $defn['maxlength'], $defn['attribs'], $defn['force_unique'], $defn['encrypt'] );
-      if( !$tmp[0] ) {
-	$status = 'error';
-	$message = $tmp[1];
-      }
+
+    if( empty($status) ) {
+        $defn['attribs'] = serialize($attribs);
     }
-  }
 
-  if( empty($status) ) {
-    $this->SetMessage($this->Lang('operation_completed'));
-    $this->RedirectToTab( $id, 'properties' );
-  }
+    if( empty($status) ) {
+        if( !empty($propname) ) {
+            $tmp = $this->SetPropertyDefn( $propname, $defn['name'], $defn['prompt'], $defn['type'], $defn['length'], $defn['maxlength'], $defn['attribs'], $defn['force_unique'], $defn['encrypt'] );
+        }
+        else {
+            // New property
+            $tmp = $this->AddPropertyDefn( $defn['name'], $defn['prompt'], $defn['type'], $defn['length'], $defn['maxlength'], $defn['attribs'], $defn['force_unique'], $defn['encrypt'] );
+            if( !$tmp[0] ) {
+                $status = 'error';
+                $message = $tmp[1];
+            }
+        }
+    }
 
-  //
-  // if we get here, it's an error of some sort
-  //
+    if( empty($status) && isset($options) && $options ) {
+        if( !empty($propname) ) {
+            $this->DeleteSelectOptions($propname);
+        }
+
+        $tmp = $this->AddSelectOptions($defn['name'],$options);
+        if( !$tmp[0] ) {
+            $status = 'error';
+            $message = $tmp[1];
+        }
+    }
+
+    if( empty($status) ) {
+        $this->SetMessage($this->Lang('operation_completed'));
+        $this->RedirectToTab( $id, 'properties' );
+    }
+
+    //
+    // if we get here, it's an error of some sort
+    //
 }
 
 #
 # Give eveyrthing to smarty
 #
 if( !empty($status) ) {
-  $smarty->assign('error',1);
+    $smarty->assign('error',1);
 }
 if( !empty($message) ) {
-  $smarty->assign('message',$message);
+    $smarty->assign('message',$message);
 }
 $smarty->assign('startform',$this->CreateFormStart($id,'addprop',$returnid,'post','',false,'',$params));
 $smarty->assign('endform',$this->CreateFormEnd());
@@ -244,87 +247,86 @@ $nusers = $db->GetOne($query);
 $query = 'SELECT count(id) FROM '.cms_db_prefix().'module_feusers_groups';
 $ngroups = $db->GetOne($query);
 if( !empty($propname) && ($nusers > 0 || $ngroups > 0) ) {
-  $smarty->assign('input_name',
-		  $this->CreateInputHidden($id,'input_name',$propname).$propname);
+    $smarty->assign('input_name',
+                    $this->CreateInputHidden($id,'input_name',$propname).$propname);
 }
 else {
-   $smarty->assign('input_name',
-		   $this->CreateInputText($id,'input_name',$defn['name'], 30, 30 ));
+    $smarty->assign('input_name',
+                    $this->CreateInputText($id,'input_name',$defn['name'], 30, 30 ));
 }
 $smarty->assign('prompt_prompt',$this->Lang('prompt'));
 $smarty->assign('input_prompt',
-		$this->CreateInputText($id,'input_prompt',$defn['prompt'], 80, 255 ));
+                $this->CreateInputText($id,'input_prompt',$defn['prompt'], 80, 255 ));
 $smarty->assign('prompt_type',$this->Lang('type'));
-$smarty->assign('input_type',  
-		$this->CreateInputDropdown( $id, 'input_type', $fieldtypes, -1, $defn['type'],
-					    'onchange="this.form.submit();"'));
+$smarty->assign('input_type',
+                $this->CreateInputDropdown( $id, 'input_type', $fieldtypes, -1, $defn['type'],
+                                            'onchange="this.form.submit();"'));
 if( $defn['type'] == 0 || $defn['type'] == 2 ) {
-  $smarty->assign('input_force_unique',
-		  $this->CreateInputYesNoDropdown($id,'input_force_unique',$defn['force_unique']));
+    $smarty->assign('input_force_unique',
+                    $this->CreateInputYesNoDropdown($id,'input_force_unique',$defn['force_unique']));
 }
 if( !isset($params['propname']) ) {
-  $smarty->assign('input_encrypt',
-		  $this->CreateInputYesNoDropdown($id,'input_encrypt',$defn['encrypt']));
+    $smarty->assign('input_encrypt',
+                    $this->CreateInputYesNoDropdown($id,'input_encrypt',$defn['encrypt']));
 }
 else {
-  $smarty->assign('input_encrypt',$defn['encrypt']?$this->Lang('yes'):$this->Lang('no'));
+    $smarty->assign('input_encrypt',$defn['encrypt']?$this->Lang('yes'):$this->Lang('no'));
 }
 
 $smarty->assign('defn',$defn);
-$smarty->assign('orig_type',  
-		$this->CreateInputHidden($id, 'orig_type', $defn['type']));
+$smarty->assign('orig_type',
+                $this->CreateInputHidden($id, 'orig_type', $defn['type']));
 $smarty->assign ('submit',
-		 $this->CreateInputSubmit ($id, 'submit', $this->Lang('submit') ));
+                 $this->CreateInputSubmit ($id, 'submit', $this->Lang('submit') ));
 $smarty->assign ('cancel',
-		 $this->CreateInputSubmit ($id, 'cancel',$this->Lang('cancel')));
+                 $this->CreateInputSubmit ($id, 'cancel',$this->Lang('cancel')));
 $flds = array();
 switch( $defn['type'] ) {
- case 0:
-   $flds[] = array($this->Lang('length').$this->Lang('lengthcomment'),
-		   $this->CreateInputText($id,'input_length',$defn['length'],3,3));
-   $flds[] = array($this->Lang('maxlength'),
-		   $this->CreateInputText($id,'input_maxlength',$defn['maxlength'],3,3));
-   break;
- case 1: // checkbox
-   $val = (isset($attribs['checked']))?$attribs['checked']:0;
-   $flds[] = array($this->Lang('prompt_dflt_checked'),
-		   $this->CreateInputCheckbox($id,'input_attrib_checked',1,$val));
-   break;
- case 2:
-   $flds[] = array($this->Lang('length').$this->Lang('lengthcomment'),
-		   $this->CreateInputText($id,'input_length',$defn['length'],3,3));
-   $flds[] = array($this->Lang('maxlength'),
-		   $this->CreateInputText($id,'input_maxlength',$defn['maxlength'],3,3));
-   break;
- case 3:
-   $val = (isset($attribs['wysiwyg']))?$attribs['wysiwyg']:0;
-   $flds[] = array($this->Lang('prop_textarea_wysiwyg'),
-		   $this->CreateInputHidden($id,'input_attrib_wysiwyg','0').
-		   $this->CreateInputCheckbox($id,'input_attrib_wysiwyg','1',$val));;
-   break;
- case 4:
- case 5:
-   $flds[] = array($this->Lang('seloptions'),
-		   $this->CreateTextArea(false,$id,$seloptions,'input_seloptions'));
-   break;
- case 6:
-   $flds[] = array($this->Lang('length').$this->Lang('lengthcomment'),
-		   $this->CreateInputText($id,'input_length',$defn['length'],3,3));
-   break;
- case 7: 
-   $flds[] = array($this->Lang('radiooptions'),
-		   $this->CreateTextArea(false,$id,$seloptions,'input_radiooptions'));
-   break;
- case 8: /* date */
-   $flds[] = array($this->Lang('start_year').':',
-		   $this->CreateInputText($id,'input_attrib_startyear',
-					  (isset($attribs['startyear']))?$attribs['startyear']:'-5',
-					  4,4));
-   $flds[] = array($this->Lang('end_year').':',
-		   $this->CreateInputText($id,'input_attrib_endyear',
-					  (isset($attribs['endyear']))?$attribs['endyear']:'+10',
-					  4,4));
-   break;
+case 0:
+    $flds[] = array($this->Lang('length').$this->Lang('lengthcomment'),
+                    $this->CreateInputText($id,'input_length',$defn['length'],3,3));
+    $flds[] = array($this->Lang('maxlength'),
+                    $this->CreateInputText($id,'input_maxlength',$defn['maxlength'],3,3));
+    break;
+case 1: // checkbox
+    $val = (isset($attribs['checked']))?$attribs['checked']:0;
+    $flds[] = array($this->Lang('prompt_dflt_checked'),
+                    $this->CreateInputCheckbox($id,'input_attrib_checked',1,$val));
+    break;
+case 2:
+    $flds[] = array($this->Lang('length').$this->Lang('lengthcomment'),
+                    $this->CreateInputText($id,'input_length',$defn['length'],3,3));
+    $flds[] = array($this->Lang('maxlength'),
+                    $this->CreateInputText($id,'input_maxlength',$defn['maxlength'],3,3));
+    break;
+case 3:
+    $val = (isset($attribs['wysiwyg']))?$attribs['wysiwyg']:0;
+    $flds[] = array($this->Lang('prop_textarea_wysiwyg'),
+                    $this->CreateInputHidden($id,'input_attrib_wysiwyg','0').
+                    $this->CreateInputCheckbox($id,'input_attrib_wysiwyg','1',$val));;
+    break;
+case 4:
+case 5:
+    $flds[] = array($this->Lang('seloptions'),
+                    $this->CreateTextArea(false,$id,$seloptions,'input_seloptions'));
+    break;
+case 6:
+    // nothing here
+    break;
+case 7:
+    $flds[] = array($this->Lang('radiooptions'),
+                    $this->CreateTextArea(false,$id,$seloptions,'input_radiooptions'));
+    break;
+case 8: /* date */
+    $flds[] = array($this->Lang('start_year').':',
+                    $this->CreateInputText($id,'input_attrib_startyear',
+                                           (isset($attribs['startyear']))?$attribs['startyear']:'-5',
+                                           4,4));
+    $flds[] = array($this->Lang('end_year').':',
+                    $this->CreateInputText($id,'input_attrib_endyear',
+                                           (isset($attribs['endyear']))?$attribs['endyear']:'+10',
+                                           4,4));
+    break;
 }
 $smarty->assign('fields',$flds);
 

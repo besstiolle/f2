@@ -8,8 +8,10 @@
 {/if}
 {$startform}
   <div class="pageoverflow">
-    <p class="pagetext">{$prompt_username}:</p>
-    <p class="pageinput">{$input_username}{if isset($username_readonly)}<br/>{$mod->Lang('msg_username_readonly')}{/if}</p>
+    <p class="pagetext">*{$prompt_username}:</p>
+    <p class="pageinput">
+      {$input_username}
+      {if isset($username_readonly)}<br/>{$mod->Lang('msg_username_readonly')}{/if}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">{$prompt_password}:</p>
@@ -20,6 +22,18 @@
     <p class="pagetext">{$prompt_repeatpassword}:</p>
     <p class="pageinput">{$input_repeatpassword}&nbsp;{$info_repeatpassword|default:''}
     {if isset($username_readonly)}<br/>{$mod->Lang('msg_username_readonly')}{/if}
+    </p>
+  </div>
+  <div class="pageoverflow">
+    <p class="pagetext">{$mod->Lang('prompt_disabled')}:</p>
+    <p class="pageinput">
+      {cge_yesno_options prefix=$actionid name=input_disabled selected=$origparams.input_disabled|default:''}
+    </p>
+  </div>
+  <div class="pageoverflow">
+    <p class="pagetext">{$mod->Lang('prompt_force_newpw')}:</p>
+    <p class="pageinput">
+      {cge_yesno_options prefix=$actionid name=input_force_newpw selected=$origparams.input_force_newpw|default:''}
     </p>
   </div>
   <div class="pageoverflow">
@@ -50,7 +64,6 @@
 </table>
 {/if}
   <div class="pageoverflow">
-    <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$hidden|default:''}{$submit}{$cancel}</p>
   </div>
 {$endform}

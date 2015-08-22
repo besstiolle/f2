@@ -1,6 +1,6 @@
 
 {if $nprops == 0}
-  <div class="error">{$mod->Lang('error_noproperties')}</div>
+  <div class="red center">{$mod->Lang('error_noproperties')}</div>
 {else}
   {if !isset($itemcount) || $itemcount == 0}
     <div class="information">0&nbsp;{$groupsfound}</div>
@@ -14,7 +14,7 @@
     {if isset($itemcount) && $itemcount > 0}
     <div class="grid_4 text-right">{$itemcount}&nbsp;{$groupsfound}</div>
     {/if}
-    <div class="clearb" ></div>
+    <div class="clearb"></div>
   </div>
 
   {if isset($items)}

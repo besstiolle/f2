@@ -52,13 +52,14 @@ if ( !isset($params['user_id']) ) {
 }
 
 // make sure the parameters are filled in
+$disabled = (int) cge_utils::get_param($params,'input_disabled');
+$force_newpw = (int) cge_utils::get_param($params,'input_force_newpw');
 $user_id   = trim($params['user_id']);
 $username = trim($params['input_username']);
 $password = trim($params['input_password']);
 $repeat   = trim($params['input_repeatpassword']);
 
-$ret = $this->_handleUserInfoValidation( $id, $params, $returnid, $message, false, 
-					 true, false );
+$ret = $this->_handleUserInfoValidation( $id, $params, $returnid, $message, false, true, false );
 
 switch( $ret ) {
  case -1: // error

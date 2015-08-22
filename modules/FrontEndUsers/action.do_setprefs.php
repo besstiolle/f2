@@ -96,7 +96,7 @@ if (isset($params['notifications'])) {
 $this->SetPreference('notification_address',$params['notification_address']);
 $this->SetPreference('notification_subject',$params['notification_subject']);
 $this->SetTemplate('notification_template',$params['notification_template']);
-    
+
 $query = "SELECT permission_id FROM ".cms_db_prefix()."permissions WHERE permission_name LIKE 'FEU %'";
 $count = $db->GetOne($query);
 
@@ -130,9 +130,6 @@ $this->SetPreference('expireusers_interval',(int)$params['expireusers_interval']
 if( isset($params['pagetype_groups']) ) {
   $this->SetPreference('pagetype_groups',implode(',',$params['pagetype_groups']));
 }
-$this->SetPreference('pagetype_action',trim($params['pagetype_action']));
-$this->SetPreference('pagetype_redirectto',(int)$params['pagetype_redirectto']);
-    
 $this->RedirectToTab($id, 'prefs', '', 'admin_settings');
 
 // EOF
