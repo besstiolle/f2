@@ -99,7 +99,6 @@ else if( isset($params['submit_states']) ) {
     $states = $parse_text_options($params['state_list']);
 
     if( count($states) ) {
-        $db = cmsms()->GetDb();
         $query = 'TRUNCATE TABLE '.CGEXTENSIONS_TABLE_STATES;
         $db->Execute($query);
         $query = 'INSERT INTO '.CGEXTENSIONS_TABLE_STATES.' (code,name,sorting) VALUES (?,?,?)';
@@ -114,7 +113,6 @@ else if( isset($params['submit_countries']) ) {
     $countries = $parse_text_options($params['country_list']);
 
     if( count($countries) ) {
-        $db = cmsms()->GetDb();
         $query = 'TRUNCATE TABLE '.CGEXTENSIONS_TABLE_COUNTRIES;
         $db->Execute($query);
         $query = 'INSERT INTO '.CGEXTENSIONS_TABLE_COUNTRIES.' (code,name,sorting) VALUES (?,?,?)';

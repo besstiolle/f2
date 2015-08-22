@@ -44,14 +44,14 @@ function cge_CreateInputYesNoDropdown(&$mod,$id,$name,$selectedvalue='',$addtext
   $items = array($cgextensions->Lang('yes')=>1,$cgextensions->Lang('no')=>0);
   return $mod->CreateInputDropdown($id,$name,$items,-1,$selectedvalue,$addtext);
 }
-  
+
 
 function cge_CreateInputSubmit(&$mod,$id,$name,$value='',$addtext='',$image='',
 			       $confirmtext='',$class='',$alt = '',$elid = '')
 {
   $real_image = '';
   if( !empty($image) ) {
-    $config = cmsms()->GetConfig();
+      $config = cms_config::get_instance();
 
     // check image_directories first
     if( isset($mod->_image_directories) && !empty($mod->_image_directories)) {
@@ -85,7 +85,7 @@ function cge_CreateInputSubmit(&$mod,$id,$name,$value='',$addtext='',$image='',
 
     $addtext .= ' title="'.$value.'"';
   }
- 
+
   if( !empty($class) ) {
     $addtext .= ' class="'.$class.'"';
   }
@@ -97,7 +97,7 @@ function cge_CreateInputSubmit(&$mod,$id,$name,$value='',$addtext='',$image='',
 /*
  * A convenience method to create a checkbox
  */
-function cge_CreateInputCheckbox(&$mod,$id, $name, $value='', $selectedvalue='', 
+function cge_CreateInputCheckbox(&$mod,$id, $name, $value='', $selectedvalue='',
   $addttext='')
 {
   $text = '<input type="checkbox" name="'.$id.$name.'" value="'.$value.'"';
@@ -134,7 +134,7 @@ function cge_CreateInputHidden( &$mod, $id, $name, $value='', $addtext='', $deli
   return $text;
 }
 
-  
+
 /*
  * A convenience function for creating a color selector
  */
@@ -149,11 +149,11 @@ function cge_CreateColorDropdown(&$mod,$id,$name,$selectedvalue)
     }
     $mod->_colors = $colors;
   }
-  
+
   return $mod->CreateInputDropdown($id,$name,$mod->_colors,-1,$selectedvalue,
      'style="background-color: '.$selectedvalue.';" onChange="this.style.backgroundColor=this.options[this.selectedIndex].value" style="background-color:'.$selectedvalue.'"');
 }
- 
+
 
 
 #

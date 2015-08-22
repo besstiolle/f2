@@ -22,7 +22,7 @@ class lookup_table_manager
     public function display_manager()
     {
         // only for admin requests.
-        if( cmsms()->is_frontend_request() ) throw new \LogicException(__METHOD__.' cannot be used for frontend requests.');
+        if( \CmsApp::get_instance()->is_frontend_request() ) throw new \LogicException(__METHOD__.' cannot be used for frontend requests.');
 
         $class = $this->_data['_c'];
         $list = $class::load_all();
@@ -31,7 +31,7 @@ class lookup_table_manager
         $mod = \cms_utils::get_module(MOD_CGEXTENSIONS);
         $newlist = array();
         $keys = array_keys($list);
-        for( $i = 0; $i < count($keys); $i++ ) {
+        for( $i = 0, $n = count($keys); $i < $n; $i++ ) {
             $key = $keys[$i];
             $item = $list[$key];
             $n_item = new \StdClass;

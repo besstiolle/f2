@@ -91,7 +91,6 @@ class module_helper
      */
     static public function get_modules_with_method($methodname)
     {
-        $gCms = cmsms();
         $res = array();
 
         $modules = ModuleOperations::get_instance()->GetInstalledModules();
@@ -117,11 +116,11 @@ class module_helper
      */
     static public function get_modules_with_capability($capability,$params = array())
     {
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
         $tmp = $mod->GetModulesWithCapability($capability,$params);
         if( is_array($tmp) && count($tmp) ) {
             $t2 = array();
-            for( $i = 0; $i < count($tmp); $i++ ) {
+            for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
                 $t2[$tmp[$i]] = $tmp[$i];
             }
             return $t2;

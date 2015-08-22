@@ -518,4 +518,13 @@
 	<li>Minor tweaks to cge_htmlpretty.</li>
   </ul>
 </li>
+<li>Version 1.49
+  <ul>
+	<li>Minor improvements to reporting stuff.</li>
+	<li>Adds get_module_template and get_module_files methods.</li>
+	<li>renames find_file method to find_module_file.</li>
+	<li>fices to getTemplateResource and createSmartyTemplate to accept any resource string.</li>
+        <li>Improvements to the jsloader stuff (1.49.3) to allow controlling minification of css and js files, and caching remote css and js</li>
+  </ul>
+</li>
 </ul>

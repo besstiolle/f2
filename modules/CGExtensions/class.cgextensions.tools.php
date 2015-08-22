@@ -95,7 +95,7 @@ final class cgextensions_tools
    */
   function DisplayImage($image,$alt='',$class='',$width='',$height='',$id='')
   {
-      $config = CmsApp::get_instance()->GetConfig();
+      $config = cms_config::get_instance();
       if( !$class && !CmsApp::get_instance()->is_frontend_request() ) $class = 'systemicon';
 
       $img1 = basename($image);
@@ -106,7 +106,7 @@ final class cgextensions_tools
               $url = "$dir/$img1";
               $path = cms_join_path($config['root_path'],$url);
               if( is_readable($path) ) {
-                  if( $this->_module->IsAdminAction() ) {
+                  if( !\CmsApp::get_instance()->is_frontend_request() ) {
                       $url = "../$url";
                   }
                   else {
@@ -165,7 +165,7 @@ final class cgextensions_tools
                               $onlyhref=false, $inline=false, $addtext='',
                               $targetcontentonly=false, $prettyurl='')
   {
-      $config = CmsApp::get_instance()->GetConfig();
+      $config = cms_config::get_instance();
 
       $pretty = false;
       if( $config['assume_mod_rewrite'] === true || $config['internal_pretty_urls'] === true ) $pretty = true;
@@ -194,7 +194,6 @@ final class cgextensions_tools
   {
     // we're gonna allow multiple templates here
     // but we're gonna prefix them all with something
-    $smarty = CmsApp::get_instance()->GetSmarty();
 
     $falseimage1 = cms_utils::get_theme_object()->DisplayImage('icons/system/false.gif','make default','','','systemicon');
     $trueimage1 = cms_utils::get_theme_object()->DisplayImage('icons/system/true.gif','default','','','systemicon');
@@ -269,11 +268,13 @@ final class cgextensions_tools
 	($rowclass == "row1" ? $rowclass = "row2" : $rowclass = "row1");
       }
 
-    $smarty->assign('parent_module_name',$module->GetFriendlyName());
-    $smarty->assign('items', $rowarray );
-    $smarty->assign('nameprompt', $this->_module->Lang('prompt_name'));
-    $smarty->assign('defaultprompt', $this->_module->Lang('prompt_default'));
-    $smarty->assign('newtemplatelink',
+    $mod = \cms_utils::get_module(MOD_CGEXTENSIONS);
+    $tpl = $mod->CreateSmartyTemplate('listtemplates.tpl');
+    $tpl->assign('parent_module_name',$module->GetFriendlyName());
+    $tpl->assign('items', $rowarray );
+    $tpl->assign('nameprompt', $this->_module->Lang('prompt_name'));
+    $tpl->assign('defaultprompt', $this->_module->Lang('prompt_default'));
+    $tpl->assign('newtemplatelink',
 			  $this->_module->CreateImageLink( $id, 'edittemplate', $returnid,
 						  $this->_module->Lang('prompt_newtemplate'),
 						  'icons/system/newobject.gif',
@@ -287,8 +288,8 @@ final class cgextensions_tools
 							'mode' => 'add',
 							'defaulttemplatepref' => $defaulttemplatepref
 							),'','',false));
-    //$smarty->assign($this->_module->CreateFormEnd());
-    return $this->_module->ProcessTemplate('listtemplates.tpl');
+    //$tpl->assign($this->_module->CreateFormEnd());
+    return $tpl->fetch();
   }
 }
 

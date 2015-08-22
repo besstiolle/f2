@@ -11,10 +11,12 @@
         thumbsize: {$mod->GetPreference('thumbnailsize',150)},
     };
 
+    // get a config variable.
     $.fn.cmsms_config = function(key) {
         if( typeof(config[key]) != 'undefined' ) return config[key];
     };
 
+    // display an admin error using admintheme styles
     $.fn.cmsms_admin_error = function(str) {
        var el1 = $('<div class="pageerrorcontainer"/>');
        var el2 = $('<div class="pageoverflow"/>');

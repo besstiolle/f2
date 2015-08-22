@@ -62,7 +62,7 @@ foreach( $list1 as $one )
 }
 
 // todo, make this configurable
-$config = cmsms()->GetConfig();
+$config = cms_config::get_instance();
 $dir2 = $config['uploads_path'];
 $list2 = cge_dir::file_list_regexp($dir2,'[Tt][Tt][Ff]$');
 if( !empty($list2) )

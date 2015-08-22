@@ -96,6 +96,7 @@ final class cge_http
      */
     static public function post($URL,$data = null,$referer = null)
     {
+        if( startswith($URL,'//') ) $URL = 'http:'.$URL;
         self::reset();
         $http = self::get_http();
         $http->setMethod('POST');
@@ -115,12 +116,11 @@ final class cge_http
      */
     static public function get($URL,$referer = '',$use_curl = TRUE)
     {
-        if( $use_curl == FALSE || !in_array('curl',get_loaded_extensions()) )
-        {
+        if( startswith($URL,'//') ) $URL = 'http:'.$URL;
+        if( $use_curl == FALSE || !in_array('curl',get_loaded_extensions()) ) {
             return file_get_contents($URL);
         }
-        else
-        {
+        else {
             self::reset();
             $http = self::get_http();
             $http->setMethod('GET');

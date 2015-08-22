@@ -19,6 +19,11 @@ final class jsloader
     /**
      * @ignore
      */
+    static $_rlibs = array();
+
+    /**
+     * @ignore
+     */
     static $_required = array();
 
     /**
@@ -79,7 +84,9 @@ final class jsloader
         if( !$rec->valid() ) throw new \CmsInvalidDataException('attempt to register js lib with invalid libdefn object');
 
         $lib = self::_find_lib($rec->name);
-        if( !$force && is_object($lib) && $lib == $rec ) return; // nothing to do.
+        if( !$force && is_object($lib) && $lib == $rec ) {
+            return; // nothing to do.
+        }
 
         // add this item
         self::_load_cache();
@@ -108,29 +115,36 @@ final class jsloader
      * For this request, indicate that a javascript library is required.
      *
      * @param string $name
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function require_lib($name)
+    public static function require_lib($name,$nominify = false)
     {
         if( !is_array($name) ) $name = explode(',',$name);
         foreach( $name as $one_name ) {
             $lib = self::_find_lib($one_name);
             if( !$lib ) throw new \Exception("Unknown required js lib $one_name");
             $obj = $lib;
+            if( $nominify ) {
+                $obj->js_nominify = true;
+                $obj->css_nominify = true;
+            }
+            self::$_rlibs[] = $obj;
         }
-        self::$_required[] = $obj;
     }
 
     /**
-     * Require an external javascript library.
+     * Add an external javascript library.
      * [experimental]
      *
      * @param string $url
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function require_jsext($url)
+    public static function add_jsext($url,$nominify = false)
     {
         // externals cannot have dependencies...
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->jsurl = $url;
+        if( $nominify ) $obj->js_nominify = true;
         self::$_required[] = $obj;
     }
 
@@ -138,9 +152,10 @@ final class jsloader
      * For this request, add a specified javascript file.
      *
      * @param string $file The complete pathname to the javascript file.
-     * @param string[] $depends array of library names (must already be registered) that this file depends upon.
+     * @param null|string[] $depends array of library names (must already be registered) that this file depends upon.
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function add_jsfile($file,$depends = null)
+    public static function add_jsfile($file,$depends = null,$nominify = false)
     {
         if( !$file || !is_string($file) ) return;
 
@@ -176,6 +191,7 @@ final class jsloader
             if( !is_array($depends) ) $depends = array($depends);
             $obj->depends = $depends;
         }
+        if( $nominify ) $obj->js_nominify = true;
         self::$_required[] = $obj;
     }
 
@@ -183,9 +199,10 @@ final class jsloader
      * Add javascript code to the output for this request.
      *
      * @param string $code The javascript code (script tags are not required)
-     * @param string[] $depends Array of required javascript libraries.
+     * @param null|string[] $depends Array of required javascript libraries.
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function add_js($code,$depends = null)
+    public static function add_js($code,$depends = null,$nominify = true)
     {
         if( !$code || !is_string($code) ) return;
 
@@ -196,16 +213,18 @@ final class jsloader
             if( !is_array($depends) ) $depends = array($depends);
             $obj->depends = $depends;
         }
+        if( $nominify ) $obj->js_nominify = true;
         self::$_required[] = $obj;
     }
 
     /**
      * @ignore
      */
-    public static function require_css($name,$depends = null)
+    public static function require_css($name,$depends = null,$nominify = false)
     {
         $obj = new \stdClass;
         $obj->cssname = trim($name);
+        if( $nominify ) $obj->css_nominify = true;
         if( $depends ) {
             if( !is_array($depends) ) $depends = array($depends);
             $obj->depends = $depends;
@@ -216,11 +235,13 @@ final class jsloader
     /**
      * @ignore
      */
-    public static function require_cssext($url)
+    public static function add_cssext($url,$nominify = false)
     {
         // externals cannot have dependencies...
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->cssurl = $url;
+        $obj->css_nominify = true; // odds are external css is already minified
+        if( $nominify ) $obj->css_nominify = true;
         self::$_required[] = $obj;
     }
 
@@ -229,9 +250,10 @@ final class jsloader
      * Add a css file to the output.
      *
      * @param string $file The filename.  If not an absolute path, then search for the file within the current module directory (if any), the uploads path, and then the root path.
-     * @param array $depends Array of libraries that this css file depends upon.
+     * @param null|string[] $depends Array of libraries that this css file depends upon.
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function add_cssfile($file,$depends = null)
+    public static function add_cssfile($file,$depends = null,$nominify = true)
     {
         if( !$file || !is_string($file) ) return;
 
@@ -241,7 +263,7 @@ final class jsloader
         // assume relative to module directory
         $module_name = \cge_tmpdata::get('module');
         if( $module_name ) {
-            $mod = cms_utils::get_module($module_name);
+            $mod = \cms_utils::get_module($module_name);
             if( $mod ) $tryfiles[] = $mod->GetModulePath()."/$file";
         }
 
@@ -265,6 +287,7 @@ final class jsloader
             if( !is_array($depends) ) $depends = array($depends);
             $obj->depends = $depends;
         }
+        if( $nominify ) $obj->css_nominify = true;
         self::$_required[] = $obj;
     }
 
@@ -273,8 +296,9 @@ final class jsloader
      *
      * @param string $styles The static CSS text (style tags are not needed).
      * @param array $depends A list of libraries that this css depends upon.
+     * @param bool $nominify If true, the library code will not be minified.
      */
-    public static function add_css($styles,$depends = null)
+    public static function add_css($styles,$depends = null,$nominify = true)
     {
         if( !$styles || !is_string($styles) ) return;
 
@@ -285,6 +309,7 @@ final class jsloader
             if( !is_array($depends) ) $depends = array($depends);
             $obj->depends = $depends;
         }
+        if( $nominify ) $obj->css_nominify = true;
         self::$_required[] = $obj;
     }
 
@@ -335,7 +360,7 @@ final class jsloader
      */
     public static function render($opts = null)
     {
-        if( count(self::$_required) == 0 ) return; // nothing to do.
+        if( count(self::$_rlibs) == 0 && count(self::$_required) == 0 ) return; // nothing to do.
 
         // process options
         $options = array();
@@ -365,24 +390,25 @@ final class jsloader
         $options['lang'] = \CmsNlsOperations::get_current_language();
 
         // expand some options to simple variables.
-        $config = cmsms()->GetConfig();
-        $cache_lifetime = (int)\cge_utils::get_param($config,'cgejs_cachelife',24);
-        $cache_lifetime = (isset($options['cache_lifetime'])) ? (int)$options['cache_lifetime'] : $cache_lifetime;
+        $config = \cms_config::get_instance();
+        $cache_lifetime = (isset($options['cache_lifetime'])) ? (int)$options['cache_lifetime'] : 24;
+        $cache_lifetime = (int)\cge_utils::get_param($config,'cgejs_cachelife',$cache_lifetime);
         $cache_lifetime = max($cache_lifetime,1);
-        $nocache = \cge_utils::get_param($config,'cgejs_nocache',0);
-        $nocache = (isset($options['no_cache']) || $nocache)?TRUE:$nocache;
-        $nominify = \cge_utils::get_param($config,'cgejs_nominify',0);
-        $nominify = (isset($options['nominify']) || $nominify)?TRUE:$nominify;
+        $nocache = (isset($options['no_cache']))?TRUE:FALSE;
+        $nocache = \cge_utils::get_param($config,'cgejs_nocache',$nocache);
+        $nominify = (isset($options['nominify']))?TRUE:FALSE;  // overrides anything in libs.
+        $nominify = \cge_utils::get_param($config,'cgejs_nominify',$nominify);
         $nocsssmarty = (isset($options['nocsssmarty']) || $nominify)?TRUE:$nocache;
         $addkey = \cge_utils::get_param($options,'addkey','');
         $do_js = (isset($options['no_js']))?FALSE:TRUE;
         $do_css = (isset($options['no_css']))?FALSE:TRUE;
         $js_fmt = '<script type="text/javascript" src="%s"></script>';
         $css_fmt = '<link type="text/css" rel="stylesheet" href="%s"/>';
-        if( !$nocache && !$nominify ) require_once(dirname(dirname(__FILE__)).'/jsmin.php');
+        if( $nocache ) $nominify = true;
+        if( !$nominify ) require_once(dirname(__DIR__).'/jsmin.php');
 
         $get_relative_url = function($filename) {
-            $config = cmsms()->GetConfig();
+            $config = \cms_config::get_instance();
             $relative_url = '';
             if( startswith($filename,$config['root_path']) ) {
                 $relative_url = str_replace($config['root_path'],$config['root_url'],dirname($filename));
@@ -408,66 +434,259 @@ final class jsloader
             return $out;
         };
 
-        // determine if we have to process all this cruft (which could potentially be very expensive)
-        $sig = md5(serialize(self::$_required).serialize($options));
-        $cache_js = TMP_CACHE_LOCATION."/cgejs_{$sig}.js";
-        $cache_css = TMP_CACHE_LOCATION."/cgejs_{$sig}.css";
-        $have_js = $have_css = FALSE;
-        $do_js2 = $do_css2 = TRUE;
-        $do_processing = TRUE;
-        if( !$nocache ) {
-            $etime = time() - $cache_lifetime * 3600;
-            if( file_exists($cache_js) ) {
-                $mtime1 = @filemtime($cache_js);
-                $have_js = TRUE;
-                if( $mtime1 > $etime ) {
-                    // cache too olo, forced to rebuild
-                    $have_js = FALSE;
-                    $do_js2 = TRUE;
+        $get_code = function($rec,$type) use (&$get_relative_url,&$fix_css_urls) {
+            $config = \cms_config::get_instance();
+            if( $type == "js" ) {
+                $js = null;
+                if( isset($rec->jsfile) ) {
+                    $jsfile = $rec->jsfile;
+                    if( !is_array($jsfile) ) $jsfile = array($jsfile);
+                    $js = null;
+                    foreach( $jsfile as $one_file ) {
+                        $one_file = self::_expand_filename($one_file);
+                        $js .= "/* jsloader // javascript file $one_file */\n";
+                        if( is_file($one_file) ) $js .= @file_get_contents($one_file);
+                    }
                 }
+                else if( isset($rec->jsurl) ) {
+                    // cache this for at least 24 hours
+                    if( startswith($rec->jsurl,$config['root_url']) ) {
+                        $fn = str_replace($config['root_url'],$config['root_path'],$rec->jsurl);
+                        if( is_file($fn) ) {
+                            $js .= "/* jsloader // javascript local file from url {$fn} */\n";
+                            $js .= file_get_contents($fn);
+                        }
+                    } else {
+                        $crf = new \cge_cached_remote_file($rec->jsurl,48*60);
+                        if( $crf->size() ) {
+                            $js .= "/* jsloader // javascript remote {$rec->jsurl} */\n";
+                            $js .= $crf->file_get_contents();
+                        }
+                    }
+                }
+                else if( isset($rec->code) ) {
+                    $js .= "/* jsloader // javascript inline code */\n";
+                    $js .= $rec->code;
+                }
+                return $js;
+            }
+            else {
+                // css
+                $css = null;
+                if( isset($rec->cssfile) ) {
+                    $cssfile = $rec->cssfile;
+                    if( !is_array($cssfile) ) $cssfile = array($cssfile);
+                    foreach( $cssfile as $one_file ) {
+                        $one_file = self::_expand_filename($one_file);
+                        $tmp = file_get_contents($one_file);
+                        $css .= "/* jsloader//css file: $one_file */\n";
+                        $relative_url = $get_relative_url($one_file);
+                        $tmp = $fix_css_urls($tmp,$relative_url);
+                        $css .= $tmp;
+                    }
+                }
+                else if( isset($rec->cssname) ) {
+                    if( version_compare(CMS_VERSION,'1.99-alpha0') < 0 ) {
+                        $query = 'SELECT css_id, css_name, css_text FROM '.cms_db_prefix().'css WHERE css_name = ?';
+                        $db = CmsApp::get_instance()->GetDb();
+                        $row = $db->GetRow($query,array($rec->cssname));
+                        if( !is_array($row) ) return;
+                        $css = trim($row['css_text']);
+                    }
+                    else {
+                        $css = CmsLayoutStylesheet::load($rec->cssname)->get_content();
+                    }
+                }
+                else if( isset($rec->cssurl) ) {
+                    if( startswith($rec->cssurl,$config['root_url']) ) {
+                        $fn = str_replace($config['root_url'],$config['root_path'],$rec->cssurl);
+                        if( is_file($fn) ) {
+                            $relative_url = $get_relative_url($fn);
+                            $tmp .= file_get_contents($fn);
+                            $tmp = $fix_css_urls($tmp,$relative_url);
+                            $css .= "/* jsloader //css local file from url {$fn} */\n";
+                            $css .= $tmp;
+                        }
+                    } else {
+                        $crf = new \cge_cached_remote_file($rec->cssurl,48*60);
+                        if( $crf->size() ) {
+                            $css .= "/* jsloader//css remote {$rec->cssurl} */\n";
+                            $css .= $crf->file_get_contents();
+                        }
+                    }
+                }
+                else if( isset($rec->styles) ) {
+                    $css .= "/* jsloader//css inline code */\n";
+                    $css .= $rec->styles;
+                }
+                return $css;
+            }
+        };
+
+        $get_minified_code = function($rec,$type) use (&$get_code) {
+            /* check for a cached version of this code */
+            $fn = TMP_CACHE_LOCATION.'/cgejs_'.md5(__FILE__.serialize($rec).$type).'.cache';
+            if( is_file($fn) ) return file_get_contents($fn);
+
+            // not in cache
+            // calculate a prefix to go on top of the cache file, and test if we are really minifying
+            $code = $prefix = null;
+            $do_minify = TRUE;
+            if( $type == 'js' ) {
+                if( isset($rec->js_nominify) && $rec->js_nominify ) $do_minify = FALSE;
+                if( $do_minify && isset($rec->jsfile) ) {
+                    $jsfile = $rec->jsfile;
+                    if( !is_array($jsfile) ) $jsfile = array($jsfile);
+                    foreach ( $jsfile as $one ) {
+                        if( strpos($one,'.min') !== FALSE || strpos($one,'.pack') !== FALSE ) {
+                            $do_minify = FALSE;
+                            break;
+                        }
+                    }
+                }
+                if( $do_minify && isset($rec->jsurl) ) {
+                    if( strpos($rec->jsurl,'.min') !== FALSE || strpos($rec->jsurl,'.pack') !== FALSE ) {
+                        $do_minify = FALSE;
+                    }
+                }
+
+                $prefix = "/* jsloader // cached javascript // ";
+                if( isset($rec->name) ) {
+                    $prefix .= $rec->name;
+                }
+                else if( isset($rec->jsfile) ) {
+                    if( is_string($rec->jsfile) ) {
+                        $prefix .= $rec->jsfile;
+                    } else {
+                        $prefix .= $rec->jsfile[0];
+                    }
+                }
+                else if( isset($rec->code) ) {
+                    $prefix .= 'inline code';
+                }
+                $prefix .= " */\n";
+            }
+            else {
+                // CSS
+                if( isset($rec->css_nominify) && $rec->css_nominify ) $do_minify = FALSE;
+                if( $do_minify && isset($rec->cssfile) ) {
+                    $cssfile = $rec->cssfile;
+                    if( !is_array($cssfile) ) $cssfile = array($cssfile);
+                    foreach ( $cssfile as $one ) {
+                        if( strpos($one,'.min') !== FALSE || strpos($one,'.pack') !== FALSE ) {
+                            $do_minify = FALSE;
+                            break;
+                        }
+                    }
+                }
+                if( $do_minify && isset($rec->cssurl) ) {
+                    if( strpos($rec->cssurl,'.min') !== FALSE || strpos($rec->cssurl,'.pack') !== FALSE ) {
+                        $do_minify = FALSE;
+                    }
+                }
+
+                $prefix = "/* jsloader // cached css // ";
+                if( isset($rec->name) ) {
+                    $prefix .= $rec->name;
+                }
+                else if( isset($rec->cssfile) ) {
+                    if( is_string($rec->cssfile) ) {
+                        $prefix .= $rec->cssfile;
+                    } else {
+                        $prefix .= $rec->cssfile[0];
+                    }
+                }
+                else {
+                    $prefix .= 'inline code';
+                }
+                $prefix .= " */\n";
             }
 
-            if( file_exists($cache_css) ) {
-                $mtime2 = @filemtime($cache_css);
-                $have_css = TRUE;
-                if( $mtime2 > $etime ) {
-                    // cache too old, forced to rebuild
-                    $have_css = FALSE;
-                    $do_css2 = TRUE;
+            // get the code.
+            $code = $get_code($rec,$type);
+            if( $code ) {
+                // got code... are we minifying and caching it?
+                if( $do_minify ) {
+                    $code = \JSMin::minify($code);
+                    $code = $prefix.$code;
+                    file_put_contents($fn,$code);
                 }
+                return $code;
+            }
+        };
+
+        // determine if we have to process all this cruft (which could potentially be very expensive)
+        $sig = md5(serialize(self::$_rlibs).serialize(self::$_required).serialize($options).$nocache.$nominify.$cache_lifetime);
+        $cache_js = TMP_CACHE_LOCATION."/cgejs_{$sig}.js";
+        $cache_css = TMP_CACHE_LOCATION."/cgejs_{$sig}.css";
+        $do_js_tag = $do_css_tag = FALSE;
+        $do_js2 = $do_css2 = FALSE;
+        $do_processing = TRUE;
+        if( $nocache ) {
+            // forced to rejenerate.
+            $do_js2 = $do_css2 = TRUE;
+        }
+        else {
+            /* we can cache */
+            $etime = time() - $cache_lifetime * 3600;
+            if( is_file($cache_js) ) {
+                $mtime1 = @filemtime($cache_js);
+                $do_js_tag = TRUE;
+                if( $mtime1 < $etime ) {
+                    // cache too olo, forced to rebuild
+                    $do_js2 = FALSE;
+                }
+            } else {
+                // no file, gotta process.
+                $do_js2 = TRUE;
+            }
+
+            if( is_file($cache_css) ) {
+                $mtime2 = @filemtime($cache_css);
+                $do_css_tag = TRUE;
+                if( $mtime2 < $etime ) {
+                    // cache too old, forced to rebuild
+                    $do_css2 = FALSE;
+                }
+            } else {
+                // no file, gotta process.
+                $do_css2 = TRUE;
             }
         }
 
         if( $do_js2 || $do_css2 ) {
             // okay, we have work to do.
-            $required = array();
-
-            // now expand all our dependencies.
-            $list_0 = array();
-            foreach( self::$_required as $rec ) {
-                if( isset($rec->depends) ) {
-                    self::_resolve_dependencies($rec,$list_0,$options['excludes']);
-                }
-                else {
-                    $sig = md5(serialize($rec));
-                    $list_0[$sig] = $rec;
-                }
-            }
-
-            // now check for callback items
-            // and get their code... this may be an expensive process
-            // note: may also have dependencies
-            $list = array();
-            foreach( $list_0 as $rec ) {
-                if( isset($rec->callback) ) {
-                    $tmp = call_user_func($rec->callback,$rec->name);
-                    if( is_object($tmp) && (isset($tmp->code) || isset($tmp->styles)) ) {
-                        $list[] = $tmp;
+            static $list = null;
+            if( is_null($list) ) {
+                // now expand all our dependencies.
+                $list_0 = array();
+                $required = array_merge(self::$_rlibs,self::$_required);
+                foreach( $required as $rec ) {
+                    if( isset($rec->depends) ) {
+                        self::_resolve_dependencies($rec,$list_0,$options['excludes']);
+                    }
+                    else {
+                        $sig = md5(serialize($rec));
+                        $list_0[$sig] = $rec;
                     }
                 }
-                else {
-                    $list[] = $rec;
+
+                // now check for callback items
+                // and get their code... this may be an expensive process
+                // note: may also have dependencies
+                $list = array();
+                foreach( $list_0 as $rec ) {
+                    if( isset($rec->callback) ) {
+                        $tmp = call_user_func($rec->callback,$rec->name);
+                        if( is_object($tmp) && (isset($tmp->code) || isset($tmp->styles)) ) {
+                            $list[] = $tmp;
+                        }
+                    }
+                    else {
+                        $list[] = $rec;
+                    }
                 }
+                unset($required,$list_0);
             }
 
             //
@@ -476,29 +695,18 @@ final class jsloader
             if( $do_js && $do_js2 && $list && count($list) ) {
                 $txt = null;
                 foreach( $list as $rec ) {
-                    $js = null;
-
-                    // get js for this item
-                    if( isset($rec->jsfile) ) {
-                        $jsfile = $rec->jsfile;
-                        if( !is_array($jsfile) ) $jsfile = array($jsfile);
-                        foreach( $jsfile as $one_file ) {
-                            $one_file = self::_expand_filename($one_file);
-                            if( is_file($one_file) ) $js .= @file_get_contents($one_file);
-                        }
+                    if( $nominify ) {
+                        $txt .= $get_code($rec,'js');
+                    } else {
+                        $txt .= $get_minified_code($rec,'js');
                     }
-                    else if( isset($rec->code) ) {
-                        $js = $rec->code;
-                    }
-
-                    if( $js ) $txt .= $js."\n";
                 }
 
                 if( $txt ) {
-                    $have_js = TRUE;
+                    $do_js_tag = TRUE;
                     file_put_contents($cache_js,$txt);
                 }
-            } // do_js
+            }
 
             //
             // process css
@@ -506,50 +714,15 @@ final class jsloader
             if( $do_css && $do_css2 && $list && count($list) ) {
                 $txt = null;
                 foreach( $list as $rec ) {
-                    $css = null;
-
-                    if( isset($rec->cssfile) ) {
-                        $cssfile = $rec->cssfile;
-                        if( !is_array($cssfile) ) $cssfile = array($cssfile);
-                        foreach( $cssfile as $one_file ) {
-                            $one_file = self::_expand_filename($one_file);
-                            $tmp = file_get_contents($one_file);
-                            $relative_url = $get_relative_url($one_file);
-                            $tmp = $fix_css_urls($tmp,$relative_url);
-                            $css .= $tmp;
-                        }
+                    if( $nominify ) {
+                        $txt .= $get_code($rec,'css');
+                    } else {
+                        $txt .= $get_minified_code($rec,'css');
                     }
-                    else if( isset($rec->cssname) ) {
-                        if( version_compare(CMS_VERSION,'1.99-alpha0') < 0 ) {
-                            $query = 'SELECT css_id, css_name, css_text FROM '.cms_db_prefix().'css WHERE css_name = ?';
-                            $db = cmsms()->GetDb();
-                            $row = $db->GetRow($query,array($rec->cssname));
-                            if( !is_array($row) ) return;
-
-                            $css = trim($row['css_text']);
-                        }
-                        else {
-                            $css = CmsLayoutStylesheet::load($rec->cssname)->get_content();
-                        }
-                    }
-                    else if( isset($rec->styles) ) {
-                        $css = $rec->styles;
-                    }
-
-                    // todo: fix up relative urls in css
-
-                    if( $css ) $txt .= $css."\n";
                 }
 
-                // process this stuff through smarty with [[ and ]] delimiters
-                // todo: or lesscss
-                if( !$nocsssmarty ) {
-                    // sorry, not done yet.
-                }
-
-                //if( !$nominify ) $txt = JSMin::minify($txt);
                 if( $txt ) {
-                    $have_css = TRUE;
+                    $do_css_tag = TRUE;
                     file_put_contents($cache_css,$txt);
                 }
 
@@ -563,12 +736,12 @@ final class jsloader
         }
 
         $out = null;
-        if( $have_js ) {
+        if( $do_js_tag ) {
             $cache_url = $config['root_url'].'/tmp/cache/'.basename($cache_js);
             $out .= trim(sprintf($js_fmt,$cache_url))."\n";
         }
 
-        if( $have_css ) {
+        if( $do_css_tag ) {
             $cache_url = $config['root_url'].'/tmp/cache/'.basename($cache_css);
             $out .= trim(sprintf($css_fmt,$cache_url))."\n";
         }

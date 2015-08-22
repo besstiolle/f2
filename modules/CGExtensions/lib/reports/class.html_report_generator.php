@@ -52,6 +52,24 @@ abstract class html_report_generator extends tabular_report_generator
     private $_idx;
 
     /**
+     * An abstract function that is called o output HTML before the end of the document.
+     * does not include the ending body or html tags.
+     *
+     * @abstract
+     * @return string
+     */
+    protected function do_header() {}
+
+    /**
+     * An abstract function that is called o output HTML before the end of the document.
+     * does not include the ending body or html tags.
+     *
+     * @abstract
+     * @return string
+     */
+    protected function do_footer() {}
+
+    /**
      * An abstract function that is called to output the head (and beginning body tag) of the HTML report.
      *
      * @abstract
@@ -67,11 +85,12 @@ abstract class html_report_generator extends tabular_report_generator
         if( $tmp ) $out .= $tmp."\n";
         $title = $this->report()->get_title();
         if( $title ) $out .= '<title>'.htmlentities($title,ENT_QUOTES).'</title>';
-        $desc = $this->report()->get_description();
+        $desc = strip_tags($this->report()->get_description());
         if( $desc ) $out .= sprintf('<meta name="description" content="%s"/>',htmlentities($desc,ENT_QUOTES));
         $out .= "</head>\n";
 
         $out .= '<body id="'.$this->get_alias().'">';
+        $out .= $this->do_header();
         return $out;
     }
 
@@ -84,7 +103,7 @@ abstract class html_report_generator extends tabular_report_generator
         $title = $this->report()->get_title();
         if( $title ) $out .= '<h1>'.htmlentities($title,ENT_QUOTES).'</h1>';
         $desc = $this->report()->get_description();
-        if( $desc ) $out .= '<p class="description">'.htmlentities($desc,ENT_QUOTES).'</p>';
+        if( $desc ) $out .= '<p class="description">'.$desc.'</p>';
         $out .= '<table id="report_data">';
         $this->_in_table = TRUE;
         $this->_out .= $out;
@@ -120,7 +139,6 @@ abstract class html_report_generator extends tabular_report_generator
         if( $this->_in_table ) {
             // start a row
             $classes = array();
-            $tag = 'tr';
 
             switch( $this->_status ) {
             case 'RPTHEADER':
@@ -207,7 +225,7 @@ abstract class html_report_generator extends tabular_report_generator
     /**
      * @ignore
      */
-    protected function before_group_header(tabular_report_defn_group $grp)
+    protected function before_group_header(tabular_report_defn_group $grp,$is_first = FALSE)
     {
         if( $grp->is_report_group() ) $this->_status = 'RPTHEADER';
         $this->_idx = 0;
@@ -252,9 +270,11 @@ abstract class html_report_generator extends tabular_report_generator
     {
         $this->_curgroup = null;
         if( $grp->is_report_group() ) return; // after and before actions are ignored for report groups.
+        $tm = $this->report()->get_resultset()->TotalMatches();
         if( ($act = $grp->get_after_action() ) ) {
             switch( $act ) {
             case $grp::ACT_PAGE:
+                if( $tm >= 0 && $tthis->_record_num >= $tm ) return; // if we're at the end of the report, doing group footers we skip page breaks.
                  $this->_out .= '<tr class="pagebreak" style="display: block; page-break-after: always;"><td></td></tr>';
             default:
                 // do nothing
@@ -298,6 +318,7 @@ abstract class html_report_generator extends tabular_report_generator
         parent::finish();
         // close off the body and html tags
         $out = '</table>';
+        $out .= $this->do_footer();
         $out .= '<!-- generated on '.strftime('%x %H:%M').' -->';
         $out .= '</body></html>'."\n";
         $this->_out .= $out;

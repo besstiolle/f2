@@ -76,30 +76,30 @@ final class cge_template_admin
                                                    $title,$filename,$info = '',$simple = false)
     {
         static $counter = 0;
-        $smarty = cmsms()->GetSmarty();
-        $cgextensions = cge_utils::get_module('CGExtensions');
+        $cgextensions = cge_utils::get_module(MOD_CGEXTENSIONS);
 
         $the_template = $module->GetTemplate($prefname);
         if( !$the_template ) $the_template = $module->GetPreference($prefname);
 
-        $smarty->assign('simple',$simple);
-        $smarty->assign('defaulttemplateform_title',$title);
-        $smarty->assign('info_title',$info);
-        $smarty->assign('startform',
+        $tpl = $cgextensions->CreateSmartyTemplate('editdefaulttemplate.tpl');
+        $tpl->assign('simple',$simple);
+        $tpl->assign('defaulttemplateform_title',$title);
+        $tpl->assign('info_title',$info);
+        $tpl->assign('startform',
                         $cgextensions->CreateFormStart($id,'setdefaulttemplate',$returnid,'post','',false,'',
                                                        array('prefname'=>$prefname,
                                                              'destmodule'=>$module->GetName(),
                                                              'destaction'=>$action,
                                                              'cg_activetab'=>$active_tab,
                                                              'filename'=>$filename)));
-        $smarty->assign('prompt_template',$cgextensions->Lang('template'));
-        $smarty->assign('input_template',$cgextensions->CreateTextArea(false,$id,$the_template,'input_template'));
-        $smarty->assign('submit',$cgextensions->CreateInputSubmit($id,'submit',$cgextensions->Lang('submit')));
-        $smarty->assign('reset',$cgextensions->CreateInputSubmit($id,'resettodefault',$cgextensions->Lang('resettofactory')));
-        $smarty->assign('endform',$cgextensions->CreateFormEnd());
-        $smarty->assign('prefname',$prefname);
-        $smarty->assign('dflt_tpl_counter',$counter++);
-        return $cgextensions->ProcessTemplate('editdefaulttemplate.tpl');
+        $tpl->assign('prompt_template',$cgextensions->Lang('template'));
+        $tpl->assign('input_template',$cgextensions->CreateTextArea(false,$id,$the_template,'input_template'));
+        $tpl->assign('submit',$cgextensions->CreateInputSubmit($id,'submit',$cgextensions->Lang('submit')));
+        $tpl->assign('reset',$cgextensions->CreateInputSubmit($id,'resettodefault',$cgextensions->Lang('resettofactory')));
+        $tpl->assign('endform',$cgextensions->CreateFormEnd());
+        $tpl->assign('prefname',$prefname);
+        $tpl->assign('dflt_tpl_counter',$counter++);
+        return $tpl->fetch();
     }
 
 
@@ -122,24 +122,26 @@ final class cge_template_admin
     public static function get_single_template_form(&$module,$id,$returnid,$tmplname,$active_tab,$title,$filename,
                                                     $info = '',$destaction = 'defaultadmin',$simple = 0)
     {
-        $cgextensions = cge_utils::get_module('CGExtensions');
-        $smarty = cmsms()->GetSmarty();
+        $cgextensions = cge_utils::get_module(MOD_CGEXTENSIONS);
+
+        $tpl = $cgextensions->CreateSmartyTemplate('editdefaulttemplate.tpl');
         $title = trim($title);
-        if( $title ) $smarty->assign('defaulttemplateform_title',$title);
-        $smarty->assign('info_title',$info);
-        $smarty->assign('startform',
+        if( $title ) $tpl->assign('defaulttemplateform_title',$title);
+        $tpl->assign('prefname',$tmplname);
+        $tpl->assign('info_title',$info);
+        $tpl->assign('startform',
                         $cgextensions->CreateFormStart($id,'setdefaulttemplate',$returnid,'post','',false,'',
                                                        array('prefname'=>$tmplname,'usetemplate'=>'1',
                                                              'destmodule'=>$module->GetName(),'cg_activetab'=>$active_tab,
                                                              'destaction'=>$destaction,'filename'=>$filename)));
-        $smarty->assign('prompt_template',$cgextensions->Lang('template'));
-        $smarty->assign('input_template',$cgextensions->CreateTextArea(false,$id,$module->GetTemplate($tmplname),
+        $tpl->assign('prompt_template',$cgextensions->Lang('template'));
+        $tpl->assign('input_template',$cgextensions->CreateTextArea(false,$id,$module->GetTemplate($tmplname),
                                                                        'input_template'));
-        $smarty->assign('simple',$simple);
-        $smarty->assign('submit',$cgextensions->CreateInputSubmit($id,'submit',$cgextensions->Lang('submit')));
-        $smarty->assign('reset',$cgextensions->CreateInputSubmit($id,'resettodefault', $cgextensions->Lang('resettofactory')));
-        $smarty->assign('endform', $cgextensions->CreateFormEnd());
-        return $cgextensions->ProcessTemplate('editdefaulttemplate.tpl');
+        $tpl->assign('simple',$simple);
+        $tpl->assign('submit',$cgextensions->CreateInputSubmit($id,'submit',$cgextensions->Lang('submit')));
+        $tpl->assign('reset',$cgextensions->CreateInputSubmit($id,'resettodefault', $cgextensions->Lang('resettofactory')));
+        $tpl->assign('endform', $cgextensions->CreateFormEnd());
+        return $tpl->fetch();
     }
 } // end of class
 #

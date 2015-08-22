@@ -95,7 +95,7 @@ final class cge_param
     public static function get_bool($params,$key,$dflt = null)
     {
         $dflt = (bool) $dflt;
-        $val = cge_utils::get_param($params,$key,$dflt);
+        $val = self::get_string($params,$key,$dflt);
         return cge_utils::to_bool($val);
     }
 
@@ -138,7 +138,7 @@ final class cge_param
         $tmp = \cge_utils::get_param($params,$key,$dflt);
         if( !is_array($tmp) ) $tmp = array($tmp);
 
-        for( $i = 0; $i < count($tmp); $i++ ) {
+        for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
             $tmp[$i] = html_entity_decode($tmp[$i]);
             $tmp[$i] = trim(strip_tags($tmp[$i]));
         }

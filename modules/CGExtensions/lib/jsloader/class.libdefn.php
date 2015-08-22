@@ -22,6 +22,8 @@ namespace CGExtensions\jsloader;
  * @property string $jsurl A URL to a remote javascript library.  Only one of the jsfile, jsurl, callback, or module properties can be specified.
  * @property string $cssurl A complete URL to a remote CSS library.
  * @property string $module The name of a module to query to get javascript code.
+ * @property bool   $js_nominify Prevent minifying of the library js code.
+ * @property bool   $css_nominify Prevent minifying of the library css code.
  */
 class libdefn
 {
@@ -55,8 +57,16 @@ class libdefn
         case 'jsurl':
         case 'cssurl':
         case 'module':
+        case 'js_nominify':
+        case 'css_nominify':
             if( isset($this->_data[$key])) return $this->_data[$key];
             break;
+
+        case 'minify_js':
+            return !$this->js_nominify;
+
+        case 'minify_css':
+            return !$this->css_nominify;
 
         default:
             stack_trace(); die();
@@ -83,6 +93,8 @@ class libdefn
         case 'styles':
         case 'lib':
         case 'module':
+        case 'js_nominify':
+        case 'css_nominify':
             return isset($this->_data[$key]);
 
         default:
@@ -152,6 +164,10 @@ class libdefn
             $this->_data[$key] = $val;
             break;
 
+        case 'js_nominify':
+        case 'css_nominify':
+            $this->_data[$key] = \cge_utils::to_bool($val);
+            break;
 
         case 'depends':
             if( $val ) {

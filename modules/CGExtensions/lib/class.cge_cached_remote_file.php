@@ -79,7 +79,7 @@ class cge_cached_remote_file
         if( $timelimit <= 0 ) $timelimit = 24*60;
         $this->_cache_timelimit = $timelimit;
         if( empty($dest) ) {
-            $bn = 'cache_'.md5($src);
+            $bn = 'cgecrf_'.md5($src);
             $dest = cms_join_path(TMP_CACHE_LOCATION,$bn);
         }
         $this->_cache_file = $dest;

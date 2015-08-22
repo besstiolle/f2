@@ -66,7 +66,7 @@ final class cge_array
      */
     static public function insert_unique($arr,$val)
     {
-        if( !in_array($str,$arr) ) $arr[] = $val;
+        if( !in_array($val,$arr) ) $arr[] = $val;
         return $arr;
     }
 
@@ -346,7 +346,7 @@ final class cge_array
     {
         $return = '';
         $values = array_values($data);
-        for( $i = 0; $i < count($values); $i++ ) {
+        for( $i = 0, $n = count($values); $i < $n; $i++ ) {
             if( strlen($values[$i]) != 0 ) $values[$i] = $quote.$values[$i].$quote;
         }
         return implode($glue,$values);
@@ -496,7 +496,7 @@ final class cge_array
         $col = '';
         $is_safe = 0;
         $prev_char = '';
-        for( $i = 0; $i < strlen($str); $i++ ) {
+        for( $i = 0, $n = strlen($str); $i < $n; $i++ ) {
             switch($str[$i]) {
             case $delim:
                 if( !$is_safe ) {

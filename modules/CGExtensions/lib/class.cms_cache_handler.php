@@ -208,7 +208,7 @@ class cms_cache_handler
         if( isset($CMS_ADMIN_PAGE) ) return FALSE;
         if( isset($_SERVER['REQUEST_METHOD']) && strtoupper($_SERVER['REQUEST_METHOD']) == 'POST' ) return FALSE;
 
-        $config = cmsms()->GetConfig();
+        $config = cms_config::get_instance();
         if( isset($config['debug']) && $config['debug'] == true ) return FALSE;
 
         $uid = get_userid(false);

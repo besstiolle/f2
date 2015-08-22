@@ -64,7 +64,7 @@ final class cge_url
      */
     public static function ssl_url($url)
     {
-        $config = cmsms()->GetConfig();
+        $config = cms_config::get_instance();
 
         $ssl_url = '';
         if( isset($config['ssl_url']) )  $ssl_url = $config['ssl_url'];
@@ -89,7 +89,7 @@ final class cge_url
     public static function current_url()
     {
         // rebuild the current url.
-        $config = cmsms()->GetConfig();
+        $config = cms_config::get_instance();
         $url1 = new cms_url($_SERVER['REQUEST_URI']);
         $url2 = new cms_url($config['root_url']);
         $url1->set_scheme($url2->get_scheme());
@@ -146,7 +146,7 @@ final class cge_url
         if( !$filename ) return;
         if( !is_readable($filename) ) return;
 
-        $config = cmsms()->Getconfig();
+        $config = cms_config::get_instance();
         if( !startswith($filename,$config['root_path']) ) return;
 
         return str_replace($config['root_path'],$config['root_url'],$filename);

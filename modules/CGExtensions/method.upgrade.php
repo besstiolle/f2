@@ -240,11 +240,9 @@ if( version_compare($oldversion,'1.38.3') < 0 ) {
   }
 }
 
-if( version_compare($oldversion,'1.40') < 0 ) {
-    $loader = new \CGExtensions\jsloader\libdefn('cg_cmsms');
-    $loader->callback = array('cge_jshandler','load');
-    \CGExtensions\jsloader\jsloader::register($loader);
-}
+$loader = new \CGExtensions\jsloader\libdefn('cg_cmsms');
+$loader->callback = array('cge_jshandler','load');
+\CGExtensions\jsloader\jsloader::register($loader);
 
 // this may fail, but let it fail.
 $this->AddEventHandler('Core','ContentPostRender');

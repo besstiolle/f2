@@ -59,7 +59,7 @@ abstract class tabular_report_generator extends report_generator
     {
         $this->do_group_footers(TRUE);
         if( ($grp = $this->report()->get_report_group()) ) {
-            $this->do_group_footer($grp,'rpt');
+            $this->do_group_footer($grp);
         }
     }
 
@@ -223,7 +223,7 @@ abstract class tabular_report_generator extends report_generator
      * @param tabular_report_defn_group $grp
      * @return void
      */
-    protected function before_group_header(tabular_report_defn_group $grp) {}
+    protected function before_group_header(tabular_report_defn_group $grp,$is_first = FALSE) {}
 
     /**
      * A callback function that is called after a single group header is output.
@@ -237,11 +237,11 @@ abstract class tabular_report_generator extends report_generator
     /**
      * @ignore
      */
-    protected function do_group_header(tabular_report_defn_group $grp)
+    protected function do_group_header(tabular_report_defn_group $grp,$is_first = FALSE)
     {
         $lines = $grp->get_header_lines();
         if( count($lines) ) {
-            $this->before_group_header($grp);
+            $this->before_group_header($grp,$is_first);
             foreach( $lines as $line ) {
                 $this->before_line();
                 $columns = $this->report()->get_columns();
@@ -275,11 +275,11 @@ abstract class tabular_report_generator extends report_generator
     {
         $grps = $this->report()->get_groups();
         if( count($grps) ) {
+            $grp_header_num = 0;
             foreach( $grps as $grp ) {
-                $grp_header_num = 0;
                 if( $do_headers || $this->_record_number == 0 || $this->changed($grp,$this->_row) ) {
                     if( $grp_header_num == 0 ) $this->before_group_headers();
-                    $this->do_group_header($grp,$grp_header_num);
+                    $this->do_group_header($grp,($grp_header_num == 0));
                 }
                 $grp_header_num++;
             }
@@ -358,7 +358,7 @@ abstract class tabular_report_generator extends report_generator
                     $grp = current($grps);
                     if( $do_footers || $this->changed($grp,$this->_row) ) {
                         if( $grp_footer_num == 0 ) $this->before_group_footers();
-                        $this->do_group_footer($grp,$grp_footer_num);
+                        $this->do_group_footer($grp);
                         $grp_footer_num++;
                     }
                 }
@@ -393,7 +393,7 @@ abstract class tabular_report_generator extends report_generator
     protected function start()
     {
         if( ($grp = $this->report()->get_report_group()) ) {
-            $this->do_group_header($grp);
+            $this->do_group_header($grp,TRUE);
         }
     }
 

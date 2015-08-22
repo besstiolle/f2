@@ -463,7 +463,7 @@ class AssocData
         $qparms = array();
         if( $key2 ) {
             if( is_array($key2) ) {
-                for( $i = 0; $i < count($key2); $i++ ) {
+                for( $i = 0, $n = count($key2); $i < $n; $i++ ) {
                     $key2[$i] = "'".$key2[$i]."'";
                 }
                 $str = implode(',',$key2);

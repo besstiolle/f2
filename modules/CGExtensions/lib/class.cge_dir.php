@@ -243,7 +243,7 @@ final class cge_dir
             if( !$pattern && $allow_empty ) return TRUE; // no pattern = match everything
             $pattern = array($pattern);
         }
-        for( $i = 0; $i < count($pattern); $i++ ) {
+        for( $i = 0, $n = count($pattern); $i < $n; $i++ ) {
             $f = $filename;
             $p = $pattern[$i];
             if( !$p ) continue;
@@ -276,6 +276,7 @@ final class cge_dir
             }
         }
 
+        if( !is_dir($path) ) return;
         if( $handle = opendir($path) ) {
             while( false !== ( $file = readdir($handle) ) ) {
                 if( $file == '.' || $file == '..' ) continue;

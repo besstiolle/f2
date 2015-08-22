@@ -25,7 +25,7 @@ final class internals
      */
     public static function reset_countries()
     {
-        $db = cmsms()->GetDb();
+        $db = \CmsApp::get_instance()->GetDb();
         $query = 'TRUNCATE TABLE '.CGEXTENSIONS_TABLE_COUNTRIES;
         $db->Execute($query);
 
@@ -46,7 +46,7 @@ final class internals
      */
     public static function reset_states()
     {
-        $db = cmsms()->GetDb();
+        $db = \CmsApp::get_instance()->GetDb();
         $query = 'TRUNCATE TABLE '.CGEXTENSIONS_TABLE_STATES;
         $db->Execute($query);
 

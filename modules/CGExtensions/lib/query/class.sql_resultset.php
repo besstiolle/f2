@@ -45,8 +45,7 @@ class sql_resultset extends resultset
         }
 
         $db = \cge_utils::get_db();
-        $this->_rs = $db->SelectLimit($sql,$this->_filter['limit'],$this->_filter['offset'],
-                                      $this->_filter['parms']);
+        $this->_rs = $db->SelectLimit($sql, $this->_filter['limit'], $this->_filter['offset'], $this->_filter['parms']);
         $this->_totalmatching = (int) $db->GetOne('SELECT FOUND_ROWS()');
     }
 

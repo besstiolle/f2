@@ -6,14 +6,14 @@ final class cge_jshandler
 
     public static function load($libname)
     {
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
         if( $libname == 'cg_cmsms' ) {
             // gotta return code.
-            $config = cmsms()->GetConfig();
-            $smarty = cmsms()->GetSmarty();
-            $smarty->assign('mod',$mod);
-            $smarty->assign('config',$config);
-            $code = $mod->ProcessTemplate('jquery.cg_cmsms.tpl');
+            $config = cms_config::get_instance();
+            $tpl = $mod->CreateSmartyTemplate('jquery.cg_cmsms.tpl');
+            $tpl->assign('mod',$mod);
+            $tpl->assign('config',$config);
+            $code = $tpl->fetch();
             $obj = new StdClass;
             $obj->code = $code;
             return $obj;

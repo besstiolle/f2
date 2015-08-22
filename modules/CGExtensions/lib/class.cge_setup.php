@@ -71,7 +71,7 @@ final class cge_setup
 
         $obj = new \CGExtensions\watermarker;
         if( !empty($img) ) {
-            $config = cmsms()->GetConfig();
+            $config = cms_config::get_instance();
             $obj->set_watermark_image($config['uploads_path'].'/'.$img);
         }
         else if( !empty($txt) ) {

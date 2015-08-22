@@ -82,8 +82,7 @@ if( $the_head_parm < 0 ) {
 $out .= $head_section;
 $html_conf = array('tidy'=>$the_body_parm,'schemes'=>'*:*');
 //$html_conf = array('tidy'=>$the_body_parm,'schemes'=>'*: mailto,http,https,ftp,file,tel');
-$out .= $page_middle.htmLawed($body_section,$html_conf);
-die($out);
+$out .= $page_middle.htmLawed($body_section,$html_conf).'</body></html>';
 $params['content'] = $out;
 
 #

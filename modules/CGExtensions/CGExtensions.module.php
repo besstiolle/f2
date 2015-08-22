@@ -149,7 +149,7 @@ class CGExtensions extends CMSModule
         // from here down only happens once per request (for CGExtensions only)
 
         // setup caching
-        if( $class == 'CGExtensions' && !is_object(cms_cache_handler::get_instance()->get_driver()) ) {
+        if( $class == MOD_CGEXTENSIONS && !is_object(cms_cache_handler::get_instance()->get_driver()) ) {
             $lifetime = (int)$this->GetPreference('cache_lifetime',300);
             $filelock = (int)$this->GetPreference('cache_filelock',1);
             $autoclean = (int)$this->GetPreference('cache_autoclean',1);
@@ -252,7 +252,7 @@ class CGExtensions extends CMSModule
         if( !is_object($this) ) return FALSE;
 
         // check for classes.
-        //if( get_class($this) != MOD_CGEXTENSIONS) cms_utils::get_module('CGExtensions');
+        //if( get_class($this) != MOD_CGEXTENSIONS) cms_utils::get_module(MOD_CGEXTENSIONS);
         $path = $this->GetModulePath().'/lib';
         if( strpos($classname,'\\') !== FALSE ) {
             $t_path = str_replace('\\','/',$classname);
@@ -372,7 +372,7 @@ class CGExtensions extends CMSModule
      * @return string
      */
     public function GetVersion() {
-        if( get_class($this) == 'CGExtensions' ) return '1.48.5';
+        if( get_class($this) == 'CGExtensions' ) return '1.49.6';
         $str = parent::GetVersion();
         return $str;
     }
@@ -390,7 +390,10 @@ class CGExtensions extends CMSModule
         $fns1 = array('doc/help.inc','docs/help.inc','doc/help.html','docs/help.html','help.inc','help.html');
         foreach( $fns1 as $p1 ) {
             $test = cms_join_path($dir,$p1);
-            if( is_file($test) ) $out = file_get_contents($test);
+            if( is_file($test) ) {
+                $out = file_get_contents($test);
+                break;
+            }
         }
 
         // check if we have api documentation and we are not generating an XML document.
@@ -446,7 +449,7 @@ class CGExtensions extends CMSModule
      * @return bool
      */
     public function IsPluginModule() {
-        if( get_class($this) == 'CGExtensions' ) return true;
+        if( get_class($this) == MOD_CGEXTENSIONS ) return true;
         return parent::IsPluginModule();
     }
 
@@ -458,7 +461,7 @@ class CGExtensions extends CMSModule
      * @return string
      */
     public function HasAdmin() {
-        if( get_class($this) == 'CGExtensions' ) return true;
+        if( get_class($this) == MOD_CGEXTENSIONS ) return true;
         return parent::HasAdmin();
     }
 
@@ -470,7 +473,7 @@ class CGExtensions extends CMSModule
      * @return string
      */
     public function HandlesEvents() {
-        if( get_class($this) == 'CGExtensions' ) return true;
+        if( get_class($this) == MOD_CGEXTENSIONS ) return true;
         return parent::HandlesEvents();
     }
 
@@ -488,7 +491,10 @@ class CGExtensions extends CMSModule
      * @abstract
      * @return string
      */
-    public function GetAdminDescription() { return $this->Lang('moddescription'); }
+    public function GetAdminDescription() {
+        if( get_class($this) == MOD_CGEXTENSIONS ) return $this->Lang('moddescription');
+        return parent::GetAdminDescription();
+    }
 
     /**
      * Get a hash containing dependent modules, and their minimum versions.
@@ -504,7 +510,10 @@ class CGExtensions extends CMSModule
      * @abstract
      * @return string
      */
-    public function InstallPostMessage() { return $this->Lang('postinstall'); }
+    public function InstallPostMessage() {
+        if( get_class($this) == MOD_CGEXTENSIONS ) return $this->Lang('postinstall');
+        return parent::InstallPostMessage();
+    }
 
     /**
      * Return the minimum CMSMS version that this module is compatible with.
@@ -520,7 +529,10 @@ class CGExtensions extends CMSModule
      * @abstract
      * @return string
      */
-    public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+    public function UninstallPostMessage() {
+        if( get_class($this) == MOD_CGEXTENSIONS ) return $this->Lang('postuninstall');
+        return parent::UninstallPostMessage();
+    }
 
     /**
      * Test if this module is visible in the admin navigation to the currently logged in admin user.
@@ -530,7 +542,7 @@ class CGExtensions extends CMSModule
      */
     public function VisibleToAdminUser()
     {
-        if( get_class($this) == 'CGExtensions' ) return $this->CheckPermission('Modify Site Preferences') ||  $this->CheckPermission('Modify Templates');
+        if( get_class($this) == MOD_CGEXTENSIONS ) return $this->CheckPermission('Modify Site Preferences') ||  $this->CheckPermission('Modify Templates');
         return parent::VisibleToAdminUser();
     }
 
@@ -573,7 +585,7 @@ class CGExtensions extends CMSModule
      */
     public function DoAction($name,$id,$params,$returnid='')
     {
-        if( !method_exists($this,'set_action_id') && $this->GetName() != 'CGExtensions' ) {
+        if( !method_exists($this,'set_action_id') && $this->GetName() != MOD_CGEXTENSIONS ) {
             die('FATAL ERROR: A module derived from CGExtensions is not handling the set_action_id method');
         }
         $this->set_action_id($id);
@@ -636,7 +648,7 @@ class CGExtensions extends CMSModule
         */
 
         // redundant for cmsms 2.0
-        $smarty = CmsApp::get_instance()->GetSmarty();
+        $smarty = Smarty_CMS::get_instance();
         $smarty->assign('actionid',$id);
         $smarty->assign('actionparams',$params);
         $smarty->assign('returnid',$returnid);
@@ -737,10 +749,10 @@ class CGExtensions extends CMSModule
     function CreateSortableListArea($id,$name,$items, $selected = '', $allowduplicates = true, $max_selected = -1,
                                     $template = '', $label_left = '', $label_right = '')
     {
-        $cge = $this->GetModuleInstance('CGExtensions');
+        $cge = $this->GetModuleInstance(MOD_CGEXTENSIONS);
         if( empty($label_left) ) $label_left = $cge->Lang('selected');
         if( empty($label_right) ) $label_right = $cge->Lang('available');
-        $smarty = CmsApp::get_instance()->GetSmarty();
+        $smarty = Smarty_CMS::get_instance();
         $smarty->clear_assign('selectedarea_selected_str');
         $smarty->clear_assign('selectedarea_selected');
         if( !empty($selected) ) {
@@ -1071,11 +1083,11 @@ class CGExtensions extends CMSModule
      */
     function DisplayErrorMessage($txt,$class = 'alert alert-danger')
     {
-        $smarty = CmsApp::get_instance()->GetSmarty();
-        $smarty->assign('cg_errorclass',$class);
-        $smarty->assign('cg_errormsg',$txt);
-        $res = $this->ProcessTemplateFromDatabase('cg_errormsg','',true,'CGExtensions');
-        return $res;
+        $mod = \cms_utils::get_module(MOD_CGEXTENSIONS);
+        $tpl = $mod->CreateSmartyTemplate('cg_errormsg');
+        $tpl->assign('cg_errorclass',$class);
+        $tpl->assign('cg_errormsg',$txt);
+        return $tpl->fetch();
     }
 
 
@@ -1086,7 +1098,7 @@ class CGExtensions extends CMSModule
      */
     function GetErrorTemplate()
     {
-        return $this->GetTemplate('cg_errormsg','CGExtensions');
+        return $this->GetTemplate('cg_errormsg',MOD_CGEXTENSIONS);
     }
 
 
@@ -1100,7 +1112,7 @@ class CGExtensions extends CMSModule
         $fn = cms_join_path(__DIR__,'templates','orig_error_template.tpl');
         if( is_file( $fn ) ) {
             $template = @file_get_contents($fn);
-            $this->SetTemplate( 'cg_errormsg', $template,'CGExtensions' );
+            $this->SetTemplate( 'cg_errormsg', $template,MOD_CGEXTENSIONS );
         }
     }
 
@@ -1113,7 +1125,7 @@ class CGExtensions extends CMSModule
      */
     function SetErrorTemplate($tmpl)
     {
-        return $this->SetTemplate('cg_errormsg',$tmpl,'CGExtensions');
+        return $this->SetTemplate('cg_errormsg',$tmpl,MOD_CGEXTENSIONS);
     }
 
 
@@ -1142,7 +1154,7 @@ class CGExtensions extends CMSModule
     {
         $tmp = $this->get_state_list();
         $result = array();
-        for( $i = 0; $i < count($tmp); $i++ ) {
+        for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
             $rec = $tmp[$i];
             $result[$rec['code']] = $rec['name'];
         }
@@ -1170,7 +1182,8 @@ class CGExtensions extends CMSModule
                 $states[$selectone] = '';
             }
             else {
-                $states[$this->Lang('select_one')] = '';
+                $cge = \cms_utils::get_module(MOD_CGEXTENSIONS);
+                $states[$cge->Lang('select_one')] = '';
             }
         }
         foreach($tmp as $row) {
@@ -1201,7 +1214,7 @@ class CGExtensions extends CMSModule
     {
         $tmp = $this->get_country_list();
         $result = array();
-        for( $i = 0; $i < count($tmp); $i++ ) {
+        for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
             $rec = $tmp[$i];
             $result[$rec['code']] = $rec['name'];
         }
@@ -1225,7 +1238,10 @@ class CGExtensions extends CMSModule
 
         if( is_array($tmp) && count($tmp) ) {
             $countries = array();
-            if( $selectone !== false ) $countries[$this->Lang('select_one')] = '';
+            if( $selectone !== false ) {
+                $cge = \cms_utils::get_module(MOD_CGEXTENSIONS);
+                $countries[$cge->Lang('select_one')] = '';
+            }
             foreach($tmp as $row) {
                 $countries[$row['name']] = $row['code'];
             }
@@ -1278,7 +1294,7 @@ class CGExtensions extends CMSModule
      */
     function CreateImageDropdown($id,$name,$selectedfile,$dir = '',$none = '')
     {
-        $config = CmsApp::get_instance()->GetConfig();
+        $config = cms_config::get_instance();
 
         if( startswith( $dir, '.' ) ) $dir = '';
         if( $dir == '' ) $dir = $config['image_uploads_path'];
@@ -1289,7 +1305,7 @@ class CGExtensions extends CMSModule
         $filelist = cge_dir::get_file_list($dir,$extensions);
         if( $none ) {
             if( !is_string($none) ) {
-                $cge = $this->GetModuleInstance('CGExtensions');
+                $cge = $this->GetModuleInstance(MOD_CGEXTENSIONS);
                 $none = $cge->Lang('none');
             }
             $filelist = array_merge(array($none=>''),$filelist);
@@ -1314,7 +1330,7 @@ class CGExtensions extends CMSModule
      */
     function CreateFileDropdown($id,$name,$selectedfile='',$dir = '',$extensions = '',$allownone = '',$allowmultiple = false,$size = 3)
     {
-        $config = CmsApp::get_instance()->GetConfig();
+        $config = cms_config::get_instance();
 
         if( $dir == '' ) $dir = $config['uploads_path'];
         else {
@@ -1325,7 +1341,10 @@ class CGExtensions extends CMSModule
 
         $tmp = cge_dir::get_file_list($dir,$extensions);
         $tmp2 = array();
-        if( !empty($allownone) ) $tmp2[$this->Lang('none')] = '';
+        if( !empty($allownone) ) {
+            $cge = \cms_utils::get_module(MOD_CGEXTENSIONS);
+            $tmp2[$cge->Lang('none')] = '';
+        }
         $filelist = array_merge($tmp2,$tmp);
 
         if( $allowmultiple ) {
@@ -1348,7 +1367,7 @@ class CGExtensions extends CMSModule
     function CreateColorDropdown($id,$name,$selectedvalue='')
     {
         $this->_load_form();
-        $cgextensions = $this->GetModuleInstance('CGExtensions');
+        $cgextensions = $this->GetModuleInstance(MOD_CGEXTENSIONS);
         return cge_CreateColorDropdown($cgextensions,$id,$name,$selectedvalue);
     }
 
@@ -1511,7 +1530,7 @@ class CGExtensions extends CMSModule
     function ShowTemplateList($id,$returnid,$prefix, $defaulttemplatepref,$active_tab, $defaultprefname,
                               $title,$info = '',$destaction = 'defaultadmin')
     {
-        $cgextensions = $this->GetModuleInstance('CGExtensions');
+        $cgextensions = $this->GetModuleInstance(MOD_CGEXTENSIONS);
         return $cgextensions->_DisplayTemplateList($this,$id,$returnid,$prefix, $defaulttemplatepref,$active_tab,
                                                    $defaultprefname,$title,$info,$destaction);
     }
@@ -1587,7 +1606,7 @@ class CGExtensions extends CMSModule
     function CreateContentURL($pageid)
     {
         die('this is still used');
-        $config = CmsApp::get_instance()->GetConfig();
+        $config = cms_config::get_instance();
 
         $contentops = ContentOperations::get_instance();
         $alias = $contentops->GetPageAliasFromID( $pageid );
@@ -1633,7 +1652,7 @@ class CGExtensions extends CMSModule
      */
     function GetUploadErrorMessage($code)
     {
-        $cgextensions = $this->GetModuleInstance('CGExtensions');
+        $cgextensions = $this->GetModuleInstance(MOD_CGEXTENSIONS);
         return $cgextensions->Lang($code);
     }
 
@@ -1683,7 +1702,7 @@ class CGExtensions extends CMSModule
      */
     function GetActionId()
     {
-        if( !method_exists($this,'get_action_id') && $this->GetName() != 'CGExtensions' ) {
+        if( !method_exists($this,'get_action_id') && $this->GetName() != MOD_CGEXTENSIONS ) {
             die('FATAL ERROR: A module derived from CGExtensions is not handling the get_action_id method');
         }
         return $this->get_action_id();
@@ -1722,7 +1741,7 @@ class CGExtensions extends CMSModule
     function GetWatermarkError($error)
     {
         if( empty($error) || $error === 0 ) return '';
-        $mod = $this->GetModuleInstance('CGExtensions');
+        $mod = $this->GetModuleInstance(MOD_CGEXTENSIONS);
         return $mod->Lang('watermarkerror_'.$error);
     }
 
@@ -1820,6 +1839,7 @@ class CGExtensions extends CMSModule
     function resolve_alias_or_id($txt,$dflt = null)
     {
         $txt = trim($txt);
+        if( !$txt ) return $dflt;
         $manager = CmsApp::get_instance()->GetHierarchyManager();
         $node = null;
         if( is_numeric($txt) && (int) $txt > 0 ) {
@@ -1926,19 +1946,67 @@ class CGExtensions extends CMSModule
    * @param string $filename
    * @return string
    */
-  public function find_file($filename)
+  public function find_module_file($filename)
   {
       if( !$filename ) return;
-      $config = CmsApp::get_instance()->GetConfig();
+      $tmp = realpath($filename);
+      if( $tmp ) return; // absolute paths not accepted.
+
+      $config = cms_config::get_instance();
       $dirlist = array();
       $dirlist[] = $config['root_path']."/module_custom/".$this->GetName();
-      $dirlist[] = $config['root_path']."/module_custom/".$this->GetName()."/templates";
       $dirlist[] = $this->GetModulePath();
-      $dirlist[] = $this->GetModulePath()."/templates";
       foreach( $dirlist as $dir ) {
           $fn = "$dir/$filename";
           if( is_file($fn) ) return $fn;
       }
+  }
+
+  /**
+   * Get a list of module files matching a specified pattern in a specified module subdirectory.
+   * This method can be used for finding a list of files matching a pattern (i.e a list of classes, or even a list of templates).
+   * This method will search for files in a matching directory in the module_custom directory (if one exists) and in the module directory.
+   * i.e: $this->get_module_files('templates','summary*tpl');
+   *
+   * @param string $dirname The directory name (relative to the module directory) to search in.
+   * @param string $pattern An optional pattern, if no pattern is specified, *.* is assumed.
+   * @return string[]
+   */
+  public function get_module_files($dirname,$pattern = null)
+  {
+      if( !$dirname ) return;
+      $tmp = realpath($dirname);
+      if( file_exists($dirname) ) return; // absolute paths not accepted.
+      if( !$pattern ) $pattern = '*.*';
+
+      $config = cms_config::get_instance();
+      $files = array();
+      $dirlist = array();
+      $dirlist[] = $config['root_path']."/module_custom/".$this->GetName();
+      $dirlist[] = $this->GetModulePath();
+      foreach( $dirlist as $dir ) {
+          $fn = "$dir/$dirname";
+          if( !is_dir($fn) ) continue;
+
+          $_list = glob("$fn/$pattern");
+          if( !count($_list) ) continue;
+          $files = array_merge($files,$_list);
+      }
+      if( count($files) ) return $files;
+  }
+
+  /**
+   * Given a filename, search for it in the module_custom and module's templates directory.
+   * i.e.: $this->find_template_file('somereport.tpl');
+   *
+   * @param string $filename The template filename (only the filename) to search for
+   * @return string The absolute path to the filename.
+   */
+  public function find_template_file($filename)
+  {
+      if( !$filename ) return;
+      $filename = "templates/".basename($filename);
+      return $this->find_module_file($filename);
   }
 
   /**
@@ -1952,7 +2020,8 @@ class CGExtensions extends CMSModule
    */
   public function CreateSmartyTemplate($template_name,$prefix = null,$cache_id = null,$compile_id = null)
   {
-      $smarty = CmsApp::get_instance()->GetSmarty();
+      // this will create a smarty template that inherits variables from the global smarty object.
+      $smarty = Smarty_CMS::get_instance();
       $tpl = $smarty->createTemplate($this->CGGetTemplateResource($template_name,$prefix),$cache_id,$compile_id);
       // should not be necessary.
       $tpl->assign($this->GetName(),$this);
@@ -1964,6 +2033,7 @@ class CGExtensions extends CMSModule
 
   /**
    * A convenience method to generate a smarty resource string given a template name and an optional prefix.
+   * if the supplied template name appears to be a smarty resource name we don't do anything.
    * if the supplied template name ends with .tpl then a file template is assumed.
    *
    * @param string $template_name The desired template name
@@ -1973,8 +2043,12 @@ class CGExtensions extends CMSModule
   public function CGGetTemplateResource($template_name,$prefix = null)
   {
       $template_name = trim($template_name);
-      if( endswith($template_name,'.tpl') ) return $this->GetFileResource($template_name);
-      return $this->GetDatabaseResource($prefix.$template_name);
+      if( !strpos($template_name,':') ) {
+          // it's not a resource.
+          if( endswith($template_name,'.tpl') ) return $this->GetFileResource($template_name);
+          return $this->GetDatabaseResource($prefix.$template_name);
+      }
+      return $template_name;
   }
 
   /**

@@ -104,7 +104,7 @@ final class cge_userops
         if( !is_array($list) ) {
             $ops = cmsms()->GetGroupOperations();
             $groups = $ops->LoadGroups();
-            $mod = cms_utils::get_module('CGExtensions');
+            $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
             $list = array();
             if( $inclnone ) $out[-1] = $mod->Lang('none');
             foreach( $groups as $onegroup ) {

@@ -170,7 +170,7 @@ final class cge_smarty_plugins
     public static function smarty_function_cgimage($params, $smarty)
     {
         $obj = $smarty->get_template_vars('mod');
-        if( !is_object($obj) )  $obj = cge_utils::get_module('CGExtensions');
+        if( !is_object($obj) )  $obj = cge_utils::get_module(MOD_CGEXTENSIONS);
 
         if( !isset($params['image']) ) return;
 
@@ -200,7 +200,7 @@ final class cge_smarty_plugins
    */
   public static function smarty_function_helptag($params, $smarty)
   {
-      $obj = cge_utils::get_module('CGExtensions');
+      $obj = cge_utils::get_module(MOD_CGEXTENSIONS);
 
       $image = 'icons/system/info.gif';
       $alt = $obj->Lang('whatsthis');
@@ -266,7 +266,7 @@ final class cge_smarty_plugins
         if( !isset($params['key']) ) return;
         if( !isset($params['text']) ) return;
 
-        $mod = cge_utils::get_module('CGExtensions');
+        $mod = cge_utils::get_module(MOD_CGEXTENSIONS);
         $title = $mod->Lang('help');
         $key = trim($params['key']);
         $text = trim($params['text']);
@@ -348,7 +348,7 @@ final class cge_smarty_plugins
         if( trim($content) != '' ) {
             $errorclass = 'error';
             if( isset( $params['errorclass'] ) ) $errorclass = trim($params['errorclass']);
-            $obj = cge_utils::get_module('CGExtensions');
+            $obj = cge_utils::get_module(MOD_CGEXTENSIONS);
             $txt = $obj->DisplayErrorMessage($content,$errorclass);
         }
 
@@ -610,7 +610,7 @@ final class cge_smarty_plugins
         if( !isset($CMS_ADMIN_PAGE) ) return;
         if( !isset($params['error']) ) return;
 
-        $mod = cge_utils::get_module('CGExtensions');
+        $mod = cge_utils::get_module(MOD_CGEXTENSIONS);
         $tmp = $mod->ShowErrors($params['error']);
 
         if( isset($params['assign']) ) {
@@ -799,7 +799,7 @@ final class cge_smarty_plugins
 
     public static function cge_start_tabs($params,$smarty)
     {
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
         $out = $mod->StartTabHeaders();
         if( isset($params['assign']) ) {
             $smarty->assign(trim($params['assign']),$out);
@@ -810,7 +810,7 @@ final class cge_smarty_plugins
 
     public static function cge_end_tabs($params,$smarty)
     {
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
         $out = '';
         if( self::$_in_tab ) {
             $out .= $mod->EndTab();
@@ -833,7 +833,7 @@ final class cge_smarty_plugins
         if( isset($params['label']) ) $label = trim($params['label']);
 
         $modname = $smarty->get_template_vars('actionmodule');
-        if( !$modname ) $modname = 'CGExtensions';
+        if( !$modname ) $modname = MOD_CGEXTENSIONS;
         $mod = cms_utils::get_module($modname);
         $out = $mod->SetTabHeader($name,$label);
 
@@ -851,7 +851,7 @@ final class cge_smarty_plugins
         if( !isset($params['name']) ) return;
         $parms2 = $smarty->get_template_vars('actionparams');
         if( !is_array($parms2) ) $parms2 = array();
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
 
         $out = '';
         if( !$endtabheaders_sent ) {
@@ -878,7 +878,7 @@ final class cge_smarty_plugins
     public static function cge_tabcontent_end($params,$smarty)
     {
         static $endheader_sent = 0;
-        $mod = cms_utils::get_module('CGExtensions');
+        $mod = cms_utils::get_module(MOD_CGEXTENSIONS);
         $out = $mod->EndTab();
         self::$_in_tab = 0;
 
@@ -1142,18 +1142,25 @@ final class cge_smarty_plugins
         $lib = trim(cge_utils::get_param($params,'lib'));
         $cssname = trim(cge_utils::get_param($params,'cssname'));
         $cssfile = trim(cge_utils::get_param($params,'cssfile'));
+        $cssurl = trim(cge_utils::get_param($params,'cssurl'));
         $jsfile = trim(cge_utils::get_param($params,'jsfile'));
+        $jsurl = trim(cge_utils::get_param($params,'jsurl'));
         $depends = cge_utils::get_param($params,'depends');
+        $nominify = cge_param::get_bool($params,'nominify');
 
         if( $lib ) {
-            \CGExtensions\jsloader\jsloader::require_lib($lib);
+            \CGExtensions\jsloader\jsloader::require_lib($lib,$nominify);
         }
         else if( $jsfile ) {
-            \CGExtensions\jsloader\jsloader::add_jsfile($jsfile,$depends);
+            \CGExtensions\jsloader\jsloader::add_jsfile($jsfile,$depends,$nominify);
+        } else if( $jsurl ) {
+            \CGExtensions\jsloader\jsloader::add_jsext($jsurl,$nominify);
         } else if( $cssfile ) {
-            \CGExtensions\jsloader\jsloader::add_cssfile($cssfile,$depends);
+            \CGExtensions\jsloader\jsloader::add_cssfile($cssfile,$depends,$nominify);
         } else if( $cssname ) {
-            \CGExtensions\jsloader\jsloader::require_css($cssname,$depends);
+            \CGExtensions\jsloader\jsloader::require_css($cssname,$depends,$nominify);
+        } else if( $cssurl ) {
+            \CGExtensions\jsloader\jsloader::add_cssext($cssurl,$nominify);
         }
     }
 
@@ -1161,14 +1168,16 @@ final class cge_smarty_plugins
     {
         if( $content == '' ) return;
         $depends = cge_utils::get_param($params,'depends');
-        \CGExtensions\jsloader\jsloader::add_js($content,$depends);
+        $nominify = cge_param::get_bool($params,'nominify');
+        \CGExtensions\jsloader\jsloader::add_js($content,$depends,$nominify);
     }
 
     public static function cgcss_add($params,$content,$smarty,$repeat)
     {
         if( $content == '' ) return;
         $depends = cge_utils::get_param($params,'depends');
-        \CGExtensions\jsloader\jsloader::add_css($content,$depends);
+        $nominify = cge_param::get_bool($params,'nominify');
+        \CGExtensions\jsloader\jsloader::add_css($content,$depends,$nominify);
     }
 
     public static function cgjs_render($params,$smarty)

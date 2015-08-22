@@ -84,7 +84,7 @@ class encrypted_store
             self::$_store = new cge_datastore(self::$_timeout);
             self::$_key = md5(__FILE__);
 
-            $config = cmsms()->GetConfig();
+            $config = cms_config::get_instance();
             $key = md5(__FILE__ . $config['root_url'] . $config['root_path'] . getenv('REMOTE_ADDR'));
             self::$_enckey = $key;
         }
