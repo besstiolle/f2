@@ -43,7 +43,7 @@ class Forge2FrontOffice extends Orm
 	}
 
 	function GetDependencies() {
-		return array('Orm'=>'0.3.1','FrontEndUsers'=>'1.30','CustomContent'=>'1.10');
+		return array('Orm'=>'0.3.1','FrontEndUsers'=>'1.30');
 	}
 
 	function GetHelp() {
@@ -317,10 +317,10 @@ class Forge2FrontOffice extends Orm
 
 		RestAPI::init($user, $pass, $rest_url, $this);
 
-		require_once(dirname(__FILE__).'/../CustomContent/lib/class.ccUser.php');
+		/*require_once(dirname(__FILE__).'/../CustomContent/lib/class.ccUser.php');
         $smarty = cmsms()->GetSmarty();
         if( !$smarty ) return;
-        $smarty->assign('ccuser',ccUser::get_instance());
+        $smarty->assign('ccuser',ccUser::get_instance());*/
 	}
 
 	static function smarty_is_project_admin($params, $smarty){
