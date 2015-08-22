@@ -1363,7 +1363,8 @@ p.pageoptions a,
 a.pageoptions {
 	padding: 2px 0;
 	color: #585858;
-	display: inline
+	display: inline;
+	cursor: pointer
 }
 img.systemicon {
 	border: none;
@@ -1549,6 +1550,10 @@ td.icons_wide {
 }
 
 /*** Design manager ***/
+.pointer {
+    cursor: pointer;
+}
+
 #oe_mainarea ul.sortable-list {
 	list-style: none;
 	padding: 0;
@@ -2178,8 +2183,8 @@ a.toggle-dropzone:focus {
 }
 
 #oe_mainarea .options-menu li.parent:hover {
-	background: #fafafa;
-	cursor: pointer;
+    background: #fafafa;
+    cursor: pointer;
 }
 
 #oe_mainarea .options-menu li:hover ul {
@@ -2187,6 +2192,7 @@ a.toggle-dropzone:focus {
 	top: 32px;
 	width: 240px;
 	background: #fafafa;
+        border: 1px solid #d0d0d0;
 }
 
 #oe_mainarea .options-menu li li {

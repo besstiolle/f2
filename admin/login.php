@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: login.php 9708 2014-09-02 14:47:11Z calguy1000 $
+#$Id: login.php 10032 2015-06-09 16:21:21Z calguy1000 $
 
 $CMS_ADMIN_PAGE=1;
 $CMS_LOGIN_PAGE=1;
@@ -102,6 +102,7 @@ else if (isset($_REQUEST['forgotpwform']) && isset($_REQUEST['forgottenusername'
     }
   }
   else {
+    unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
     Events::SendEvent('Core','LoginFailed',array('user'=>$_REQUEST['forgottenusername']));
     $error = lang('usernotfound');
   }
@@ -164,6 +165,7 @@ else if ( isset($_SESSION['redirect_url']) ) {
   if (true == $is_logged_in) {
     $userid = get_userid();
     $homepage = cms_userprefs::get_for_user($userid,'homepage'.'index.php');
+    $homepage = CmsAdminUtils::get_session_url($homepage);
 
     $homepage = str_replace('&amp;','&',$homepage);
     $tmp = explode('?',$homepage);
@@ -211,6 +213,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
     audit($oneuser->id, "Admin Username: ".$oneuser->username, 'Logged In');
 
     // Now call the event
+    unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
     Events::SendEvent('Core', 'LoginPost', array('user' => &$oneuser));
 
     // redirect to upgrade if db_schema it's old
@@ -287,6 +290,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
     $error .= lang('usernameincorrect');
     debug_buffer("Login failed.  Error is: " . $error);
 
+    unset($_POST['password'],$_REQUEST['password']);
     Events::SendEvent('Core','LoginFailed',array('user'=>$_POST['username']));;
     // put mention into the admin log
     $ip_login_failed = cms_utils::get_real_ip();

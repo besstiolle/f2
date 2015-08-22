@@ -91,12 +91,12 @@ final class CmsPermission
 	{
 		$this->validate();
 
-		$db = cmsms()->GetDb();
-		$new_id = $db->GenID(cms_db_prefix().'permissions_seq');
+		$db = CmsApp::get_instance()->GetDb();
+		$new_id = $db->GenID(CMS_DB_PREFIX.'permissions_seq');
 		if( !$new_id ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
 		$now = $db->DbTimeStamp(time());
-		$query = 'INSERT INTO '.cms_db_prefix()."permissions
+		$query = 'INSERT INTO '.CMS_DB_PREFIX."permissions
               (permission_id,permission_name,permission_text,permission_source,create_date,
                modified_date) VALUES (?,?,?,?,$now,$now)";
 		$dbr = $db->Execute($query,
@@ -122,8 +122,8 @@ final class CmsPermission
 
 		if( !isset($this->_data['id']) || $this->_data['id'] < 1 ) {
 			// Name must be unique
-			$db = cmsms()->GetDb();
-			$query = 'SElECT permission_id FROM '.cms_db_prefix().'permissions
+			$db = CmsApp::get_instance()->GetDb();
+			$query = 'SElECT permission_id FROM '.CMS_DB_PREFIX.'permissions
                 WHERE permission_name = ?';
 			$dbr = $db->GetOne($query,array($this->_data['name']));
 			if( $dbr > 0 ) throw new CmsInvalidDataException('Permission with name '.$this->_data['name'].' already exists');
@@ -152,12 +152,12 @@ final class CmsPermission
 			throw new CmsLogicException('Cannnot delete a CmsPermission object that has not been saved');
 		}
 
-		$db = cmsms()->GetDb();
-		$query = 'DELETE FROM '.cms_db_prefix().'group_perms WHERE permission_id = ?';
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'group_perms WHERE permission_id = ?';
 		$dbr = $db->Execute($query,array($this->_data['id']));
 		if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
-		$query = 'DELETE FROM '.cms_db_prefix().'permissions WHERE permission_id = ?';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id = ?';
 		$dbr = $db->Execute($query,array($this->_data['id']));
 		if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 		unset($this->_data['id']);
@@ -179,14 +179,14 @@ final class CmsPermission
 			}
 		}
 
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$row = null;
 		if( (int)$name > 0 ) {
-			$query = 'SELECT * FROM '.cms_db_prefix().'permissions WHERE permission_id = ?';
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id = ?';
 			$row = $dbr->GetRow($query,array((int)$name));
 		}
 		else {
-			$query = 'SELECT * FROM '.cms_db_prefix().'permissions WHERE permission_name = ?';
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'permissions WHERE permission_name = ?';
 			$row = $db->GetRow($query,array($name));
 		}
 		if( !is_array($row) || count($row) == 0 ) {

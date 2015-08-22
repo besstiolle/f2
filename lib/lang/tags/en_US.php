@@ -173,6 +173,20 @@ $lang['help_function_cms_pageoptions'] = <<<EOT
 <pre><code>&lt;select name="{\$actionid}pagenum"&gt;{cms_pageoptions numpages=50 curpage=14}&lt;/select&gt;</code></pre>
 EOT;
 
+$lang['help_function_share_data'] = <<<EOT
+<h3>What does this do?</h3>
+<p>This plugin is used to copy one, or more active smarty variables to the parent or global scope.</p>
+<h3>What parameters does it take?</h3>
+<ul>
+<li>scope - <strong>optional string</strong> - The target scope to copy variables to.  Possible values are &quot;parent&quot; <em>(the default)</em> or &quot;global&quot; to copy the data to the global smarty object for subsequent use throughout the page.</li>
+<li>vars - <strong>required mixed</strong> - Either an array of string variable names, or a comma separated list of string variable names.</li>
+</ul>
+<h3>Example:</h3>
+<pre><code>{share_data scope=global data='title,canonical'}</code></pre>
+<h3>Note:</h3>
+<p>This plugin will not accept array accessors or object members as variable names.  i.e: <code>]\$foo[1]</code> or <code>{\$foo->bar}</code> will not work.</p>
+EOT;
+
 $lang['help_function_cms_yesno'] = <<<EOT
 <h3>What does this do?</h3>
 <p>This is a simple plugin used in form generation to create a set of options for a &lt;select&gt; representing a yes/no choice.</p>
@@ -282,9 +296,29 @@ $lang['help_function_page_attr'] = <<<EOT
 <p>Insert the tag into the template like: <code>{page_attr key="extra1"}</code>.</p>
 <h3>What parameters does it take?</h3>
 <ul>
-  <li><strong>key [required]</strong> The key to return the attribute of.</li>
+  <li><em>(optional)</em> page (int|string) - An optional page id or alias to fetch the content from.  If not specified, the current page is assumed.</li>
+  <li><strong>key [required]</strong> The key to return the attribute of.
+    <p>The key can either be a block name, or from a set of standard properties associated with a content page.  The accepted standard properties are:</p>
+    <ul>
+      <li>_dflt_ - (string) The value for the default content block (also known as content_en).</li>
+      <li>title</li>
+      <li>description</li>
+      <li>created_date - (string date) Date of the creation of the content object.</li>
+      <li>modified_date - (string date) Date of the last modification of the content object.</li>
+      <li>last_modified_by - (int) UID of the user who last modified the page.</li>
+      <li>owner - (int) UID of the page owner.</li>
+      <li>image - (string) The path to the image assocated with the content page.</li>
+      <li>thumbnail - (string) The path to the thumbnail assocated with the content page.</li>
+      <li>extra1 - (string) The value of the extra1 attribute.</li>
+      <li>extra2 - (string) The value of the extra2 attribute.</li>
+      <li>extra3 - (string) The value of the extra3 attribute.</li>
+    </ul>
+  </li>
   <li><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</li>
 </ul>
+<h3>Returns:</h3>
+<p><strong>string</strong> - The actual value of the content block from the database for the specified block and page.</p>
+<p><strong>Note:</strong> - The output of this plugin is not passed through smarty or cleaned for display.   If displaying the data you must convert string data to entities, and/or pass it through smarty.</p>
 EOT;
 
 $lang['help_function_page_image'] = <<<EOT
@@ -953,7 +987,7 @@ $lang['help_function_cms_jquery'] = <<<EOT
 <p>Simply insert this tag into your page or template: <code>{cms_jquery}</code></p>
 
 <h3>Sample</h3>
-<pre><code>{cms_jquery cdn='true' exclude='jquery.ui.nestedSortable.js' append='uploads/NCleanBlue/js/ie6fix.js' include_css=0}</code></pre>
+<pre><code>{cms_jquery cdn='true' exclude='jquery-ui' append='uploads/NCleanBlue/js/ie6fix.js' include_css=0}</code></pre>
 <h4><em>Outputs</em></h4>
 <pre><code>&lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"&gt;&lt;/script&gt;
@@ -961,17 +995,18 @@ $lang['help_function_cms_jquery'] = <<<EOT
 &lt;script type="text/javascript" src="uploads/NCleanBlue/js/ie6fix.js"&gt;&lt;/script&gt;
 </code></pre>
 
-<h3><em>Included Defaults</em></h3>
+<h3>>Known Scripts:</h3>
 <ul>
-	<li><tt>jQuery</tt><em>(1.7.2)</em> - jquery.min.js</li>
-	<li><tt>jQuery UI</tt><em>(1.8.21)</em> - jquery-ui.min.js</li>
-	<li><tt>nestedSortable</tt>(1.3.4) - jquery.ui.nestedSortable.js</li>
-	<li><tt>jQuery json</tt><em>(2.3)</em> - jquery.json.min.js</li>
+	<li><tt>jQuery</tt><em>(1.11.1)</em></li>
+	<li><tt>jQuery-UI</tt><em>(1.8.21)</em></li>
+	<li><tt>nestedSortable</tt><em>(1.3.4)</em></li>
+	<li><tt>json</tt><em>(2.3)</em></li>
+	<li><tt>migrate</tt><em>(2.3)</em></li>
 </ul>
 
 <h3>What parameters does it take?</h3>
 <ul>
-	<li><em>(optional) </em><tt>exclude</tt> - use comma seperated value(CSV) list of scripts you would like to exclude. <code>'jquery.ui.nestedSortable.js,jquery.json.min.js'</code></li>
+	<li><em>(optional) </em><tt>exclude</tt> - use comma seperated value(CSV) list of scripts you would like to exclude. <code>'jquery-ui,migrate'</code></li>
 	<li><em>(optional) </em><tt>append</tt> - use comma seperated value(CSV) list of script paths you would like to append. <code>'/uploads/jquery.ui.nestedSortable.js,http://code.jquery.com/jquery-1.7.1.min.js'</code></li>
 	<li><em>(optional) </em><tt>cdn</tt> - cdn='true' will insert jQuery and jQueryUI Frameworks using Google's Content Delivery Netwok. Default is false.</li>
 	<li><em>(optional) </em><tt>ssl</tt> - use to use the ssl_url as the base path.</li>

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: content.functions.php 9954 2015-05-12 00:17:16Z calguy1000 $
 
 /**
  * Handles content related functions
@@ -33,24 +33,22 @@
  */
 function is_sitedown()
 {
-  global $CMS_INSTALL_PAGE;
-  if( isset($CMS_INSTALL_PAGE) ) return TRUE;
+    global $CMS_INSTALL_PAGE;
+    if( isset($CMS_INSTALL_PAGE) ) return TRUE;
 
-  if( get_site_preference('enablesitedownmessage') !== '1' ) return FALSE;
+    if( cms_siteprefs::get('enablesitedownmessage') !== '1' ) return FALSE;
 
-  if( get_site_preference('sitedownexcludeadmins') ) {
     $uid = get_userid(FALSE);
-    if( $uid ) return FALSE;
-  }
+    if( $uid && cms_siteprefs::get('sitedownexcludeadmins') ) return FALSE;
 
-  if( !isset($_SERVER['REMOTE_ADDR']) ) return TRUE;
-  $excludes = get_site_preference('sitedownexcludes','');
-  if( empty($excludes) ) return TRUE;
+    if( !isset($_SERVER['REMOTE_ADDR']) ) return TRUE;
+    $excludes = cms_siteprefs::get('sitedownexcludes','');
+    if( empty($excludes) ) return TRUE;
 
-  $tmp = explode(',',$excludes);
-  $ret = cms_ipmatches($_SERVER['REMOTE_ADDR'],$excludes);
-  if( $ret ) return FALSE;
-  return TRUE;
+    $tmp = explode(',',$excludes);
+    $ret = cms_ipmatches($_SERVER['REMOTE_ADDR'],$excludes);
+    if( $ret ) return FALSE;
+    return TRUE;
 }
 
 ?>

@@ -109,7 +109,7 @@ class News extends CMSModule
 
   function InitializeAdmin()
   {
-    $this->CreateParameter('pagelimit', 100000, $this->Lang('help_pagelimit'));
+    $this->CreateParameter('pagelimit', 1000, $this->Lang('help_pagelimit'));
     $this->CreateParameter('browsecat', 0, $this->lang('helpbrowsecat'));
     $this->CreateParameter('showall', 0, $this->lang('helpshowall'));
     $this->CreateParameter('showarchive', 0, $this->lang('helpshowarchive'));
@@ -141,7 +141,6 @@ class News extends CMSModule
     $text .= "Title:      {\$title}\n";
     $text .= "IP Address: {\$ipaddress}\n";
     $text .= "Summary:    {\$summary|strip_tags}\n";
-    $text .= "Post Date:  {\$postdate|date_format}\n";
     $text .= "Start Date: {\$startdate|date_format}\n";
     $text .= "End Date:   {\$enddate|date_format}\n";
     return $text;
@@ -154,7 +153,7 @@ class News extends CMSModule
 
     if ($attr == 'article') {
       $db = $this->GetDb();
-      $q = "SELECT news_title,news_url FROM ".cms_db_prefix()."module_news WHERE news_id = ?";
+      $q = "SELECT news_title,news_url FROM ".CMS_DB_PREFIX."module_news WHERE news_id = ?";
       $row = $db->GetRow( $q, array( $articleid ) );
 
       if ($row) {
@@ -187,7 +186,7 @@ class News extends CMSModule
 	}
 
 	$prettyurl = $row['news_url'];
-	if( $row['news_url'] != '' ) {
+	if( $row['news_url'] == '' ) {
 	  $aliased_title = munge_string_to_url($row['news_title']);
 	  $prettyurl = 'news/' . $articleid.'/'.$detailpage."/$aliased_title".$detailtemplate;
 	}
@@ -206,7 +205,7 @@ class News extends CMSModule
   {
     $db = $this->GetDb();
 
-    $query = 'SELECT * FROM '.cms_db_prefix().'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
+    $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
     $result = $db->Execute($query,array('published'));
 
     while ($result && !$result->EOF) {
@@ -244,7 +243,7 @@ class News extends CMSModule
       $output = array();
       if( $this->CheckPermission('Approve News') ) {
 	$db = $this->GetDb();
-	$query = 'SELECT count(news_id) FROM '.cms_db_prefix().'module_news n WHERE status != \'published\'
+	$query = 'SELECT count(news_id) FROM '.CMS_DB_PREFIX.'module_news n WHERE status != \'published\'
                   AND (end_time IS NULL OR end_time > NOw())';
 	$count = $db->GetOne($query);
 	if( $count ) {
@@ -280,16 +279,16 @@ class News extends CMSModule
 			  array('returnid'=>$this->GetPreference('detail_returnid',-1)));
     cms_route_manager::add_static($route);
 
-    $query = 'SELECT news_id,news_url FROM '.cms_db_prefix().'module_news WHERE status = ? AND news_url != ? AND '
+    $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = ? AND news_url != ? AND '
       . '('.$db->ifNull('start_time',$db->DbTimeStamp(1)).' < NOW()) AND '
       . '(('.$db->IfNull('end_time',$db->DbTimeStamp(1)).' = '.$db->DbTimeStamp(1).') OR (end_time > NOW()))';
     $query .= ' ORDER BY news_date DESC';
     $tmp = $db->GetArray($query,array('published',''));
 
     if( is_array($tmp) ) {
-      foreach( $tmp as $one ) {
-	news_admin_ops::register_static_route($one['news_url'],$one['news_id']);
-      }
+        foreach( $tmp as $one ) {
+            news_admin_ops::register_static_route($one['news_url'],$one['news_id']);
+        }
     }
   }
 
@@ -321,7 +320,7 @@ class News extends CMSModule
       $fn = 'browsecat.tpl';
     }
 
-    $fn = cms_join_path(dirname(__FILE__),'templates',$fn);
+    $fn = cms_join_path(__DIR__,'templates',$fn);
     if( file_exists($fn) ) return @file_get_contents($fn);
   }
 

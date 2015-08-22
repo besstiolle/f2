@@ -16,20 +16,16 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_root_url($params, &$template)
+function smarty_function_root_url($params, &$smarty)
 {
-	$smarty = $template->smarty;
-	$config = cmsms()->GetConfig();
-     
-    $str = $config['root_url'];
+    $str = CMS_ROOT_URL;
 
-	if( !isset($params['autossl']) || $params['autossl'] != 0 )
-	{
+	if( !isset($params['autossl']) || $params['autossl'] != 0 )	{
+        $config = CmsApp::get_instance()->GetConfig();
 		$str = $config->smart_root_url();
 	}
 
-    if( isset($params['assign']) )
-    {
+    if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$str);
 		return;
     }

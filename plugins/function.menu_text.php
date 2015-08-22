@@ -16,29 +16,24 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_menu_text($params, &$template)
+function smarty_function_menu_text($params, &$smarty)
 {
-	$smarty = $template->smarty;
-	$content_obj = cmsms()->variables['content_obj'];
-	$config = cmsms()->config;
-	
-	if (!is_object($content_obj) || $content_obj->Id() == -1)
-    {
+    $gCms = CmsApp::get_instance();
+    $content_obj = $gCms->get_content_object();
+
+	if (!is_object($content_obj) || $content_obj->Id() == -1) {
 		// We've a custom error message...  set a message
 		$result="404 Error";
     } else {
 		$result = $content_obj->MenuText();
-		if (!(isset($config["use_smarty_php_tags"]) && $config["use_smarty_php_tags"] == true))
-		{
-			$result = preg_replace("/\{\/?php\}/", "", $result);
-		}
+        $result = preg_replace("/\{\/?php\}/", "", $result);
 	}
-	
+
 	if( isset($params['assign']) ){
 		$smarty->assign(trim($params['assign']),$result);
 		return;
 	}
-	
+
 	return $result;
 }
 

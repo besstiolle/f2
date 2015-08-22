@@ -78,9 +78,9 @@ final class UserTagOperations
 	public function LoadUserTags()
 	{
 		if( count($this->_cache) == 0 ) {
-			$db = cmsms()->GetDb();
+			$db = CmsApp::get_instance()->GetDb();
 
-			$query = 'SELECT * FROM '.cms_db_prefix().'userplugins'.' ORDER BY userplugin_name';
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'userplugins'.' ORDER BY userplugin_name';
 			$data = $db->GetArray($query);
 			if( is_array($data) ) {
 				foreach( $data as $row ) {
@@ -140,8 +140,8 @@ final class UserTagOperations
 	function SmartyTagExists($name,$check_functions = true)
 	{
 		// get the list of smarty plugins that are known.
-		$config = cmsms()->GetConfig();
-		$phpfiles = glob($config['root_path'].'/plugins/function.*.php');
+		$config = CmsApp::get_instance()->GetConfig();
+		$phpfiles = glob(CMS_ROOT_PATH.'/plugins/function.*.php');
 		if( is_array($phpfiles) && count($phpfiles) ) {
 			for( $i = 0; $i < count($phpfiles); $i++ ) {
 				$fn = basename($phpfiles[$i]);
@@ -155,7 +155,7 @@ final class UserTagOperations
 
 		if( $check_functions ) {
 			// registered by something else... maybe a module.
-			$smarty = cmsms()->GetSmarty();
+			$smarty = CmsApp::get_instance()->GetSmarty();
 			if( $smarty->is_registered($name) ) return TRUE;
 		}
 
@@ -173,13 +173,13 @@ final class UserTagOperations
 	 */
 	function SetUserTag( $name, $text, $description )
 	{
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
 		$existing = $this->GetUserTag($name);
 		if (!$existing) {
 			$this->_cache = array(); // reset the cache.
-			$new_usertag_id = $db->GenID(cms_db_prefix()."userplugins_seq");
-			$query = "INSERT INTO ".cms_db_prefix()."userplugins (userplugin_id, userplugin_name, code, description, create_date, modified_date) VALUES (?,?,?,?,".$db->DBTimeStamp(time()).",".$db->DBTimeStamp(time()).")";
+			$new_usertag_id = $db->GenID(CMS_DB_PREFIX."userplugins_seq");
+			$query = "INSERT INTO ".CMS_DB_PREFIX."userplugins (userplugin_id, userplugin_name, code, description, create_date, modified_date) VALUES (?,?,?,?,".$db->DBTimeStamp(time()).",".$db->DBTimeStamp(time()).")";
 			$result = $db->Execute($query, array($new_usertag_id, $name, $text, $description));
 			if ($result)
 				return true;
@@ -188,7 +188,7 @@ final class UserTagOperations
 		}
 		else {
 			$this->_cache = array(); // reset the cache.
-			$query = 'UPDATE '.cms_db_prefix().'userplugins SET code = ?';
+			$query = 'UPDATE '.CMS_DB_PREFIX.'userplugins SET code = ?';
             $parms = array($text);
 			if( $description ) {
 				$query .= ', description = ?';
@@ -211,10 +211,10 @@ final class UserTagOperations
 	 */
 	function RemoveUserTag( $name )
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = 'DELETE FROM '.cms_db_prefix().'userplugins WHERE userplugin_name = ?';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'userplugins WHERE userplugin_name = ?';
 		$result = &$db->Execute($query, array($name));
 
 		$this->_cache = array();
@@ -253,7 +253,7 @@ final class UserTagOperations
 		$row = $this->_get_from_cache($name);
 		$result = FALSE;
 		if( $row ) {
-			$smarty = cmsms()->GetSmarty();
+			$smarty = CmsApp::get_instance()->GetSmarty();
 			$functionname = $this->CreateTagFunction($name);
 			$result = call_user_func_array($functionname, array(&$params, &$smarty));
 		}

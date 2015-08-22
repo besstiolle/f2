@@ -49,28 +49,37 @@ define('CMS_USER_KEY','_userkey_');
 
 global $CMS_INSTALL_PAGE,$CMS_ADMIN_PAGE,$CMS_LOGIN_PAGE,$DONT_LOAD_DB,$DONT_LOAD_SMARTY;
 
-$session_key = substr(md5($dirname), 0, 12);
+$session_name = 'CMSSESSID'.substr(md5($dirname), 0, 12);
 if( !isset($CMS_INSTALL_PAGE) ) {
-  @session_name('CMSSESSID' . $session_key);
-  @ini_set('url_rewriter.tags', '');
-  @ini_set('session.use_trans_sid', 0);
+    @session_name($session_name);
+    @ini_set('url_rewriter.tags', '');
+    @ini_set('session.use_trans_sid', 0);
 }
 
 #Setup session with different id and start it
-if( isset($CMS_ADMIN_PAGE) || isset($CMS_INSTALL_PAGE) && !headers_sent() ) {
-  // admin pages can't be cached... period, at all.. never.
-  @session_cache_limiter('nocache');
-  header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+if( (isset($CMS_ADMIN_PAGE) || isset($CMS_INSTALL_PAGE)) && !headers_sent() ) {
+    // admin pages can't be cached... period, at all.. never.
+    @session_cache_limiter('nocache');
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 }
 else {
-  @session_cache_limiter('public');
+    @session_cache_limiter('public');
 }
 
+if( isset($_COOKIE[$session_name]) ) {
+    // validate the contents of the cookie.
+    if (!preg_match('/^[a-zA-Z0-9,\-]{22,40}$/', $_COOKIE[$session_name]) ) {
+        session_id( uniqid() );
+        session_start();
+        session_regenerate_id();
+    }
+}
 if(!@session_id()) session_start();
 
 // minimum stuff to get started (autoloader needs the cmsms() and the config stuff.
-if( !defined('CONFIG_FILE_LOCATION') ) define('CONFIG_FILE_LOCATION',dirname(__FILE__).'/config.php');
+if( !defined('CONFIG_FILE_LOCATION') ) define('CONFIG_FILE_LOCATION',__DIR__.'/config.php');
 
+require_once($dirname.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'compat.functions.php');
 require_once($dirname.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'classes'.DIRECTORY_SEPARATOR.'class.CmsException.php');
 require_once($dirname.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php');
 require_once($dirname.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php');
@@ -80,19 +89,54 @@ require_once($dirname.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'module.func
 require_once($dirname.DIRECTORY_SEPARATOR.'version.php');
 debug_buffer('done loading required files');
 
-// sanitize $_GET and $_SERVER
-{
-  $sanitize = function(&$value,$key) {
-    $value = preg_replace('/\<\/?script[^\>]*\>/i', '', $value);
-    $value = preg_replace('/javascript\:/i', '', $value);
-  };
-  array_walk_recursive($_GET,$sanitize);
-  array_walk_recursive($_SERVER,$sanitize);
+if( cms_to_bool(ini_get('register_globals')) ) {
+    echo 'FATAL ERROR: For security reasons register_globals must not be enabled for any CMSMS install.  Please adjust your PHP configuration settings to disable this feature.';
+    die();
 }
 
+// sanitize $_GET and $_SERVER
+{
+    $sanitize = function(&$value,$key) {
+        $value = preg_replace('/\<\/?script[^\>]*\>/i', '', $value);
+        $value = str_ireplace('script:', '', $value);
+    };
+    array_walk_recursive($_GET,$sanitize);
+    array_walk_recursive($_SERVER,$sanitize);
+}
+
+#Grab the current configuration
+$_app = CmsApp::get_instance(); // for use in this file only.
+$config = $_app->GetConfig();
+
+// new for 2.0 ... this creates a mechanism whereby items can be cached automatically, and fetched (or calculated) via the use of a callback
+// if the cache is too old, or the cached value has been cleared or not yet been saved.
+$obj = new \CMSMS\internal\global_cachable('schema_version',
+                                           function(){
+                                               $db = \CmsApp::get_instance()->GetDb();
+                                               $query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+                                               return $db->GetOne($query);
+                                  });
+\CMSMS\internal\global_cache::add_cachable($obj);
+$obj = new \CMSMS\internal\global_cachable('latest_content_modification',
+                                           function(){
+                                               $db = \CmsApp::get_instance()->GetDb();
+                                               $query = 'SELECT modified_date FROM '.CmsApp::get_instance()->GetDbPrefix().'content ORDER BY modified date DESC';
+                                               $tmp = $db->GetOne($query);
+                                               return $db->UnixTimeStamp($tmp);
+                                           });
+\CMSMS\internal\global_cache::add_cachable($obj);
+$obj = new \CMSMS\internal\global_cachable('default_content',
+                                           function(){
+                                               $db = \CmsApp::get_instance()->GetDb();
+                                               $query = 'SELECT content_id FROM '.CmsApp::get_instance()->GetDbPrefix().'content WHERE default_content = 1';
+                                               $tmp = $db->GetOne($query);
+                                               return $tmp;
+                                           });
+\CMSMS\internal\global_cache::add_cachable($obj);
+cms_siteprefs::setup();
+
 if( isset($CMS_ADMIN_PAGE) ) {
-  function cms_admin_sendheaders($content_type = 'text/html',$charset = '')
-  {
+  function cms_admin_sendheaders($content_type = 'text/html',$charset = '') {
     if( !$charset ) $charset = get_encoding();
 
     // Date in the past
@@ -126,9 +170,6 @@ if( isset($CMS_ADMIN_PAGE) ) {
 }
 
 
-#Grab the current configuration
-$config = cmsms()->GetConfig();
-
 #Set the timezone
 if( $config['timezone'] != '' ) @date_default_timezone_set(trim($config['timezone']));
 
@@ -136,8 +177,8 @@ if( $config['timezone'] != '' ) @date_default_timezone_set(trim($config['timezon
 if( isset($config['php_memory_limit']) && !empty($config['php_memory_limit'])  ) ini_set('memory_limit',trim($config['php_memory_limit']));
 
 if ($config["debug"] == true) {
-  @ini_set('display_errors',1);
-  @error_reporting(E_ALL);
+    @ini_set('display_errors',1);
+    @error_reporting(E_ALL);
 }
 
 debug_buffer('loading page functions');
@@ -157,12 +198,12 @@ debug_buffer('done loading files');
 #Load them into the usual variables.  This'll go away a little later on.
 if (!isset($DONT_LOAD_DB)) {
   debug_buffer('Initialize Database');
-  cmsms()->GetDb();
+  $_app->GetDb();
   debug_buffer('Done Initializing Database');
 
   // Set a umask
-  $global_umask = get_site_preference('global_umask','');
-  if( $global_umask != '' ) @umask( octdec($global_umask) );
+  $global_umask = cms_siteprefs::get('global_umask','');
+  if( $global_umask != '' ) umask( octdec($global_umask) );
 }
 
 #Fix for IIS (and others) to make sure REQUEST_URI is filled in
@@ -174,7 +215,7 @@ if (!isset($_SERVER['REQUEST_URI'])) {
 #Load all installed module code
 if (! isset($CMS_INSTALL_PAGE)) {
   debug_buffer('','Loading Modules');
-  $modops = cmsms()->GetModuleOperations();
+  $modops = ModuleOperations::get_instance();
   $modops->LoadModules(isset($LOAD_ALL_MODULES), !isset($CMS_ADMIN_PAGE));
   debug_buffer('', 'End of Loading Modules');
 }
@@ -184,13 +225,13 @@ if(isset($CMS_ADMIN_PAGE)) CmsNlsOperations::set_language();
 
 if( !isset($DONT_LOAD_SMARTY) ) {
   debug_buffer('Initialize Smarty');
-  $smarty = cmsms()->GetSmarty();
+  $smarty = $_app->GetSmarty();
   debug_buffer('Done Initialiing Smarty');
-  if ($config['debug'] == true) {
+  if( defined('CMS_DEBUG') && CMS_DEBUG ) {
     $smarty->debugging = true;
     $smarty->error_reporting = 'E_ALL';
   }
-  $smarty->assign('sitename', get_site_preference('sitename', 'CMSMS Site'));
+  $smarty->assign('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
 }
 
 

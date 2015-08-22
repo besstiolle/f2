@@ -16,12 +16,11 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listgroups.php 9695 2014-08-18 18:56:33Z rolf1 $
+#$Id: listgroups.php 9899 2015-04-04 17:27:23Z JoMorg $
 
 $CMS_ADMIN_PAGE=1;
 
 require_once("../include.php");
-require_once(cms_join_path($dirname,'lib','html_entity_decode_utf8.php'));
 require_once("../lib/classes/class.group.inc.php");
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
@@ -119,7 +118,7 @@ if (check_permission($userid, 'Add Groups')) {
 	      echo $themeObject->DisplayImage('icons/system/edit.gif', lang('edit'),'','','systemicon');
 	      echo "</a></td>\n";
 	      if ($onegroup->id != 1 && !$userops->UserInGroup($userid,$onegroup->id)) {
-		echo "<td class=\"icons_wide\"><a href=\"deletegroup.php".$urlext."&amp;group_id=".$onegroup->id."\" onclick=\"return confirm('".cms_html_entity_decode_utf8(lang('deleteconfirm', $onegroup->name),true)."');\">";
+		echo "<td class=\"icons_wide\"><a href=\"deletegroup.php".$urlext."&amp;group_id=".$onegroup->id."\" onclick=\"return confirm('".cms_html_entity_decode(lang('deleteconfirm', $onegroup->name) )."');\">";
 		echo $themeObject->DisplayImage('icons/system/delete.gif', lang('delete'),'','','systemicon');
 		echo "</a></td>\n";
 	      }

@@ -141,8 +141,8 @@ function _get_tpl_urls($tpl_content)
 
 try {
 	// and the work...
-  $the_design = CmsLayoutCollection::load($params['design']);
-  $exporter = new dm_design_exporter($the_design);
+    $the_design = CmsLayoutCollection::load($params['design']);
+    $exporter = new dm_design_exporter($the_design);
 	$xml = $exporter->get_xml();
 
 	// clear any output buffers.
@@ -152,13 +152,13 @@ try {
 	// headers
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/force-download');
-	header('Content-Disposition: attachment; filename='.$the_design->get_name().'.xml');
+	header('Content-Disposition: attachment; filename='.munge_string_to_url($the_design->get_name()).'.xml');
 
 	// output
 	echo $xml;
-  exit();
+    exit();
 }
-catch( CmsException $e ) {
+catch( \Exception $e ) {
   $this->SetError($e->GetMessage());
   $this->RedirectToAdminTab();
 }

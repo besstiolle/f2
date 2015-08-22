@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: misc.functions.php 9756 2014-11-09 17:23:36Z calguy1000 $
+#$Id: misc.functions.php 10030 2015-06-09 15:00:55Z calguy1000 $
 
 /**
  * Miscellaneous support functions
@@ -39,78 +39,80 @@
  */
 function redirect($to)
 {
-  $_SERVER['PHP_SELF'] = null;
+    $_SERVER['PHP_SELF'] = null;
 
-  $schema = 'http';
-  if( cmsms()->is_https_request ) $schema = 'https';
+    $schema = 'http';
+    if( CmsApp::get_instance()->is_https_request ) $schema = 'https';
 
-  $host = $_SERVER['HTTP_HOST'];
-  $components = parse_url($to);
-  if(count($components) > 0) {
-    $to =  (isset($components['scheme']) && startswith($components['scheme'], 'http') ? $components['scheme'] : $schema) . '://';
-    $to .= isset($components['host']) ? $components['host'] : $host;
-    $to .= isset($components['port']) ? ':' . $components['port'] : '';
-    if(isset($components['path'])) {
-      if(in_array(substr($components['path'],0,1),array('\\','/'))) {
-	//Path is absolute, just append.
-	$to .= $components['path'];
-      }
-      //Path is relative, append current directory first.
-      else if (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
-	$to .= (strlen(dirname($_SERVER['PHP_SELF'])) > 1 ?  dirname($_SERVER['PHP_SELF']).'/' : '/') . $components['path'];
-      }
-      else if (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
-	if (endswith($_SERVER['REQUEST_URI'], '/')) {
-	  $to .= (strlen($_SERVER['REQUEST_URI']) > 1 ? $_SERVER['REQUEST_URI'] : '/') . $components['path'];
-	}
-	else {
-	  $dn = dirname($_SERVER['REQUEST_URI']);
-	  if( !endswith($dn,'/') ) $dn .= '/';
-	  $to .= $dn . $components['path'];
-	}
-      }
+    $host = $_SERVER['HTTP_HOST'];
+    $components = parse_url($to);
+    if(count($components) > 0) {
+        $to =  (isset($components['scheme']) && startswith($components['scheme'], 'http') ? $components['scheme'] : $schema) . '://';
+        $to .= isset($components['host']) ? $components['host'] : $host;
+        $to .= isset($components['port']) ? ':' . $components['port'] : '';
+        if(isset($components['path'])) {
+            if(in_array(substr($components['path'],0,1),array('\\','/'))) {
+                //Path is absolute, just append.
+                $to .= $components['path'];
+            }
+            //Path is relative, append current directory first.
+            else if (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
+                $to .= (strlen(dirname($_SERVER['PHP_SELF'])) > 1 ?  dirname($_SERVER['PHP_SELF']).'/' : '/') . $components['path'];
+            }
+            else if (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
+                if (endswith($_SERVER['REQUEST_URI'], '/')) {
+                    $to .= (strlen($_SERVER['REQUEST_URI']) > 1 ? $_SERVER['REQUEST_URI'] : '/') . $components['path'];
+                }
+                else {
+                    $dn = dirname($_SERVER['REQUEST_URI']);
+                    if( !endswith($dn,'/') ) $dn .= '/';
+                    $to .= $dn . $components['path'];
+                }
+            }
+        }
+        $to .= isset($components['query']) ? '?' . $components['query'] : '';
+        $to .= isset($components['fragment']) ? '#' . $components['fragment'] : '';
     }
-    $to .= isset($components['query']) ? '?' . $components['query'] : '';
-    $to .= isset($components['fragment']) ? '#' . $components['fragment'] : '';
-  }
-  else {
-    $to = $schema."://".$host."/".$to;
-  }
+    else {
+        $to = $schema."://".$host."/".$to;
+    }
 
-  session_write_close();
+    session_write_close();
 
-  $debug = false;
-  if( class_exists('CmsApp') ) {
-    $config = cmsms()->GetConfig();
-    $debug = $config['debug'];
-  }
+    // this could be used in install/upgrade routines where config is not set yet
+    // so cannot use constants.
+    $debug = false;
+    if( class_exists('CmsApp') ) {
+        $config = CmsApp::get_instance()->GetConfig();
+        $debug = $config['debug'];
+    }
 
-  if (headers_sent() && !$debug) {
-    // use javascript instead
-    echo '<script type="text/javascript">
+    if (headers_sent() && !$debug) {
+        // use javascript instead
+        echo '<script type="text/javascript">
           <!--location.replace("'.$to.'"); // -->
           </script>
           <noscript>
           <meta http-equiv="Refresh" content="0;URL='.$to.'">
           </noscript>';
-    exit;
-  }
-  else {
-    if ( $debug ) {
-      echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br />";
-      echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br />";
-      echo '<div id="DebugFooter">';
-      foreach (cmsms()->get_errors() as $error) {
-	echo $error;
-      }
-      echo '</div> <!-- end DebugFooter -->';
-      exit();
+        exit;
     }
     else {
-      header("Location: $to");
-      exit();
+        if ( $debug ) {
+            echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br />";
+            echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br />";
+            echo '<div id="DebugFooter">';
+            foreach (CmsApp::get_instance()->get_errors() as $error) {
+                echo $error;
+            }
+            echo '</div> <!-- end DebugFooter -->';
+            exit();
+        }
+        else {
+            header("Location: $to");
+            exit();
+        }
     }
-  }
 }
 
 
@@ -123,7 +125,7 @@ function redirect($to)
  */
 function redirect_to_alias($alias)
 {
-  $manager = cmsms()->GetHierarchyManager();
+  $manager = CmsApp::get_instance()->GetHierarchyManager();
   $node = $manager->sureGetNodeByAlias($alias);
   if( !$node ) {
 	// put mention into the admin log
@@ -150,9 +152,9 @@ function redirect_to_alias($alias)
  */
 function microtime_diff($a, $b)
 {
-  list($a_dec, $a_sec) = explode(" ", $a);
-  list($b_dec, $b_sec) = explode(" ", $b);
-  return $b_sec - $a_sec + $b_dec - $a_dec;
+    list($a_dec, $a_sec) = explode(" ", $a);
+    list($b_dec, $b_sec) = explode(" ", $b);
+    return $b_sec - $a_sec + $b_dec - $a_dec;
 }
 
 
@@ -172,8 +174,8 @@ function microtime_diff($a, $b)
  */
 function cms_join_path()
 {
-  $args = func_get_args();
-  return implode(DIRECTORY_SEPARATOR,$args);
+    $args = func_get_args();
+    return implode(DIRECTORY_SEPARATOR,$args);
 }
 
 
@@ -196,7 +198,7 @@ function cms_htmlentities($val, $param=ENT_QUOTES, $charset="UTF-8", $convert_si
   $val = str_replace( "&"            , "&amp;"         , $val );
   $val = str_replace( "<!--"         , "&#60;&#33;--"  , $val );
   $val = str_replace( "-->"          , "--&#62;"       , $val );
-  $val = preg_replace( "/<script/i"  , "&#60;script"   , $val );
+  $val = str_ireplace( "<script"     , "&#60;script"   , $val );
   $val = str_replace( ">"            , "&gt;"          , $val );
   $val = str_replace( "<"            , "&lt;"          , $val );
   $val = str_replace( "\""           , "&quot;"        , $val );
@@ -214,32 +216,6 @@ function cms_htmlentities($val, $param=ENT_QUOTES, $charset="UTF-8", $convert_si
 
 
 /**
- * Convert a string into UTF-8 entities.
- *
- * @internal
- * @deprecated
- * @param string Input string
- * @return string
- * Rolf: used in admin/listmodules.php
- */
-function cms_utf8entities($val)
-{
-  if ($val == "") return "";
-  $val = str_replace( "&#032;", " ", $val );
-  $val = str_replace( "&"  , "\u0026" , $val );
-  $val = str_replace( ">"  , "\u003E" , $val );
-  $val = str_replace( "<"  , "\u003C" , $val );
-
-  $val = str_replace( "\"" , "\u0022" , $val );
-  $val = str_replace( "!"  , "\u0021" , $val );
-  $val = str_replace( "'"  , "\u0027" , $val );
-
-  return $val;
-}
-
-
-
-/**
  * A function to output a backtrace into the generated log file.
  *
  * @see debug_to_log, debug_bt
@@ -247,7 +223,7 @@ function cms_utf8entities($val)
  */
 function debug_bt_to_log()
 {
-    if( cmsms()->config['debug_to_log'] || (function_exists('check_login') && check_login(TRUE)) ) {
+    if( CmsApp::get_instance()->config['debug_to_log'] || (function_exists('check_login') && check_login(TRUE)) ) {
         $bt=debug_backtrace();
         $file = $bt[0]['file'];
         $line = $bt[0]['line'];
@@ -296,11 +272,11 @@ function debug_bt()
     $bt = array_reverse($bt);
     echo "<pre><dl>\n";
     foreach($bt as $trace) {
-      $file = $trace['file'];
-      $line = $trace['line'];
-      $function = $trace['function'];
-      $args = implode(',', $trace['args']);
-      echo "
+        $file = $trace['file'];
+        $line = $trace['line'];
+        $function = $trace['function'];
+        $args = implode(',', $trace['args']);
+        echo "
         <dt><b>$function</b>($args) </dt>
         <dd>$file on line $line</dd>
 		";
@@ -322,60 +298,60 @@ function debug_bt()
 */
 function debug_display($var, $title="", $echo_to_screen = true, $use_html = true,$showtitle = TRUE)
 {
-  global $starttime;
-  if( !$starttime ) $starttime = microtime();
+    global $starttime;
+    if( !$starttime ) $starttime = microtime();
 
-  ob_start();
+    ob_start();
 
-  if( $showtitle ) {
-    $titleText = "Debug: ";
-    if($title) $titleText = "Debug display of '$title':";
-    $titleText .= '(' . microtime_diff($starttime,microtime()) . ')';
-    if (function_exists('memory_get_usage')) $titleText .= ' - (usage: '.memory_get_usage().')';
+    if( $showtitle ) {
+        $titleText = "Debug: ";
+        if($title) $titleText = "Debug display of '$title':";
+        $titleText .= '(' . microtime_diff($starttime,microtime()) . ')';
+        if (function_exists('memory_get_usage')) $titleText .= ' - (usage: '.memory_get_usage().')';
 
-    $memory_peak = (function_exists('memory_get_peak_usage')?memory_get_peak_usage():'');
-    if( $memory_peak ) $titleText .= ' - (peak: '.$memory_peak.')';
+        $memory_peak = (function_exists('memory_get_peak_usage')?memory_get_peak_usage():'');
+        if( $memory_peak ) $titleText .= ' - (peak: '.$memory_peak.')';
 
-    if ($use_html) {
-      echo "<div><b>$titleText</b>\n";
+        if ($use_html) {
+            echo "<div><b>$titleText</b>\n";
+        }
+        else {
+            echo "$titleText\n";
+        }
     }
-    else {
-      echo "$titleText\n";
-    }
-  }
 
-  if(FALSE == empty($var)) {
-    if ($use_html) echo '<pre>';
-    if(is_array($var)) {
-      echo "Number of elements: " . count($var) . "\n";
-      print_r($var);
+    if(FALSE == empty($var)) {
+        if ($use_html) echo '<pre>';
+        if(is_array($var)) {
+            echo "Number of elements: " . count($var) . "\n";
+            print_r($var);
+        }
+        elseif(is_object($var)) {
+            print_r($var);
+        }
+        elseif(is_string($var)) {
+            if( $use_html ) {
+                print_r(htmlentities(str_replace("\t", '  ', $var)));
+            }
+            else {
+                print_r($var);
+            }
+        }
+        elseif(is_bool($var)) {
+            echo $var === true ? 'true' : 'false';
+        }
+        else {
+            print_r($var);
+        }
+        if ($use_html) echo '</pre>';
     }
-    elseif(is_object($var)) {
-      print_r($var);
-    }
-    elseif(is_string($var)) {
-      if( $use_html ) {
-	print_r(htmlentities(str_replace("\t", '  ', $var)));
-      }
-      else {
-	print_r($var);
-      }
-    }
-    elseif(is_bool($var)) {
-      echo $var === true ? 'true' : 'false';
-    }
-    else {
-      print_r($var);
-    }
-    if ($use_html) echo '</pre>';
-  }
-  if ($use_html) echo "</div>\n";
+    if ($use_html) echo "</div>\n";
 
-  $output = ob_get_contents();
-  ob_end_clean();
+    $output = ob_get_contents();
+    ob_end_clean();
 
-  if($echo_to_screen) echo $output;
-  return $output;
+    if($echo_to_screen) echo $output;
+    return $output;
 }
 
 
@@ -388,7 +364,7 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
  */
 function debug_output($var, $title="")
 {
-  if(cmsms()->config["debug"] == true) debug_display($var, $title, true);
+    if(CmsApp::get_instance()->config["debug"] == true) debug_display($var, $title, true);
 }
 
 
@@ -403,7 +379,7 @@ function debug_output($var, $title="")
  */
 function debug_to_log($var, $title='',$filename = '')
 {
-    if( cmsms()->config['debug_to_log'] || (function_exists('check_login') && check_login(TRUE)) ) {
+    if( CmsApp::get_instance()->config['debug_to_log'] || (function_exists('check_login') && check_login(TRUE)) ) {
         if( $filename == '' ) {
             $filename = TMP_CACHE_LOCATION . '/debug.log';
             $x = @filemtime($filename);
@@ -419,15 +395,15 @@ function debug_to_log($var, $title='',$filename = '')
 
 
 /**
- * Display $var nicely to the cmsms()->errors array if $config['debug'] is set.
+ * Display $var nicely to the CmsApp::get_instance()->errors array if $config['debug'] is set.
  *
  * @param mixed $var
  * @param string $title
  */
 function debug_buffer($var, $title="")
 {
-  $config = cmsms()->GetConfig();
-  if($config["debug"] == true) cmsms()->add_error(debug_display($var, $title, false, true));
+    if( !defined('CMS_DEBUG') || CMS_DEBUG == 0 ) return;
+    CmsApp::get_instance()->add_error(debug_display($var, $title, false, true));
 }
 
 
@@ -442,8 +418,8 @@ function debug_buffer($var, $title="")
  */
 function debug_sql($str, $newline = false)
 {
-  $config = cmsms()->GetConfig();
-  if($config["debug"] == true) cmsms()->add_error(debug_display($str, '', false, true));
+    if( !defined('CMS_DEBUG') || CMS_DEBUG == 0 ) return;
+    CmsApp::get_instance()->add_error(debug_display($str, '', false, true));
 }
 
 
@@ -900,12 +876,12 @@ function can_admin_upload()
   # and the uploads and modules directory.  if they all match, then we
   # can upload files.
   # if safe mode is off, then we just have to check the permissions.
-  $config = cmsms()->GetConfig();
-  $file_index = $config['root_path'].DIRECTORY_SEPARATOR.'index.php';
-  $file_moduleinterface = $config['root_path'].DIRECTORY_SEPARATOR.
+  $config = CmsApp::get_instance()->GetConfig();
+  $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
+  $file_moduleinterface = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.
     $config['admin_dir'].DIRECTORY_SEPARATOR.'moduleinterface.php';
   $dir_uploads = $config['uploads_path'];
-  $dir_modules = $config['root_path'].DIRECTORY_SEPARATOR.'modules';
+  $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
 
   $stat_index = @stat($file_index);
   $stat_moduleinterface = @stat($file_moduleinterface);
@@ -988,7 +964,7 @@ function stack_trace()
  */
 function cms_move_uploaded_file( $tmpfile, $destination )
 {
-   $config = cmsms()->GetConfig();
+   $config = CmsApp::get_instance()->GetConfig();
 
    if( !@move_uploaded_file( $tmpfile, $destination ) ) return false;
    @chmod($destination,octdec($config['default_upload_permission']));
@@ -1101,11 +1077,11 @@ function is_email( $email, $checkDNS=false )
  */
 function get_secure_param()
 {
-  $urlext = '?';
-  $str = strtolower(ini_get('session.use_cookies'));
-  if( $str == '0' || $str == 'off' ) $urlext .= htmlspecialchars(SID).'&';
-  $urlext .= CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-  return $urlext;
+    $urlext = '?';
+    $str = strtolower(ini_get('session.use_cookies'));
+    if( $str == '0' || $str == 'off' ) $urlext .= htmlspecialchars(SID).'&';
+    $urlext .= CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+    return $urlext;
 }
 
 
@@ -1122,7 +1098,7 @@ function cms_to_bool($str)
   if( is_numeric($str) ) return ((int)$str != 0)?TRUE:FALSE;
 
   $str = strtolower($str);
-  if( $str == '1' || $str == 'y' || $str == 'yes' || $str == 'true' ) return TRUE;
+  if( $str == '1' || $str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on' ) return TRUE;
   return FALSE;
 }
 
@@ -1172,51 +1148,53 @@ function cms_get_jquery($exclude = '',$ssl = null,$cdn = false,$append = '',$cus
   $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/jquery.json-2.4.min.js');
   $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.2.1.min.js');
 
-  if( cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
-    global $CMS_LOGIN_PAGE;
-    if( isset($_SESSION[CMS_USER_KEY]) && !isset($CMS_LOGIN_PAGE) ) {
-      $url = $config['admin_url'];
-      $scripts['cms_js_setup'] = array('local'=>$url.'/cms_js_setup.php?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
-    }
-    $scripts['cms_admin'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cms_admin.js');
-    $scripts['cms_dirtyform'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_dirtyform.js');
-    $scripts['cms_lock'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_lock.js');
-    $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
-	$scripts['ui_touch_punch'] = array('local'=>$basePath.'/lib/jquery/js/jquery.ui.touch-punch.min.js');
+  if( CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
+      global $CMS_LOGIN_PAGE;
+      if( isset($_SESSION[CMS_USER_KEY]) && !isset($CMS_LOGIN_PAGE) ) {
+          $url = $config['admin_url'];
+          $scripts['cms_js_setup'] = array('local'=>$url.'/cms_js_setup.php?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
+      }
+      $scripts['cms_admin'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cms_admin.js');
+      $scripts['cms_dirtyform'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_dirtyform.js');
+      $scripts['cms_lock'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_lock.js');
+      $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
+      $scripts['ui_touch_punch'] = array('local'=>$basePath.'/lib/jquery/js/jquery.ui.touch-punch.min.js');
   }
 
   // Check if we need to exclude some script
   if(!empty($exclude)) {
-    $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
-    foreach($exclude_list as $one) {
-      // find a match
-      $found = null;
-      foreach( $scripts as $key => $rec ) {
-	if( strtolower($one) == strtolower($key) ) {
-	  $found = $key;
-	  break;
-	}
-	if( isset($rec['aliases']) && is_array($rec['aliases']) ) {
-	  foreach( $rec['aliases'] as $alias ) {
-	    if( strtolower($one) == strtolower($alias) ) {
-	      $found = $key;
-	      break;
-	    }
-	  }
-	  if( $found ) break;
-	}
-      }
+      $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
+      foreach($exclude_list as $one) {
+          $one = trim(strtolower($one));
 
-      if( $found ) unset($scripts[$found]);
-    }
+          // find a match
+          $found = null;
+          foreach( $scripts as $key => $rec ) {
+              if( strtolower($one) == strtolower($key) ) {
+                  $found = $key;
+                  break;
+              }
+              if( isset($rec['aliases']) && is_array($rec['aliases']) ) {
+                  foreach( $rec['aliases'] as $alias ) {
+                      if( strtolower($one) == strtolower($alias) ) {
+                          $found = $key;
+                          break;
+                      }
+                  }
+                  if( $found ) break;
+              }
+          }
+
+          if( $found ) unset($scripts[$found]);
+      }
   }
 
   // let them add scripts to the end ie: a jQuery plugin
   if(!empty($append)) {
-    $append_list = explode(",", trim(str_replace(' ','',$append)));
-    foreach($append_list as $key => $item) {
-      $scripts['user_'+$key] = array('local'=>$item);
-    }
+      $append_list = explode(",", trim(str_replace(' ','',$append)));
+      foreach($append_list as $key => $item) {
+          $scripts['user_'+$key] = array('local'=>$item);
+      }
   }
 
   // Output
@@ -1224,14 +1202,14 @@ function cms_get_jquery($exclude = '',$ssl = null,$cdn = false,$append = '',$cus
   $fmt_js = '<script type="text/javascript" src="%s"></script>';
   $fmt_css = '<link rel="stylesheet" type="text/css" href="%s"/>';
   foreach($scripts as $script) {
-    $url_js = $script['local'];
-    if( $cdn && isset($script['cdn']) ) $url_js = $script['cdn'];
-    $output .= sprintf($fmt_js,$url_js)."\n";
-    if( isset($script['css']) && $script['css'] != '' ) {
-      $url_css = $script['css'];
-      if( $cdn && isset($script['css_cdn']) ) $url_css = $script['css_cdn'];
-      if( $include_css ) $output .= sprintf($fmt_css,$url_css)."\n";
-    }
+      $url_js = $script['local'];
+      if( $cdn && isset($script['cdn']) ) $url_js = $script['cdn'];
+      $output .= sprintf($fmt_js,$url_js)."\n";
+      if( isset($script['css']) && $script['css'] != '' ) {
+          $url_css = $script['css'];
+          if( $cdn && isset($script['css_cdn']) ) $url_css = $script['css_cdn'];
+          if( $include_css ) $output .= sprintf($fmt_css,$url_css)."\n";
+      }
   }
   return $output;
 }

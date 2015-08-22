@@ -27,7 +27,7 @@
 /**
  * Include group class definition
  */
-include_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'class.group.inc.php');
+include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.group.inc.php');
 
 /**
  * A singleton Class for doing group related functions.
@@ -72,9 +72,9 @@ final class GroupOperations
 	 */
 	public function LoadGroups()
 	{
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$result = array();
-		$query = "SELECT group_id, group_name, group_desc, active FROM ".cms_db_prefix()."groups ORDER BY group_id";
+		$query = "SELECT group_id, group_name, group_desc, active FROM ".CMS_DB_PREFIX."groups ORDER BY group_id";
 		$dbresult = $db->Execute($query);
 		while ($dbresult && $row = $dbresult->FetchRow()) {
 			$onegroup = new Group();
@@ -97,9 +97,9 @@ final class GroupOperations
 	public function &LoadGroupByID($id)
 	{
 		$result = false;
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
-		$query = "SELECT group_id, group_name, group_desc, active FROM ".cms_db_prefix()."groups WHERE group_id = ? ORDER BY group_id";
+		$query = "SELECT group_id, group_name, group_desc, active FROM ".CMS_DB_PREFIX."groups WHERE group_id = ? ORDER BY group_id";
 		$dbresult = $db->Execute($query, array($id));
 
 		while ($dbresult && $row = $dbresult->FetchRow()) {
@@ -123,15 +123,15 @@ final class GroupOperations
 	public function InsertGroup($group)
 	{
 		$result = -1;
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
-		$query = 'SELECT group_id FROM '.cms_db_prefix().'groups WHERE group_name = ?';
+		$query = 'SELECT group_id FROM '.CMS_DB_PREFIX.'groups WHERE group_name = ?';
 		$tmp = $db->GetOne($query,array($group->name));
 		if( $tmp ) return $result;
 
-		$new_group_id = $db->GenID(cms_db_prefix()."groups_seq");
+		$new_group_id = $db->GenID(CMS_DB_PREFIX."groups_seq");
 		$time = $db->DBTimeStamp(time());
-		$query = "INSERT INTO ".cms_db_prefix()."groups (group_id, group_name, group_desc, active, create_date, modified_date)
+		$query = "INSERT INTO ".CMS_DB_PREFIX."groups (group_id, group_name, group_desc, active, create_date, modified_date)
                   VALUES (?,?,?,?,".$time.", ".$time.")";
 		$dbresult = $db->Execute($query, array($new_group_id, $group->name, $group->description, $group->active));
 		if ($dbresult !== false) $result = $new_group_id;
@@ -148,14 +148,14 @@ final class GroupOperations
 	public function UpdateGroup($group)
 	{
 		$result = false;
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
-		$query = 'SELECT group_id FROM '.cms_db_prefix().'groups WHERE group_name = ? AND group_id != ?';
+		$query = 'SELECT group_id FROM '.CMS_DB_PREFIX.'groups WHERE group_name = ? AND group_id != ?';
 		$tmp = $db->GetOne($query,array($group->name,$group->id));
 		if( $tmp ) return $result;
 
 		$time = $db->DBTimeStamp(time());
-		$query = "UPDATE ".cms_db_prefix()."groups SET group_name = ?, group_desc = ?, active = ?, modified_date = ".$time." WHERE group_id = ?";
+		$query = "UPDATE ".CMS_DB_PREFIX."groups SET group_name = ?, group_desc = ?, active = ?, modified_date = ".$time." WHERE group_id = ?";
 		$dbresult = $db->Execute($query, array($group->name, $group->description, $group->active, $group->id));
 		if ($dbresult !== false) $result = true;
 
@@ -171,15 +171,15 @@ final class GroupOperations
 	public function DeleteGroupByID($id)
 	{
 		$result = false;
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
-		$query = 'DELETE FROM '.cms_db_prefix().'user_groups where group_id = ?';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'user_groups where group_id = ?';
 		$dbresult = $db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".cms_db_prefix()."group_perms where group_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."group_perms where group_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".cms_db_prefix()."groups where group_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."groups where group_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		if ($dbresult !== false) $result = true;
@@ -202,8 +202,8 @@ final class GroupOperations
 		if( $groupid == 1 ) return TRUE;
 
 		if( !isset($this->_perm_cache) || !is_array($this->_perm_cache) || !isset($this->_perm_cache[$groupid]) ) {
-			$db = cmsms()->GetDb();
-			$query = 'SELECT permission_id FROM '.cms_db_prefix().'group_perms WHERE group_id = ?';
+			$db = CmsApp::get_instance()->GetDb();
+			$query = 'SELECT permission_id FROM '.CMS_DB_PREFIX.'group_perms WHERE group_id = ?';
 			$dbr = $db->GetCol($query,array((int)$groupid));
 			if( is_array($dbr) && count($dbr) ) $this->_perm_cache[$groupid] = $dbr;
 		}
@@ -223,13 +223,13 @@ final class GroupOperations
 		if( $permid < 1 ) return;
 		if( $groupid <= 1 ) return;
 
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
-		$new_id = $db->GenId(cms_db_prefix().'group_perms_seq');
+		$new_id = $db->GenId(CMS_DB_PREFIX.'group_perms_seq');
 		if( !$new_id ) return;
 
 		$now = $db->DbTimeStamp(time());
-		$query = 'INSERT INTO '.cms_db_prefix()."group_perms (group_perm_id,group_id,permission_id,create_date,modified_date)
+		$query = 'INSERT INTO '.CMS_DB_PREFIX."group_perms (group_perm_id,group_id,permission_id,create_date,modified_date)
                   VALUES (?,?,?,$now,$now)";
  		$dbr = $db->Execute($query,array($new_id,$groupid,$permid));
 		unset($this->_perm_cache);
@@ -247,7 +247,7 @@ final class GroupOperations
 		if( $permid < 1 ) return;
 		if( $groupid <= 1 ) return;
 
-		$query = 'DELETE FROM '.cms_db_prefix().'group_perms WHERE group_id = ? AND perm_id = ?';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'group_perms WHERE group_id = ? AND perm_id = ?';
 		$dbr = $db->Execute($query,array($groupid,$permid));
 		unset($this->_perm_cache);
 	}

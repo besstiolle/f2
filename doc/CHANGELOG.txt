@@ -99,7 +99,70 @@ ModuleManager
   - Now shows summary of releases for a specific module
   - Visual indicators for stale and new modules
 
+
+Version 1.12 - Pohnpei
+----------------------------------
+Core - General
+  - Now require that register_globals be OFF. This may generate errors for some sites, you MUST change their PHP config if register_globals is on! [Security fix]
+  - Smarty template security fix
+  - Replace stub file for function.process_pagedata.php
+  - Fixes Admin homepage issue (Note: current homepage must be reset!)
+  - Adds the CmsAdminUtils class (new utility class for Admin requests). Currently with two static methods
+  - Fixes to HTML entity decoding
+  - PHP 5.2.x compatibility issues
+  - Remove the html_entity_decode_utf8 function (should only have been used in the core). We now have one standard cms_html_entity_decode function
+  - Minor fix to {cms_selflink}
+  - Remove some extra whitespace from editcontent and edittemplate
+  - Increase Image Manager height
+  - Fixes issue with French locale string
+  - Fixes #9598 - Issues with cancel button in changegroupperm and changegroupassign
+
+News
+  - Remove {eval} from factory default display templates (will not effect existing installs) [Security fix]
+  - Fixes #10129 - DoS by specifying extra-large pagelimit (now maximum of 1000) [Security fix]
+  - Fixes #10452 - Browsecat counting articles that do not start yet
+
+
+Version 1.11.13 - Baquerizo Moreno 
+----------------------------------
+Core - General
+  - Minor fix to index.php wrt regular expressions
+  - Minor fix to cms_url class
+  - Fixes path disclosure vulnerability in page functions
+  - Fixes minor XSS issue in add bookmark
+  - Adds minor casts and type safeness in change group permissions
+
+News - 2.15
+  - Security feature, now the fesubmit action (which is still deprecated) must be explicitly enabled in the News module options
+  - Fixes XSS issues in the News module fesubmit action
   
+MicroTiny
+  - Improvements to URL handling when inserting links and images
+
+
+Version 1.11.12 - Seymour Norte
+--------------------------------
+Core - General
+  - Fixes ShowMessage() and ShowErrors() when using the NCleanGrey Admin theme
+  - now determine SSL requests in a centralized, and consistent manner
+  - dynamic root_url calculations now correctly determine schema
+  - Using HTTPS by default now works for new pages
+  - Minor fix for default content type selection when loading an object
+  - Rationalize HTTPS request detection
+  - Adds a new 403 exception
+  - Adds a new method IsPermitted in the Content base class
+  - Ensure that 404 and 403 errors do not cache
+  - Fixes to caching of block plugins
+  - Fixes to caching of content blocks on non cachable pages
+  - now set a global variable CMSMS_GENERATING_XML when generating an XML file
+
+Core - MicroTiny
+  - Improvements to URL generation
+
+Core - Bug Reports
+  - #10170 Incorrect setting for session_cache_limiter() in include.php
+
+
 Version 1.11.11 - San Cristobal
 -------------------------------
 Core - General

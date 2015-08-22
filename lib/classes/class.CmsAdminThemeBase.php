@@ -203,13 +203,12 @@ abstract class CmsAdminThemeBase
 	private function _fix_url_userkey($url)
 	{
 		$newurl = $url;
-		$config = cmsms()->GetConfig();
 		if( strpos($url,CMS_SECURE_PARAM_NAME) !== FALSE ) {
 			$from = '/'.CMS_SECURE_PARAM_NAME.'=[a-zA-Z0-9]{16}/i';
 			$to = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 			$newurl = preg_replace($from,$to,$url);
 		}
-		elseif( startswith($url,$config['root_url']) || !startswith($url,'http') ) {
+		elseif( startswith($url,CMS_ROOT_URL) || !startswith($url,'http') ) {
 			$prefix = '?';
 			if( strpos($url,'?') !== FALSE ) $prefix = '&amp;';
 			$newurl .= $prefix.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
@@ -309,15 +308,14 @@ abstract class CmsAdminThemeBase
 
 				// find an icon for this thing.
 				if( $obj->icon == '' ) {
-					$config = cmsms()->GetConfig();
 					$tmp = array("modules/{$key}/images/icon.gif",
 								 "modules/{$key}/icons/icons.gif",
 								 "modules/{$key}/images/icon.png",
 								 "modules/{$key}/icons/icons.png");
 					foreach( $tmp as $one ) {
-						$fn = cms_join_path($config['root_path'],$one);
-						if( file_exists($fn) ) {
-							$obj->icon = $config['root_url'].'/'.$one;
+						$fn = cms_join_path(CMS_ROOT_PATH,$one);
+						if( is_file($fn) ) {
+							$obj->icon = CMS_ROOT_URL.'/'.$one;
 							break;
 						}
 					}
@@ -367,9 +365,9 @@ abstract class CmsAdminThemeBase
         $this->_perms['sitePrefPerms'] = check_permission($this->userid, 'Modify Site Preferences') |
             (isset($this->_sectionCount['preferences']) && $this->_sectionCount['preferences'] > 0);
         $this->_perms['adminPerms'] = $this->_perms['sitePrefPerms'] |
-            (isset($this->_sectionCount['admin']) && $this->_sectionCount['admin'] > 0);
+            (isset($this->_sectionCount['siteadmin']) && $this->_sectionCount['siteadmin'] > 0);
         $this->_perms['siteAdminPerms'] = $this->_perms['sitePrefPerms'] |
-			$this->_perms['adminPerms'] | (isset($this->_sectionCount['admin']) && $this->_sectionCount['admin'] > 0);
+			$this->_perms['adminPerms'] | (isset($this->_sectionCount['siteadmin']) && $this->_sectionCount['siteadmin'] > 0);
 
 		// extensions
         $this->_perms['codeBlockPerms'] = check_permission($this->userid, 'Modify User-defined Tags');
@@ -405,7 +403,6 @@ abstract class CmsAdminThemeBase
 		// note: it would be interesting if we could cache these menuItems in the session
 		// then clear this data when the cache is cleared (for when modules become available)
 
-		$config = cmsms()->GetConfig();
 		debug_buffer('before populate admin navigation');
 		if( $subtitle ) $this->_subtitle = $subtitle;
 
@@ -418,7 +415,7 @@ abstract class CmsAdminThemeBase
 		$items['main'] = array('url'=>'index.php','parent'=>-1,'title'=>'CMS','priority'=>1,'description'=>'','show_in_menu'=>true);
 		$items['home'] = array('url'=>'index.php','parent'=>'main','priority'=>1,'title'=>$this->_FixSpaces(lang('home')),
 							   'description'=>'','show_in_menu'=>true);
-		$items['viewsite'] = array('url'=>$config['root_url'].'/index.php','parent'=>'main',
+		$items['viewsite'] = array('url'=>CMS_ROOT_URL.'/index.php','parent'=>'main',
 								   'title'=>$this->_FixSpaces(lang('viewsite')),'type'=>'external','priority'=>2,
 								   'description'=>'','show_in_menu'=>true, 'target'=>'_blank');
 		$items['logout'] = array('url'=>'logout.php','parent'=>'main','title'=>$this->_FixSpaces(lang('logout')),'priority'=>3,
@@ -558,7 +555,6 @@ abstract class CmsAdminThemeBase
 		debug_buffer('before system modules');
 
 		// add in all of the 'system' modules next
-		$gCms = cmsms();
 		$moduleops = ModuleOperations::get_instance();
 		// todo: cleanup
 		foreach ($this->_menuItems as $sectionKey=>$sectionArray) {
@@ -814,7 +810,7 @@ abstract class CmsAdminThemeBase
 	 */
 	protected function get_admin_navigation()
 	{
-		$smarty = cmsms()->GetSmarty();
+		$smarty = CmsApp::get_instance()->GetSmarty();
 		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY]);
 		$this->_populate_admin_navigation();
 		return $this->_menuItems;
@@ -930,7 +926,7 @@ abstract class CmsAdminThemeBase
 	 */
 	public function get_bookmarks($pure = FALSE)
 	{
-		$bookops = cmsms()->GetBookmarkOperations();
+		$bookops = CmsApp::get_instance()->GetBookmarkOperations();
 		$marks = array_reverse($bookops->LoadBookmarks($this->userid));
 
 		if( !$pure ) {
@@ -1045,8 +1041,8 @@ abstract class CmsAdminThemeBase
 				$imageName = substr($imageName,strrpos($imageName,'/')+1);
 			}
 
-			$config = cmsms()->GetConfig();
-			$str = dirname($config['root_path'].'/'.$config['admin_dir']."/themes/{$this->themeName}/images/{$imagePath}{$imageName}");
+			$config = CmsApp::get_instance()->GetConfig();
+			$str = dirname(CMS_ROOT_PATH.'/'.$config['admin_dir']."/themes/{$this->themeName}/images/{$imagePath}{$imageName}");
 			if (file_exists("{$str}/{$imageName}")) {
 				$str = "themes/{$this->themeName}/images/{$imagePath}{$imageName}";
 				$this->_imageLink[$imageName] = $str;
@@ -1123,7 +1119,7 @@ abstract class CmsAdminThemeBase
 	 */
 	static public function GetAvailableThemes()
 	{
-		$config = cmsms()->GetConfig();
+		$config = CmsApp::get_instance()->GetConfig();
 
 		$files = glob(cms_join_path($config['admin_path'],'themes').'/*');
 		if( is_array($files) && count($files) ) {
@@ -1155,7 +1151,7 @@ abstract class CmsAdminThemeBase
 			self::$_instance = new $name;
 		}
 		else {
-			$gCms = cmsms();
+			$gCms = CmsApp::get_instance();
 			$config = $gCms->GetConfig();
 			$themeObjName = $name."Theme";
 			$fn = $config['admin_path']."/themes/$name/{$themeObjName}.php";
@@ -1224,54 +1220,78 @@ abstract class CmsAdminThemeBase
 	}
 
 
-	/**
-	 * Returns a select list of the pages in the system for use in
-	 * various admin pages.
+    /**
+	 * Return an array of admin pages, suitable for use in a dropdown.
 	 *
-	 * @param string $name - The html name of the select box
-	 * @param string $selected - If a matching id is found in the list, that item is marked as selected.
-	 * @param string $id - The html id attribute for the select box.
-	 * @return string The select list of pages
+	 * @internal
+	 * @since 1.12
+	 * @param bool $none A flag indicating wether 'none' should be the first option.
+	 * @return array The keys of the array are langified strings to display to the user.  The values are URLS.
 	 */
-	public function GetAdminPageDropdown($name,$selected,$id = '')
+    public function GetAdminPages($none = TRUE)
 	{
 		$opts = array();
-		$opts[ucfirst(lang('none'))] = '';
+		if( $none ) $opts[ucfirst(lang('none'))] = '';
 
 		$depth = 0;
 		$menuItems = $this->get_admin_navigation();
 		foreach( $menuItems as $sectionKey=>$menuItem ) {
-			if( $menuItem['parent'] != -1 ) continue;
-			if( !$menuItem['show_in_menu'] || strlen($menuItem['url']) < 1 ) continue;
+			if( $menuItem['parent'] != -1 ) continue; // only parent pages
+			if( !$menuItem['show_in_menu'] || strlen($menuItem['url']) < 1 ) continue; // only visible stuff
 
-			$opts[$menuItem['title']] = $menuItem['url'];
+			$opts[$menuItem['title']] = CmsAdminUtils::get_generic_url($menuItem['url']);
 
-			if( is_array($menuItem['children']) &&
-				count($menuItem['children']) ) {
+			if( is_array($menuItem['children']) && count($menuItem['children']) ) {
 				foreach( $menuItem['children'] as $thisChild ) {
-					if( $thisChild == 'home' || $thisChild == 'logout' ||
-						$thisChild == 'viewsite') {
+					if( $thisChild == 'home' || $thisChild == 'logout' || $thisChild == 'viewsite') {
 						continue;
 					}
 
 					$menuChild = $menuItems[$thisChild];
-					if( !$menuChild['show_in_menu'] || strlen($menuChild['url']) < 1 ) continue;
+					if( !$menuChild['show_in_menu'] || strlen($menuChild['url']) < 1 ) {
+						continue;
+					}
 
 					//$opts['&nbsp;&nbsp;'.$menuChild['title']] = cms_htmlentities($menuChild['url']);
-					$opts['&nbsp;&nbsp;'.$menuChild['title']] = $menuChild['url'];
+					$url = $menuChild['url'];
+					$url = CmsAdminUtils::get_generic_url($url);
+					$opts['&nbsp;&nbsp;'.$menuChild['title']] = $url;
 				}
 			}
 		}
+		return $opts;
+	}
 
-		$atext = '';
-		if( $id != '' ) $atext = ' id="'.trim($id).'"';
-		$output = '<select'.$atext.' name="'.$name.'">'."\n";
+	/**
+	 * Returns a select list of the pages in the system for use in
+	 * various admin pages.
+	 *
+	 * @internal
+	 * @param string $name - The html name of the select box
+	 * @param string $selected - If a matching id is found in the list, that item
+	 *                           is marked as selected.
+	 * @return string The select list of pages
+	 */
+	public function GetAdminPageDropdown($name,$selected,$id = '')
+	{
+		$opts = $this->GetAdminPages();
+
+        $attrs = array('name'=>trim((string)$name));
+        if( $id ) $attrs['id'] = trim((string)$id);
+        $output = '<select ';
+        foreach( $attrs as $key => $val ) {
+            $output .= ' '.$key.'='.$val;
+        }
+        $output .= '>';
+
 		foreach( $opts as $key => $value ) {
 			if( $value == $selected ) {
-				$output .= sprintf("<option selected=\"selected\" value=\"%s\">%s</option>\n",$value,$key);
+				$output .= sprintf("<option selected=\"selected\" value=\"%s\">%s</option>\n",
+								   $value,$key);
 			}
 			else {
-				$output .= sprintf("<option value=\"%s\">%s</option>\n",$value,$key);
+				$output .= sprintf("<option value=\"%s\">%s</option>\n",
+								   $value,$key);
 			}
 		}
 		$output .= '</select>'."\n";

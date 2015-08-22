@@ -52,7 +52,7 @@ $lang['help_function_admin_icon'] = '<h3>Que fait cette balise ?</h3>
   <li>id - <em>(option)</em> - Un attribut optionnel Id pour la balise img.</li>
   <li>title - <em>(option)</em> - Un attribut optionnel de titre pour la balise img.</li>
   <li>accesskey - <em>(option)</em> - Attribut optionnel "accesskey" pour la balise img.</li>
-  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>{admin_icon icon=\'edit.gif\' class=\'editicon\'}</code></pre>';
@@ -65,7 +65,7 @@ $lang['help_function_cms_action_url'] = '<h3>Que fait cette balise ?</h3>
   <li>returnid - <em>(option)</em> - Entier  (integer) PageId pour afficher les résultats de l\'action. Ce paramètre n\'est pas nécessaire si l\'action doit être affiché sur la page courante, ou si l\'URL est destinée à une action d\'administration depuis une action d\'administration.</li>
   <li>mid - <em>(option)</em> - Id de l\'action du module. Par défaut, c\'est "m1_" pour des actions d\'administration, et "cntnt01" pour les actions sur le site Web (frontend).</li>
   <li>forjs - <em>(option)</em> - Entier (integer) facultatif qui indique que l\'URL générée doit être adaptée pour une utilisation en JavaScript.</li>
-  <li>assign - <em>(option)</em> -  Affecte (Assigne)la sortie URL de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> -  Affecte (Assigne)la sortie URL de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <p><strong>Note :</strong> Tous les autres paramètres qui ne sont pas acceptés par ce plugin sont automatiquement transmis à l\'action du module par l\'URL générée.</p>
 <h3>Exemple :</h3>
@@ -84,7 +84,7 @@ $lang['help_function_cms_admin_user'] = '<h3>Que fait cette balise ?</h3>
       <li>fullname - donner le nom complet de l\'UID indiqué.</li>
     </ul>
   </li>
-  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>{cms_admin_user uid=1 mode=email}</code></pre>';
@@ -92,7 +92,7 @@ $lang['help_function_cms_get_language'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise retourne le nom du langage courant CMSMS™. La langue est utilisée pour les chaînes de traduction et de mise en forme de la date.</p>
 <h3>Comment l\'utiliser ?</h3>
 <ul>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_cms_help'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est un plugin d\'administration uniquement, utilisé pour générer un lien qui lorsqu\'il est cliqué va afficher une aide contextuelle pour un élément particulier.</p>
@@ -102,7 +102,7 @@ $lang['help_function_cms_help'] = '<h3>Que fait cette balise ?</h3>
   <li>key - <strong>requis string</strong> - La deuxième partie d\'une clé unique pour identifier la chaîne d\'aide à afficher. C\'est généralement la clé du fichier de langue appropriée.</li>
   <li>realm - <em>(option string)</em> - La première partie d\'une clé unique pour identifier la chaîne d\'aide. Si ce paramètre n\'est pas précisé et si ce plugin est appelé à partir d\'une action de module alors le nom du module en cours est utilisé. Si aucun nom de module ne peut être trouvé alors "help" utilise la langue utilisateur.</li>
   <li>title - <em>(option string)</em> - Le titre de la fenêtre Aide</ li>
-<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>{cms_help key2=\'help_field_username\' title=$foo}</code></pre>';
@@ -112,14 +112,14 @@ $lang['help_function_cms_init_editor'] = '<h3>Que fait cette balise ?</h3>
 <p>La première chose que vous devez faire est de sélectionner l\'éditeur WYSIWYG à utiliser sur le site Web (frontend),dans la page "Administration du site/Paramètres globaux/Paramètres généraux". Ensuite si vous utilisez l\'éditeur WYSIWYG sur de nombreuses pages, il peut être préférable de placer la balise {cms_init_editor} directement dans le gabarit des page. Si vous avez besoin de l\'éditeur WYSIWYG dans un nombre limité de pages, vous pouvez juste placer la balise dans la page par l\'onglet Options "Métadonnées spécifiques pour cette page"</p>
 <h3>Quels paramètres ?</h3>
 <ul>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_cms_lang_info'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise retourne un objet contenant les informations sur la langue sélectionné dont  CMSMS™ dispose. Cela peut inclure des informations de localisation, les codages, la langue, alias, etc...</p>
 <h3>Comment l\'utiliser ?</h3>
 <ul>
 	<li><em>(option)</em> lang - La langue dans laquelle retourner les informations. Si le paramètre "lang" n\'est pas spécifié alors l\'information pour le langage courant CMSMS™ est utilisé.</li>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre>{cms_lang_info assign=\'nls\'}{$nls->locale()}</pre>
@@ -137,13 +137,24 @@ $lang['help_function_cms_pageoptions'] = '<h3>Que fait cette balise ?</h3>
   </ul>
 <h3>Exemple :</h3>
 <pre><code><select name="{$actionid}pagenum">{cms_pageoptions numpages=50 curpage=14}</select></code></pre>';
+$lang['help_function_share_data'] = '<h3>Que fait cette balise ?</h3>
+ 	<p>Cette balise permet de copier une ou plusieurs variables Smarty actives vers le parent ou pour une étendue plus globale.</p>
+ 	<h3>Quels paramètres ?</h3>
+ 	<ul>
+ 	<li>scope - <em>(option string)</em> - La portée de la cible pour copier les variables. Les valeurs possibles sont "parent" <em>(par défaut)</em> ou "global" pour copier les données vers la variable Smarty pour une utilisation ultérieure dans toute la page.</li>
+ 	<li>vars - <strong>requis mixed</strong> - Soit un tableau de "string" des noms de variables, soit une liste de "string" de noms de variables séparés par des virgules.</li>
+ 	</ul>
+ 	<h3>Exemple :</h3>
+ 	<pre><code>{share_data scope=global data=\'title,canonical\'}</code></pre>
+ 	<h3>Note :</h3>
+ 	<p>Cette balise n\'acceptera pas de "array accessors" ou "object members" comme noms de variable.  Exemple : <code>{$foo[1]}</code> ou <code>{$foo->bar}</code> ne fonctionnera pas.</p>';
 $lang['help_function_cms_yesno'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est un plugin simple, utilisé dans la génération de formulaire pour créer un ensemble d\'options < select > représentant un choix Oui/Non.</p>
 <p>Ce plugin va traduire le choix Oui/Non en une valeur préalablement choisie.</p>
 <h3>Quels paramètres ?</h3>
 <ul>
   <li>selected - <em>(option integer)</em> - soit 0 <em>(no)</em> ou 1 <em>(yes)</em></li>
-  <li>assign - <em>(option string)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option string)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>< select name="{$actionid}opt" >{cms_yesno selected=$opt}< /select ></code></pre>';
@@ -152,7 +163,7 @@ Une balise pour tester si un module donné (par son nom) est installé
 <h3>Comment l\'utiliser ?</h3>
 <ul>
 	<li><strong>(requis)</strong> module - (string) Le nom du module.</li>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 {module_available module=\'News\' assign=\'havenews\'}{if \$havenews}{cms_module module=News}{/if}
@@ -174,7 +185,7 @@ $lang['help_function_browser_lang'] = '<h3>Que fait cette balise ?</h3>
 <ul>
  	<li><strong>(requis)</strong> accepted  - Une virgule comme séparateur de liste pour les deux caractères de noms de langues acceptées.</li>
 	<li><em>(option)</em> default - La langue par défaut, si aucune langue acceptée n\'a été prise en charge par le navigateur. "en" est utilisée si aucune valeur n\'est spécifiée.</li>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée. Si non spécifié les résultats de cette fonction sont retournés.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée. Si non spécifié les résultats de cette fonction sont retournés.</li>
 </ul>';
 $lang['help_function_content_module'] = '<h3>Que fait cette balise ?</h3>
 <p>Ce type de bloc de contenu permet d\'interagir avec différents modules pour créer des blocs de contenu différents.</p>
@@ -188,7 +199,7 @@ $lang['help_function_content_module'] = '<h3>Que fait cette balise ?</h3>
  	 <li><em>(option)</em> label - Un label pour le bloc de contenu pour une utilisation lors de l\'édition de la page.</li>
 	 <li><em>(option)</em> required - Permet de spécifier que le bloc de contenu doit contenir du texte.</em></li>
 	 <li><em>(option)</em> tab - L\'onglet désiré pour afficher ce champ dans le formulaire d\'édition.</li>
- 	 <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+ 	 <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
  	 </ul>
         </p>';
 $lang['help_function_cms_stylesheet'] = '<h3>Que fait cette balise ?</h3>
@@ -222,14 +233,34 @@ h3 .error { background: url([[root_url]]/uploads/images/error_background.gif); }
 </pre>
 <p><strong>Note :</strong> Étant donné que les balises sont mise en cache, les variables Smarty doivent être placées au sommet de CHAQUE feuille de style, qui est attaché à un gabarit.</p>';
 $lang['help_function_page_attr'] = '<h3>Que fait cette balise ?</h3>
-<p>Cette balise peut être utilisée pour renvoyer la valeur de l\'attribut d\'une page déterminée. </p>
+<p>Cette balise peut être utilisée pour renvoyer la valeur des attributs d\'une page déterminée.</p>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre gabarit : <code>{page_attr key="extra1"}</code>.</p>
 <h3>Quels paramètres ?</h3>
 <ul>
-  <li><strong>key (requis)</strong> La clé pour retourner l\'attribut.</li>
-  <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
-</ul>';
+  <li><em>(option)</em> page (int|string) - Une id de page optionnelle ou un alias pour récupérer du contenu. Si non spécifié, la page actuelle est affichée.</li>
+  <li><strong>key (requis)</strong> La clé de l\'attribut retournée.
+    <p> La clé peut être soit un nom de bloc, ou un ensemble de propriétés standard associées à une page de contenu.  Les propriétés standard acceptées sont :</p>
+    <ul>
+      <li>_dflt_ - (string) La valeur pour le bloc de contenu par défaut (également connu sous le nom content_en).</li>
+      <li>title</li>
+      <li>description</li>
+      <li>created_date - (string date) Date de la création du contenu.</li>
+      <li>modified_date - (string date) Date de la dernière modification du contenu.</li>
+      <li>last_modified_by - (int) UID de l\'utilisateur qui a modifié la page.</li>
+      <li>owner - (int) UID du propriétaire de la page.</li>
+      <li>image - (string) Le chemin vers l\'image associée avec le contenu de la page.</li>
+      <li>thumbnail - (string)  Le chemin de la vignette associée avec le contenu de la page.</li>
+      <li>extra1 - (string) La valeur de l\'attribut extra1</li>
+      <li>extra2 - (string) La valeur de l\'attribut extra2.</li>
+      <li>extra3 - (string) La valeur de l\'attribut extra3.</li>
+     </ul>
+ </li>
+  <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
+</ul>
+<h3>Retours :</h3>
+<p><strong>string</strong> - La valeur réelle du bloc de contenu à partir de la base de données pour le bloc et la page spécifiés.</p>
+<p><strong>Note :</strong> - La sortie de ce plugin ne passe pas par Smarty et n\'est pas nettoyé pour l\'affichage. Pour l\'affichage des données, vous devez convertir les chaînes de données en entités, et/ou les passer par Smarty.</p>';
 $lang['help_function_page_image'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise peut être utilisée pour renvoyer la valeur du champ image ou vignette d\'une certaine page</p>
 <h3>Comment l\'utiliser ?</h3>
@@ -237,7 +268,7 @@ $lang['help_function_page_image'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
   <li><em>(option)</em> thumbnail - Affiche la valeur de la propriété de la vignette au lieu de celle de l\'image.</li>
-  <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_dump'] = '<h3>Que fait cette balise ?</h3>
   <p>Cette balise peut être utilisée pour lire (dump) le contenu de toute variable Smarty dans un format plus lisible. Ceci est utile pour le débogage et l\'édition des gabarits, afin de connaître le format et le type de données disponibles.</p>
@@ -250,7 +281,7 @@ $lang['help_function_dump'] = '<h3>Que fait cette balise ?</h3>
 	<li>nomethods - Évite les methods from objets.</li>
 	<li>novars -  Évite les object members.</li>
 	<li>recurse - Fait une récursion d\'un nombre maximum de niveaux jusqu\'à ce que le nombre maximal soit atteint. Ce qui donne une sortie détaillée pour chaque item jusqu\'à ce que le nombre maximum de niveaux soient atteint.</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_content_image'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise permet aux concepteurs de gabarits d\'inciter les utilisateurs à sélectionner un fichier image lors de l\'édition du contenu d\'une page. Elle se comporte de façon similaire à la balise {content}, pour ajouter d\'autres blocs de contenu.</p>
@@ -278,7 +309,7 @@ $lang['help_function_content_image'] = '<h3>Que fait cette balise ?</h3>
   <li><em>(option)</em> tab=\'\' - L\'onglet désiré pour afficher ce champ dans le formulaire d\'édition.</li>
   <li><em>(option)</em> exclude=\'\' - Spécifie un préfixe de fichiers à exclure. Exemple : thumb_</li>
   <li><em>(option)</em> sort=\'\' - éventuellement trier les options. Par défaut : Ne pas trier.</li>
-  <li><em>(option)</em> assign=\'\' (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li><em>(option)</em> assign=\'\' (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_process_pagedata'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise va traiter les données contenues dans le bloc "pagedata" des pages de contenu à travers Smarty.  Elle permet de spécifier des données spécifiques pour chaque page via Smarty sans avoir à changer le gabarit de chaque page.</p>
@@ -289,7 +320,7 @@ $lang['help_function_process_pagedata'] = '<h3>Que fait cette balise ?</h3>
 </ol>
 <br/>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_current_date'] = '<h3 style="color: red;">ATTENTION cette balise est obsolète.</h3>
 <p>Nous recommandons d\'utiliser la balise <code>{$smarty.now|cms_date_format}</code></p>	
 <h3>Que fait cette balise ?</h3>
@@ -300,7 +331,7 @@ $lang['help_function_current_date'] = '<h3 style="color: red;">ATTENTION cette b
 <ul>
 	<li><em>(option)</em> format - Date/Time utilise le format de la fonction PHP strftime. Voir <a href="http://php.net/strftime" target="_blank">ici</a> pour une liste des paramètres et plus d\'information.</li>
 	<li><em>(option)</em> ucword - Si "true" affiche en majuscule la première lettre de chaque mot.</li>		
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_tab_end'] = '<h3>Que fait cette balise ?</h3>
   <p>Ce plugin génère le code HTML pour indiquer la fin d\'une zone de contenu avec des onglets.</p>
@@ -315,7 +346,7 @@ $lang['help_function_tab_end'] = '<h3>Que fait cette balise ?</h3>
 <span style="color: blue;">{tab_end}</span></code></pre>
 <h3>Quels paramètres ?</h3>
 <ul>
-   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Voir Aussi :</h3>
   <ul>
@@ -339,7 +370,7 @@ $lang['help_function_tab_header'] = '<h3>Que fait cette balise ?</h3>
    <li><strong>name - requis string</strong> - Le nom de l\'onglet. Doit correspondre au nom d\'un onglet passé à {tab_header}</li>
    <li>label - <em>option string</em> - Le label lisible pour l\'onglet. S\'il n\'est pas spécifié, le nom de l\'onglet sera utilisé.</li>
    <li>active - <em>option mixed</em> - Indique s\'il s\'agit de l\'onglet actif ou non. Vous pouvez donner le nom (string) de l\'onglet actif dans la séquence d\'onglets "headers" ou une valeur booléenne.</li>
-   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Voir Aussi :</h3>
   <ul>
@@ -361,7 +392,7 @@ $lang['help_function_tab_start'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
    <li><strong>name - requis</strong> - Le nom de l\'onglet. Doit correspondre au nom d\'un onglet passé à {tab_header}</li>
-   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+   <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Voir Aussi :</h3>
   <ul>
@@ -373,7 +404,7 @@ $lang['help_function_title'] = '<h3>Que fait cette balise ?</h3>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{title}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_stylesheet'] = '<h3>Que fait cette balise ?</h3>
 <p><span style="color: #ff0000;">ATTENTION cette balise est obsolète</span> et sera supprimé des versions futures de CMSMS™.</p>
 <p>Récupère les données des feuilles de style du système. Par défaut, elle prend toutes les feuilles de style liées au gabarit en cours.</p>
@@ -383,14 +414,14 @@ $lang['help_function_stylesheet'] = '<h3>Que fait cette balise ?</h3>
 	<li><em>(option)</em> name - Au lieu d\'avoir toutes les feuilles de style pour la page donnée, il n\'y aura que celle nommée spécifiquement, qu\'elle soit liée au gabarit en cours ou non.</li>
 	<li><em>(option)</em> media - Si le nom est défini, ce paramètre permet de changer de type de média pour cette feuille de style.</li>
 	<li><em>(option)</em> templateid - Si templateid est défini, les feuilles de style seront associées uniquement à ce gabarit, au lieu de celui en cours.</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_sitename'] = '<h3>Que fait cette balise ?</h3>
 <p>Affiche le nom du site. Ce paramètre est défini lors de l\'installation et peut être modifié via les Paramètres Globaux du panneau d\'administration.</p>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{sitename}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_search'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est une balise pour le module de recherche afin de rendre la syntaxe de balise plus aisée. 
 Au lieu d\'avoir à utiliser <code>{cms_module module=\'Search\'}</code> vous pouvez maintenant utiliser <code>{search}</code> pour insérer le module dans un gabarit.
@@ -423,7 +454,7 @@ $lang['help_function_cms_textarea'] = '<h3>Que fait cette balise ?</h3>
     <li>text - pour le paramètre "value".</li>
 <li>cssname - option string : Passe le nom de cette feuille de style pour le module WYSIWYG, si un module WYSIWYG est activé.</li>
     <li>addtext - option string : Texte supplémentaire à ajouter à la balise textarea.</li>
-    <li>assign - option string : Affecte (Assigne) le résultat en HTML  de la balise à la variable smarty nommée.</li>
+    <li>assign - option string : Affecte (Assigne) le résultat en HTML  de la balise à la variable smarty ainsi nommée.</li>
   </ul';
 $lang['help_function_root_url'] = '<h3>Que fait cette balise ?</h3>
 <p>Affiche l\'URL de la racine du site.</p>
@@ -439,7 +470,7 @@ $lang['help_function_repeat'] = '<h3>Que fait cette balise ?</h3>
 <ul>
 	<li>string=\'text\' - La séquence à répéter</li>
  	<li>times=\'num\' - Le nombre de répétition de cette séquence.</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_recently_updated'] = '<h3>Que fait cette balise ?</h3>
 <p>Affiche une liste des pages récemment modifiées.</p>
@@ -475,7 +506,7 @@ $lang['help_function_modified_date'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
 	<li><em>(option)</em> format - Date/Time utilise le format de la fonction PHP strftime.  Voir <a href="http://php.net/strftime" target="_blank">ici</a> pour une liste des paramètres et plus d\'information.</li>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_metadata'] = '<h3>Que fait cette balise ?</h3>
 <p>Affiche les metadata pour cette page. Les metadata de la page de paramètres globaux et ceux spécifiques à chaque page seront affichés.</p>
@@ -484,14 +515,14 @@ $lang['help_function_metadata'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
 	<li><em>(option)</em> showbase (true/false) - Si défini à false, la balise de base ne sera pas envoyée.</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_menu_text'] = '<h3>Que fait cette balise ?</h3>
 <p>Imprime le texte de menu de la page.</p>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{menu_text}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_menu'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est une balise pour le module MenuManager pour simplifier la syntaxe. 
 Au lieu d\'utiliser la balise <code>{cms_module module=\'MenuManager\'}</code> vous pouvez utiliser <code>{menu}</code> pour insérer le module dans des pages et gabarits.
@@ -505,7 +536,7 @@ $lang['help_function_last_modified_by'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
 	<li><em>(option)</em> format - Id, nom d\'utilisateur, nom complet</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_image'] = '<h3>Que fait cette balise ?</h3>
 <p>Crée une balise image pour une image stockée dans votre dossier /uploads/images</p>
@@ -520,7 +551,7 @@ $lang['help_function_image'] = '<h3>Que fait cette balise ?</h3>
     <li><em>(option)</em>  <tt>class</tt> - La classe CSS de l\'image.</li>
      <li><em>(option)</em>  <tt>title</tt> - Infobulle au passage la souris sur le texte de l\'image. La valeur par défaut est le texte "alt "de l\'image.</li>
      <li><em>(option)</em>  <tt>addtext</tt> - Texte supplémentaire à mettre dans la balise.</li>
-	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_html_blob'] = '<h3>Que fait cette balise ?</h3>
 <p>Voir l\'aide sur global_content pour la description.</p>';
@@ -536,7 +567,7 @@ $lang['help_function_google_search'] = '<h3>Que fait cette balise ?</h3>
 <ul>
 	<li><em>(option)</em> domain - Cela indique à Google le domaine du site Web pour la recherche. Ce script essaie de le déterminer automatiquement.</li>
 	<li><em>(option)</em> buttonText - Le texte que vous souhaitez afficher sur le bouton de recherche. La valeur par défaut est "Search Site".</li>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_global_content'] = '<h3>Que fait cette balise ?</h3>
 <p>Insère un bloc de contenu (global_content) dans votre gabarit ou page. Le bloc de contenu est maintenant créé dans le menu Disposition/Gestion du design</p>
@@ -552,13 +583,13 @@ $lang['help_function_get_template_vars'] = '<h3>Que fait cette balise ?</h3>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{get_template_vars}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_page_error'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est une balise d\'administration qui affiche une erreur dans une page CMS Made Simple.</p>
 <h3>Comment l\'utiliser ?</h3>
 <ul>
   <li>msg - <strong>requis string</strong> - le message d\'erreur à afficher.</li>
-  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>{page_error msg=\'Une erreur s\'est produite\'}</code></pre>';
@@ -567,7 +598,7 @@ $lang['help_function_page_warning'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
   <li>msg - <strong>requis string</strong> - Le message d\'alerte à afficher.</li>
-  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Exemple :</h3>
 <pre><code>{page_warning msg=\'ah ! petit problème\'}</code></pre>';
@@ -577,7 +608,7 @@ $lang['help_function_uploads_url'] = '<h3>Que fait cette balise ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{uploads_url}</code></p>
 <h3>Quels paramètres ?</h3>
 <ul>
-	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_embed'] = '<h3>Que fait cette balise ?</h3>
 <p>Inclut une autre application dans votre CMS. Le plus utilisé est par exemple un forum . 
@@ -604,7 +635,7 @@ $lang['help_function_description'] = '<h3>Que fait cette balise ?</h3>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{description}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_created_date'] = '<h3>Que fait cette balise ?</h3>
 <p>Affiche la date et l\'heure de création de la page.  Si aucun format n\'est défini l\'affichage par défaut sera comme par exemple \'Jan 01, 2004\'.</p>
 <h3>Comment l\'utiliser ?</h3>
@@ -612,7 +643,7 @@ $lang['help_function_created_date'] = '<h3>Que fait cette balise ?</h3>
 <h3>Quels paramètres ?</h3>
 <ul>
 	<li><em>(option)</em> format - Date/Time utilise le format de la fonction PHP strftime. Voir <a href="http://php.net/strftime" target="_blank">ici</a> pour un paramètre et les informations.</li>
-	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> assign - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_content'] = '<h3>Que fait cette balise ?</h3>
 <p>C\'est l\'endroit où le contenu de votre page sera affiché. Il sera inséré dans le gabarit de la page pour affichage.</p>
@@ -623,7 +654,7 @@ $lang['help_function_content'] = '<h3>Que fait cette balise ?</h3>
 <ul>
 	<li><em>(option)</em> block - Vous permet d\'avoir plus d\'un bloc de contenu par page. Lorsque plusieurs balises "content" sont mises dans un gabarit, il y aura autant de zones d\'édition affichées lorsque la page sera éditée.
 <p>Exemple :</p>
-<pre>{content block="second_content_block"; label="Second Content Block"}</pre>
+<pre>{content block="second_content_block" label="Second Content Block"}</pre>
 <p>Maintenant, lorsque vous éditez une page, il y aura un texte intitulé "Second Content Block".</p></li>
 	<li><em>(option)</em> WYSIWYG (true/false) - Si false, alors un éditeur WYSIWYG ne sera jamais utilisé lors de l\'édition de ce bloc. Si true, alors agit comme d\'habitude. Ne fonctionne que lorsque le paramètre "block" est utilisé.</li>
 	<li><em>(option)</em> oneline (true/false) - Si true, alors une seule ligne d\'édition sera montrée lors de l\'édition de ce bloc. Si false, alors agit comme d\'habitude. Ne fonctionne que lorsque le paramètre "block" est utilisé.</li>
@@ -654,13 +685,13 @@ $lang['help_function_cms_versionname'] = '<h3>Que fait cette balise ?</h3>
 <h3>Comment l\'utiliser ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit :  <code>{cms_versionname}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_cms_version'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise est utilisée pour insérer le numéro de la version courante du CMS dans votre page ou votre gabarit. Il n\'affiche rien d\'autre que le numéro de version.</p>
 <h3>Comment l\'utiliser ?</h3>
 <p>C\'est une balise basique. Insérez la balise dans votre page ou votre gabarit : <code>{cms_version}</code></p>
 <h3>Quels paramètres ?</h3>
-<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>';
+<p><em>(option)</em> assign (string) - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>';
 $lang['help_function_cms_selflink'] = '<h3>Que fait cette balise ?</h3>
 <p>Crée un lien vers une autre page de contenu de CMSMS™ l\'intérieur de votre gabarit ou de votre contenu.</p>
 <h3>Comment l\'utiliser ?</h3>
@@ -669,13 +700,12 @@ $lang['help_function_cms_selflink'] = '<h3>Que fait cette balise ?</h3>
 		
 <ul>
 	<li><em>(option)</em> <tt>page</tt> - Id ou alias de la page du lien.</li>
-	<tt>anchorlink</tt> doit être utilisé pour votre lien. </li> <!-- Russ - 25-04-2006 -->
 	<li><em>(option)</em> <tt>anchorlink</tt> - Spécifie une ancre à ajouter à une URL générée.</li>
 	<li><em>(option)</em> <tt>urlparam</tt> - Spécifie des paramètres avec l\'URL. <strong>Ne pas utiliser ce paramètre avec <em>"anchorlink"</em>
 </strong></li>
 	<li><em>(option)</em> <tt>tabindex ="a value"</tt> - Défini un tabindex pour le lien.</li> <!-- Russ - 22-06-2005 -->
 	<li><em>(option)</em> <tt>dir start/next/prev/up (previous)</tt> - Lien vers la page de démarrage par défaut ou la page suivante ou précédente, ou la page parent (up). Liens vers la page de démarrage par défaut ou la page suivante ou précédente, ou la page parent (up). Si utilisé <tt>page</tt> ne doit pas être donné.
-<strong>Note :</strong> Seulement une des options peut être utilisée dans la même déclaration "cms_selflink" !</li>
+<strong>Note :</strong> Seule une des options peut être utilisée dans la même déclaration "cms_selflink" !</li>
 	<li><em>(option)</em> <tt>text</tt> - Texte à afficher pour le lien. S\'il n\'est pas fourni, le nom de la page est utilisé à la place.</li>
 	<li><em>(option)</em> <tt>menu 1/0</tt> - Si 1, le texte du menu est utilisé pour le texte du lien au lieu du Nom de la page.</li>
 	<li><em>(option)</em> <tt>target</tt> - Option pour la cible d\'un lien vers. Utiliser pour une frame et du JavaScript.</li>
@@ -692,8 +722,8 @@ $lang['help_function_cms_selflink'] = '<h3>Que fait cette balise ?</h3>
 	<li><em>(option)</em> <tt>alt</tt> - Variante pour être utilisée avec l\'image (alt = "" sera utilisée si aucun paramètre n\'est donné alt).</li>
 	<li><em>(option)</em> <tt>width</tt> - Largeur pour être utilisé avec l\'image (aucun attribut de largeur ne sera utilisé sur la sortie balise img s\'il n\'est pas fourni.).</li>
 	<li><em>(option)</em> <tt>height</tt> - Hauteur pour être utilisé avec l\'image (aucun attribut de hauteur sera utilisé sur la sortie balise img s\'il n\'est pas fourni.).</li>
-	<li><em>(option)</em> <tt>imageonly</tt> - Si vous utilisez une image, cela supprime l\'affichage de lien texte. Si vous voulez pas de texte dans tous les liens, mettre lang = 0 pour supprimer le label. <strong>Exemple :</strong> (cms_selflink dir = "next" image = "next.png" text = "Next" imageonly = 1)</li>
-	<li><em>(option)</em> <tt>assign</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> <tt>imageonly</tt> - Si vous utilisez une image, cela supprime l\'affichage de lien texte. Si vous ne voulez pas de texte dans tous les liens, mettre lang = 0 pour supprimer le label. <strong>Exemple :</strong> (cms_selflink dir = "next" image = "next.png" text = "Next" imageonly = 1)</li>
+	<li><em>(option)</em> <tt>assign</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_cms_module'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise sert à insérer des modules dans vos pages ou vos gabarits. Si un module est créé pour être utilisé comme une balise (Vérifier les détails dans l\'aide), vous avez la possibilité de l\'insérer à l\'aide de cette balise.</p>
@@ -734,7 +764,7 @@ $lang['help_function_anchor'] = '<h3>Que fait cette balise ?</h3>
 	<li><tt>tabindex</tt> - Le tabindex numérique pour le lien, s\'il existe.</li>
 	<li><tt>accesskey</tt> - L\' accesskey pour le lien, s\'il existe.</li>
 	<li><em>(option)</em> <tt>onlyhref</tt> - Affiche seulement le href et non le lien entier. Aucune autre option ne fonctionnera.</li>
-	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_site_mapper'] = '<h3>Que fait cette balise ?</h3>
  <p>C\'est une balise pour le module Menu Manager afin de rendre la syntaxe de balise plus aisée, et ainsi de simplifier la création d\'un plan de site.</p>
@@ -756,7 +786,7 @@ $lang['help_function_cms_jquery'] = '<h3>Que fait cette balise ?</h3>
 <p>Insérer la balise dans votre page ou votre gabarit : <code>{cms_jquery}</code></p>
  
 <h3>Exemple</h3>
-<pre><code>{cms_jquery cdn=\'true\' exclude=\'jquery.ui.nestedSortable.js\' append=\'uploads/NCleanBlue/js/ie6fix.js\' include_css=0}</code></pre>
+<pre><code>{cms_jquery cdn=\'true\' exclude=\'jquery-ui\' append=\'uploads/NCleanBlue/js/ie6fix.js\' include_css=0}</code></pre>
 <h4><em>Outputs</em></h4>
 <pre><code>< script type="text/javascript" src= "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">< /script>
 < script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js">< /script>
@@ -766,27 +796,28 @@ $lang['help_function_cms_jquery'] = '<h3>Que fait cette balise ?</h3>
  
 <h3><em>Inclus par défaut</em></h3>
 <ul>
-	<li><tt>jQuery</tt><em>(1.7.2)</em> - jquery-x.x.x.min.js</li>
-	<li><tt>jQuery UI</tt><em>(1.8.21)</em> - jquery-ui-x.x.x.min.js</li>
-	<li><tt>nestedSortable</tt>(1.3.4) - jquery.ui.nestedSortable-x.x.x.js</li>
-	<li><tt>jQuery json</tt><em>(2.3)</em> - jquery/js/jquery.json-x.x.js</li>
+	<li><tt>jQuery</tt><em>(1.11.1)</em></li>
+	<li><tt>jQuery-UI</tt><em>(1.8.21)</em></li>
+	<li><tt>nestedSortable</tt><em>(1.3.4)</em></li>
+	<li><tt>json</tt><em>(2.3)</em></li>
+        <li><tt>migrate</tt><em>(2.3)</em></li>
 </ul>
     
 <h3>Quels paramètres ?</h3>
 <ul>
-	<li><em>(option) </em><tt>exclude</tt> - Utiliser une liste séparée par des virgules(CSV) pour la liste des scripts que vous souhaitez exclure. <code>\'jquery.ui.nestedSortable.js,jquery.json.min.js\'</code></li>
-	<li><em>(option) </em><tt>append</tt> -Utiliser une liste séparée par des virgules(CSV) pour  la liste des chemins des scripts que vous souhaitez ajouter.<code>\'/uploads/jquery.ui.nestedSortable.js,http://code.jquery.com/jquery-1.7.1.min.js\'</code></li>
+	<li><em>(option) </em><tt>exclude</tt> - Utiliser une liste séparée par des virgules (CSV) pour la liste des scripts que vous souhaitez exclure. <code>\'jquery-ui,migrate\'</code></li>
+	<li><em>(option) </em><tt>append</tt> - Utiliser une liste séparée par des virgules (CSV) pour la liste des chemins des scripts que vous souhaitez ajouter.<code>\'/uploads/jquery.ui.nestedSortable.js,http://code.jquery.com/jquery-1.7.1.min.js\'</code></li>
     	<li><em>(option) </em><tt>cdn</tt> - cdn=\'true\' permet d\'insérer jQuery et jQueryUI en utilisant le réseau Google "Content Delivery Network". Par défaut à "false"</li>
-    	<li><em>(option) </em><tt>ssl</tt> - Utilisé pour ssl_url comme le chemin de base souhaité.</li>
-     	<li><em>(option) </em><tt>custom_root</tt> - Utilisé pour définir un chemin de base souhaité. <code>custom_root=\'http://test.domain.com/\'</code> <br/>NOTE : Réécrit l\'option SSL et travaille avec l\'option cdn</li>
+    	<li><em>(option) </em><tt>ssl</tt> - Utilisé pour ssl_url comme chemin de base souhaité.</li>
+     	<li><em>(option) </em><tt>custom_root</tt> - Utilisé pour définir un chemin de base souhaité. <code>custom_root=\'http://test.domain.com/\'</code> <br/>NOTE : Écrase l\'option SSL et fonctionne avec l\'option cdn</li>
 <li><em>(option) </em><tt>include_css <em>(boolean)</em></tt> - Utilisé pour empêcher le CSS d\'être inclus à la sortie. Par défaut "true".</li>	
-	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+	<li><em>(option)</em> <tt>assign (string)</tt> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>';
 $lang['help_function_form_end'] = '<h3>Que fait cette balise ?</h3>
 <p>Cette balise crée une balise de fin de formulaire .</p>
 <h3>Quels paramètres ?</h3>
 <ul>
-  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</li>
+  <li>assign - <em>(option)</em> - Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</li>
 </ul>
 <h3>Usage:</h3>
 <pre><code>{form_end}</code></pre>
@@ -831,7 +862,7 @@ $lang['help_function_form_start'] = '<h3>Que fait cette balise ?</h3>
     <p>Permet de spécifier un tableau associatif (clé/valeur) avec des paramètres supplémentaires pour la balise formulaire.</p>
   </li>
   <li>assign = <em>(option string)</em>
-    <p>Affecte (Assigne) le résultat de la balise à la variable Smarty nommée.</p>
+    <p>Affecte (Assigne) le résultat de la balise à la variable Smarty ainsi nommée.</p>
   </li>
 </ul>
 <h3>Utilisation :</h3>

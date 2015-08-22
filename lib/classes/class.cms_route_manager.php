@@ -109,7 +109,7 @@ final class cms_route_manager
 		}
 
 		// do the linear regex thing.
-		for( $i = 0; $i < count($regex); $i++ ) {
+		for( $i = 0, $n = count($regex); $i < $n; $i++ ) {
 			$rec = $regex[$i];
 			if( $rec->matches($needle) ) return $rec;
 		}
@@ -212,9 +212,9 @@ final class cms_route_manager
 		self::_load_static_routes();
 		if( self::route_exists($route) ) return TRUE;
 
-		$query = 'INSERT INTO '.cms_db_prefix().'routes (term,key1,key2,key3,data,created) VALUES (?,?,?,?,?,NOW())';
+		$query = 'INSERT INTO '.CMS_DB_PREFIX.'routes (term,key1,key2,key3,data,created) VALUES (?,?,?,?,?,NOW())';
 
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->Execute($query,array($route['term'], $route['key1'], $route['key2'], $route['key3'], serialize($route)));
 		if( !$dbr ) {
 			die($db->sql.' -- '.$db->ErrorMsg());
@@ -240,7 +240,7 @@ final class cms_route_manager
 	 */
 	public static function del_static($term,$key1 = null,$key2 = null,$key3 = null)
 	{
-		$query = 'DELETE FROM '.cms_db_prefix().'routes WHERE ';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'routes WHERE ';
 		$where = array();
 		$parms = array();
 		if( $term ) {
@@ -265,7 +265,7 @@ final class cms_route_manager
 
 		if( count($where) == 0 ) return FALSE;
 
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$query .= implode(' AND ',$where);
 		$dbr = $db->Execute($query,$parms);
 		if( $dbr ) {
@@ -348,15 +348,15 @@ final class cms_route_manager
 	{
 		// clear the route table and cache
 		self::_clear_cache();
-		$db = cmsms()->GetDb();
-		$query = 'TRUNCATE TABLE '.cms_db_prefix().'routes';
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'TRUNCATE TABLE '.CMS_DB_PREFIX.'routes';
 		$db->Execute($query);
 
 		// get content routes
-		$query = 'SELECT content_id,page_url FROM '.cms_db_prefix()."content WHERE active=1 AND COALESCE(page_url,'') != ''";
+		$query = 'SELECT content_id,page_url FROM '.CMS_DB_PREFIX."content WHERE active=1 AND COALESCE(page_url,'') != ''";
 		$tmp = $db->GetArray($query);
 		if( is_array($tmp) && count($tmp) ) {
-			for( $i = 0; $i < count($tmp); $i++ ) {
+			for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
 				$route = CmsRoute::new_builder($tmp[$i]['page_url'],'__CONTENT__',$tmp[$i]['content_id'],'',TRUE);
 				cms_route_manager::add_static($route);
 			}
@@ -384,7 +384,7 @@ final class cms_route_manager
 		$data = self::_get_routes_from_cache();
 		if( is_array($data) && count($data) ) {
 			self::$_routes = array();
-			for( $i = 0; $i < count($data); $i++ ) {
+			for( $i = 0, $n = count($data); $i < $n; $i++ ) {
 				$obj = @unserialize($data[$i]['data']);
 				self::$_routes[$obj->signature()] = $obj;
 			}
@@ -398,13 +398,12 @@ final class cms_route_manager
 	private static function _get_routes_from_cache()
 	{
 		$fn = self::_get_cache_filespec();
-		if( !file_exists($fn) ) {
-			$db = cmsms()->GetDb();
-			$query = 'SELECT * FROM '.cms_db_prefix().'routes';
+		if( !is_file($fn) ) {
+			$db = CmsApp::get_instance()->GetDb();
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'routes';
 			$tmp = $db->GetArray($query);
 			self::$_routes_loaded = TRUE;
 			if( is_array($tmp) && count($tmp) ) {
-				$fn = self::_get_cache_filespec();
 				file_put_contents($fn,serialize($tmp));
 				return $tmp;
 			}
@@ -420,7 +419,7 @@ final class cms_route_manager
 	 */
 	private static function _get_cache_filespec()
 	{
-		return TMP_CACHE_LOCATION.'/'.md5(TMP_CACHE_LOCATION.get_class()).'.dat';
+		return TMP_CACHE_LOCATION.'/'.md5(TMP_CACHE_LOCATION.__CLASS__).'.dat';
 	}
 
 	/**

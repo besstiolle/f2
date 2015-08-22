@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: Content.inc.php 9701 2014-08-30 15:48:29Z calguy1000 $
+#$Id: Content.inc.php 10037 2015-06-19 20:56:48Z calguy1000 $
 
 /**
  * Class definition and methods for the main Content class.
@@ -136,9 +136,6 @@ class Content extends ContentBase
 	 */
     function FillParams($params,$editing = false)
     {
-		$gCms = cmsms();
-		$config = $gCms->GetConfig();
-
 		if (isset($params)) {
 			$parameters = array('pagedata','searchable','disable_wysiwyg','design_id');
 
@@ -158,7 +155,7 @@ class Content extends ContentBase
 						$module = cms_utils::get_module($blockInfo['module']);
 						if( !is_object($module) ) continue;
 						if( !$module->HasCapability(CmsCoreCapabilities::CONTENT_BLOCKS) ) continue;
-						$tmp = $module->GetContentBlockValue($blockName,$blockInfo['params'],$params,!$editing,$this);
+						$tmp = $module->GetContentBlockFieldValue($blockName,$blockInfo['params'],$params,!$editing,$this);
 						if( $tmp != null ) $params[$name] = $tmp;
 					}
 				}
@@ -238,7 +235,6 @@ class Content extends ContentBase
 	function ValidateData()
 	{
 		$errors = parent::ValidateData();
-		$gCms = cmsms();
 		if( $errors === FALSE ) $errors = array();
 
 		if ($this->mTemplateId <= 0 ) {
@@ -264,7 +260,7 @@ class Content extends ContentBase
                     if( !is_object($module) ) continue;
                     if( !$module->HasCapability(CmsCoreCapabilities::CONTENT_BLOCKS) ) continue;
                     $value = $this->GetPropertyValue($blockInfo['id']);
-                    $tmp = $module->ValidateContentBlockValue($blockName,$value,$blockInfo['params'],$this);
+                    $tmp = $module->ValidateContentBlockFieldValue($blockName,$value,$blockInfo['params'],$this);
                     if( !empty($tmp) ) {
                         $errors[] = $tmp;
                         $result = false;
@@ -296,7 +292,7 @@ class Content extends ContentBase
         CMS_Content_Block::reset();
         $this->_contentBlocks = array();
         try {
-            $parser = cmsms()->get_template_parser();
+            $parser = CmsApp::get_instance()->get_template_parser();
             $parser->fetch('cms_template:'.$this->TemplateId()); // do the magic.
 
             $this->_contentBlocks = CMS_Content_Block::get_content_blocks();
@@ -318,7 +314,6 @@ class Content extends ContentBase
 	 */
     protected function display_single_element($one,$adding)
     {
-		$gCms = cmsms();
 		static $_designs;
 		static $_types;
 		static $_designtree;
@@ -400,7 +395,7 @@ class Content extends ContentBase
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_disablewysiwyg',lang('help_title_page_disablewysiwyg'));
 			return array('<label for="id_disablewysiwyg">'.lang('disable_wysiwyg').':</label>'.$help,
 						 '<input type="hidden" name="disable_wysiwyg" value="0" />
-             <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1"  '.($disable_wysiwyg==1?'checked="checked"':'').' onclick="this.form.submit()" />');
+             <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1"  '.($disable_wysiwyg==1?'checked="checked"':'').'/>');
 			break;
 
 		default:
@@ -467,11 +462,19 @@ class Content extends ContentBase
 	 */
 	private function _display_image_block($blockInfo,$value,$adding)
 	{
-		$gCms = cmsms();
-		$config = $gCms->GetConfig();
+		$config = CmsApp::get_instance()->GetConfig();
 		$adddir = get_site_preference('contentimage_path');
 		if( $blockInfo['dir'] != '' ) $adddir = $blockInfo['dir'];
 		$dir = cms_join_path($config['uploads_path'],$adddir);
+        $rp1 = realpath($config['uploads_path']);
+        $rp2 = realpath($dir);
+
+        $dropdown = null;
+        if( !startswith($rp2,$rp1) ) {
+            $err = lang('err_invalidcontentimgpath');
+            return '<div class="red">'.$err.'</div>';
+        }
+
 		$optprefix = '';
 		$inputname = $blockInfo['id'];
 		if( isset($blockInfo['inputname']) ) $inputname = $blockInfo['inputname'];
@@ -488,7 +491,6 @@ class Content extends ContentBase
 	 */
 	private function _display_module_block($blockName,$blockInfo,$value,$adding)
 	{
-		$gCms = cmsms();
 		$ret = '';
 		if( !isset($blockInfo['module']) ) return FALSE;
 		$module = cms_utils::get_module($blockInfo['module']);
@@ -498,7 +500,7 @@ class Content extends ContentBase
 			// a hack to allow overriding the input field name.
 			$blockName = $blockInfo['inputname'];
 		}
-		$tmp = $module->GetContentBlockInput($blockName,$value,$blockInfo['params'],$adding,$this);
+		$tmp = $module->GetContentBlockFieldInput($blockName,$value,$blockInfo['params'],$adding,$this);
 		return $tmp;
 	}
 

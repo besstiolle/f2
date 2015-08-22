@@ -49,87 +49,89 @@ class Smarty_CMS extends SmartyBC
     global $CMS_ADMIN_PAGE; // <- Still needed?
     global $CMS_INSTALL_PAGE;
 
-    $config = cmsms()->GetConfig();
-
     // Set template_c and cache dirs
     $this->setCompileDir(TMP_TEMPLATES_C_LOCATION);
     $this->setCacheDir(TMP_CACHE_LOCATION);
     $this->assign('app_name','CMSMS');
 
-    if ($config["debug"] == true) {
-      $this->debugging = false;
-      $this->error_reporting = 'E_ALL';
+    if (CMS_DEBUG == true) {
+        $this->debugging = false;
+        $this->error_reporting = 'E_ALL';
     }
 
+    // set our own template class with some funky stuff in it
+    $this->template_class = 'CMS_Smarty_Template';
+
     // Set plugins dirs
-    $this->addPluginsDir(cms_join_path($config['root_path'],'plugins'));
+    $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'plugins'));
 
     // common resources.
     $this->registerResource('module_db_tpl',new CMSModuleDbTemplateResource());
     $this->registerResource('module_file_tpl',new CMSModuleFileTemplateResource());
     $this->registerResource('cms_template',new CmsTemplateResource()); // <- Should proably be global and removed from parser?
+    $this->registerResource('template',new CmsTemplateResource()); // <- Should proably be global and removed from parser? // deprecated
     $this->registerResource('cms_stylesheet',new CmsStylesheetResource());
 
     // register default plugin handler
     $this->registerDefaultPluginHandler(array(&$this, 'defaultPluginHandler'));
 
     // Load User Defined Tags
-    if( !cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
-      $utops = cmsms()->GetUserTagOperations();
-      $usertags = $utops->ListUserTags();
-      $caching = false;
+    if( !CmsApp::get_instance()->test_state(CmsApp::STATE_INSTALL) ) {
+        $utops = UserTagOperations::get_instance();
+        $usertags = $utops->ListUserTags();
+        $caching = false;
 
-      foreach( $usertags as $id => $name ) {
-	$function = $utops->CreateTagFunction($name);
-	$this->registerPlugin('function',$name,$function,$caching);
-      }
+        foreach( $usertags as $id => $name ) {
+            $function = $utops->CreateTagFunction($name);
+            $this->registerPlugin('function',$name,$function,$caching);
+        }
     }
 
-    if(cmsms()->is_frontend_request()) {
+    if(CmsApp::get_instance()->is_frontend_request()) {
+        $config = cmsms()->GetConfig();
+        $this->addTemplateDir($config['assets_path'].'/templates');
+        $this->addConfigDir($config['assets_path'].'/configs');
 
-      $this->setTemplateDir(cms_join_path($config['root_path'],'tmp','templates'));
-      $this->setConfigDir(cms_join_path($config['root_path'],'tmp','templates'));
+        // Check if we are at install page, don't register anything if so, cause nothing below is needed.
+        if(isset($CMS_INSTALL_PAGE)) return;
 
-      // Check if we are at install page, don't register anything if so, cause nothing below is needed.
-      if(isset($CMS_INSTALL_PAGE)) return;
+        if (is_sitedown()) {
+            $this->setCaching(false);
+            $this->force_compile = true;
+        }
 
-      if (is_sitedown()) {
-		$this->setCaching(false);
-		$this->force_compile = true;
-      }
+        // Load resources
+        $this->registerResource('tpl_top',new CmsTemplateResource('top'));
+        $this->registerResource('tpl_head',new CmsTemplateResource('head'));
+        $this->registerResource('tpl_body',new CmsTemplateResource('body'));
+        $this->registerResource('content',new CMSContentTemplateResource());
 
-      // Load resources
-      $this->registerResource('tpl_top',new CmsTemplateResource('top'));
-      $this->registerResource('tpl_head',new CmsTemplateResource('head'));
-      $this->registerResource('tpl_body',new CmsTemplateResource('body'));
-      $this->registerResource('content',new CMSContentTemplateResource());
+        // just for frontend actions.
+        $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compile_fecontentblock'),false);
+        $this->registerPlugin('function','content_image','CMS_Content_Block::smarty_fetch_imageblock',false);
+        $this->registerPlugin('function','content_module','CMS_Content_Block::smarty_fetch_moduleblock',false);
+        $this->registerPlugin('function','process_pagedata','CMS_Content_Block::smarty_fetch_pagedata',false);
 
-      // just for frontend actions.
-      $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compile_fecontentblock'),false);
-      $this->registerPlugin('function','content_image','CMS_Content_Block::smarty_fetch_imageblock',false);
-      $this->registerPlugin('function','content_module','CMS_Content_Block::smarty_fetch_moduleblock',false);
-      $this->registerPlugin('function','process_pagedata','CMS_Content_Block::smarty_fetch_pagedata',false);
+        // Autoload filters
+        $this->autoloadFilters();
 
-      // Autoload filters
-      $this->autoloadFilters();
+        // compile check can only be enabled, if using smarty cache... just for safety.
+        if( get_site_preference('use_smartycache',0) ) $this->setCompileCheck(get_site_preference('use_smartycompilecheck',1));
 
-      // compile check can only be enabled, if using smarty cache... just for safety.
-      if( get_site_preference('use_smartycache',0) ) $this->setCompileCheck(get_site_preference('use_smartycompilecheck',1));
+        // Enable security object
+        $this->enableSecurity('CMSSmartySecurityPolicy');
     }
-    else if(cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE)) {
-      $this->addPluginsDir(cms_join_path($config['root_path'], $config['admin_dir'],'plugins'));
-
-      $this->setCaching(false);
-      $this->setTemplateDir(cms_join_path($config['root_path'],$config['admin_dir'],'templates'));
-      $this->setConfigDir(cms_join_path($config['root_path'],$config['admin_dir'],'configs'));;
+    else if(CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE)) {
+        $this->setCaching(false);
+        $config = CmsApp::get_instance()->GetConfig();
+        $admin_dir = $config['admin_path'];
+        $this->addPluginsDir($admin_dir.'/plugins');
+        $this->setTemplateDir($admin_dir.'/templates');
+        $this->setConfigDir($admin_dir.'/configs');;
     }
 
 	// Add assets tpl dir to scope
-	$this->addTemplateDir(cms_join_path($config['root_path'], 'lib', 'assets', 'templates'));
-
-    // Enable security object
-    // Note: Buggy, disabled prior to release of CMSMS 1.11
-    //$this->enableSecurity('CMSSmartySecurityPolicy');
+	$this->addTemplateDir(cms_join_path(CMS_ROOT_PATH, 'lib', 'assets', 'templates'));
   }
 
   /**
@@ -150,39 +152,47 @@ class Smarty_CMS extends SmartyBC
    */
   private function autoloadFilters()
   {
-    $pre = array();
-    $post = array();
-    $output = array();
+      $pre = array();
+      $post = array();
+      $output = array();
 
-    foreach( $this->plugins_dir as $onedir ) {
-      if( !is_dir($onedir) ) continue;
+      foreach( $this->plugins_dir as $onedir ) {
+          if( !is_dir($onedir) ) continue;
 
-      $files = glob($onedir.'/*php');
-      if( !is_array($files) || count($files) == 0 ) continue;
+          $files = glob($onedir.'/*php');
+          if( !is_array($files) || count($files) == 0 ) continue;
 
-      foreach( $files as $onefile ) {
-	$onefile = basename($onefile);
-	$parts = explode('.',$onefile);
-	if( !is_array($parts) || count($parts) != 3 ) continue;
+          foreach( $files as $onefile ) {
+              $onefile = basename($onefile);
+              $parts = explode('.',$onefile);
+              if( !is_array($parts) || count($parts) != 3 ) continue;
 
-	switch( $parts[0] ) {
-	case 'output':
-	  $output[] = $parts[1];
-	  break;
+              switch( $parts[0] ) {
+              case 'output':
+                  $output[] = $parts[1];
+                  break;
 
-	case 'prefilter':
-	  $pre[] = $parts[1];
-	  break;
+              case 'prefilter':
+                  $pre[] = $parts[1];
+                  break;
 
-	case 'postfilter':
-	  $post[] = $parts[1];
-	  break;
-	}
-      }
+              case 'postfilter':
+                  $post[] = $parts[1];
+                  break;
+              }
+          }
     }
 
-    $this->autoload_filters = array('pre'=>$pre,'post'=>$post,'output'=>$output);
+      $this->autoload_filters = array('pre'=>$pre,'post'=>$post,'output'=>$output);
   }
+
+    public function registerClass($a,$b)
+    {
+        if( $this->security_policy ) {
+            $this->security_policy->static_classes[] = $a;
+        }
+        parent::registerClass($a,$b);
+    }
 
   /**
    * Registers plugin to be used in templates
@@ -197,11 +207,10 @@ class Smarty_CMS extends SmartyBC
    */
   public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
   {
-    if (!isset($this->smarty->registered_plugins[$type][$tag])) {
-      $this->smarty->registered_plugins[$type][$tag] = array($callback, (bool) $cacheable, (array) $cache_attr);
-    }
-
-    return $this;
+      if (!isset($this->registered_plugins[$type][$tag])) {
+          return parent::registerPlugin($type,$tag,$callback,$cacheable,$cache_attr);
+      }
+      return $this;
   }
 
   /**
@@ -217,35 +226,34 @@ class Smarty_CMS extends SmartyBC
    */
   public function defaultPluginHandler($name, $type, $template, &$callback, &$script, &$cachable)
   {
-    debug_buffer('',"Start Load Smarty Plugin $name/$type");
+      debug_buffer('',"Start Load Smarty Plugin $name/$type");
 
-    $cachable = TRUE;
-    $config = cmsms()->GetConfig();
-    $fn = cms_join_path($config['root_path'],'plugins',$type.'.'.$name.'.php');
-    if( file_exists($fn) ) {
-      // plugins with the smarty_cms_function
-      require_once($fn);
-      $func = 'smarty_cms_'.$type.'_'.$name;
-      $script = $fn;
-      if( function_exists($func) ) {
-	$callback = $func;
-	$cachable = FALSE;
-	debug_buffer('',"End Load Smarty Plugin $name/$type");
-	return TRUE;
+      $cachable = TRUE;
+      $fn = cms_join_path(CMS_ROOT_PATH,'plugins',$type.'.'.$name.'.php');
+      if( file_exists($fn) ) {
+          // plugins with the smarty_cms_function
+          require_once($fn);
+          $func = 'smarty_cms_'.$type.'_'.$name;
+          $script = $fn;
+          if( function_exists($func) ) {
+              $callback = $func;
+              $cachable = FALSE;
+              debug_buffer('',"End Load Smarty Plugin $name/$type");
+              return TRUE;
+          }
       }
-    }
 
-    if( cmsms()->is_frontend_request() ) {
-      $row = cms_module_smarty_plugin_manager::load_plugin($name,$type);
-      if( is_array($row) && is_array($row['callback']) && count($row['callback']) == 2 &&
-	  is_string($row['callback'][0]) && is_string($row['callback'][1]) ) {
-	$cachable = $row['cachable'];
-	$callback = $row['callback'][0].'::'.$row['callback'][1];
-	return TRUE;
+      if( CmsApp::get_instance()->is_frontend_request() ) {
+          $row = cms_module_smarty_plugin_manager::load_plugin($name,$type);
+          if( is_array($row) && is_array($row['callback']) && count($row['callback']) == 2 &&
+              is_string($row['callback'][0]) && is_string($row['callback'][1]) ) {
+              $cachable = $row['cachable'];
+              $callback = $row['callback'][0].'::'.$row['callback'][1];
+              return TRUE;
+          }
       }
-    }
 
-    return FALSE;
+      return FALSE;
   }
 
   /**
@@ -299,7 +307,7 @@ class Smarty_CMS extends SmartyBC
     }
 
     // send an event before fetching...this allows us to change template stuff.
-    if( cmsms()->is_frontend_request() ) {
+    if( CmsApp::get_instance()->is_frontend_request() ) {
       $parms = array('template'=>&$template,'cache_id'=>&$cache_id,'compile_id'=>&$compile_id,'display'=>&$display);
       Events::SendEvent('Core','TemplatePreFetch',$parms);
     }
@@ -311,18 +319,18 @@ class Smarty_CMS extends SmartyBC
 
   public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true)
   {
-    if ($parent instanceof Smarty) {
-      $saved_tpl_vars = $parent->tpl_vars;
-      $saved_config_vars = $parent->config_vars;
-    }
-    $tpl = parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
-    if ($parent instanceof Smarty) {
-      $parent->tpl_vars = $saved_tpl_vars;
-      $parent->config_vars = $saved_config_vars;
-      $tpl->tpl_vars = &$parent->tpl_vars;
-      $tpl->config_vars = &$parent->config_vars;
-    }
-    return $tpl;
+      if ($parent instanceof Smarty) {
+          $saved_tpl_vars = $parent->tpl_vars;
+          $saved_config_vars = $parent->config_vars;
+      }
+      $tpl = parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
+      if ($parent instanceof Smarty) {
+          $parent->tpl_vars = $saved_tpl_vars;
+          $parent->config_vars = $saved_config_vars;
+          $tpl->tpl_vars = &$parent->tpl_vars;
+          $tpl->config_vars = &$parent->config_vars;
+      }
+      return $tpl;
   }
 
   /**
@@ -338,13 +346,13 @@ class Smarty_CMS extends SmartyBC
    */
   public function clearCache($template_name,$cache_id = null,$compile_id = null,$exp_time = null,$type = null)
   {
-    if( is_null($cache_id) || $cache_id === '' ) {
-      $cache_id = $this->_global_cache_id;
-    }
-    else if( $cache_id[0] == '|' ) {
-      $cache_id = $this->_global_cache_id . $cache_id;
-    }
-    return parent::clearCache($template_name,$cache_id,$compile_id,$exp_time,$type);
+      if( is_null($cache_id) || $cache_id === '' ) {
+          $cache_id = $this->_global_cache_id;
+      }
+      else if( $cache_id[0] == '|' ) {
+          $cache_id = $this->_global_cache_id . $cache_id;
+      }
+      return parent::clearCache($template_name,$cache_id,$compile_id,$exp_time,$type);
   }
 
   /**
@@ -377,10 +385,10 @@ class Smarty_CMS extends SmartyBC
    */
   public function errorConsole(Exception $e)
   {
-    $config = cmsms()->GetConfig();
-
     $this->force_compile = true;
-    $this->debugging = true;
+
+    # do not show smarty debug console popup to users not logged in
+    $this->debugging = check_login(true);;
 
     $this->assign('e_line', $e->getLine());
     $this->assign('e_file', $e->getFile());

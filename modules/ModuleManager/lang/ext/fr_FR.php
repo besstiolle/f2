@@ -20,6 +20,7 @@ $lang['back_to_module_manager'] = 'Retourner au Gestionnaire de Modules';
 $lang['cancel'] = 'Annuler';
 $lang['cantdownload'] = 'Impossible de télécharger';
 $lang['cantremove'] = 'Impossible de supprimer';
+$lang['cantuninstall'] = 'Désinstallation impossible';
 $lang['changeperms'] = 'Changer les permissions';
 $lang['confirm_chmod'] = 'Si vous continuez cela va tenter de changer les permissions des fichiers sur ces modules . Êtes-vous sûr(e) de vouloir continuer ?';
 $lang['confirm_resetcache'] = 'Êtes-vous sûr(e)) de vouloir effacer le cache local ?';
@@ -34,6 +35,7 @@ $lang['dependstxt'] = 'Dépendance(s)';
 $lang['depend_activate'] = 'le module %s sera activé.';
 $lang['depend_install'] = 'le module %s (version %s ou supérieure) sera installé.';
 $lang['depend_upgrade'] = 'Le module %s sera mis à jour vers la version %s.';
+$lang['depends_upon'] = 'Dépend de&nbsp;';
 $lang['display_in_english'] = 'Vue en Anglais';
 $lang['display_in_mylanguage'] = 'Vue en français';
 $lang['download'] = 'Télécharger et installer';
@@ -79,7 +81,6 @@ $lang['error_upgrade'] = 'La mise à jour du module %s a échoué !';
 $lang['export'] = 'Export&nbsp;';
 $lang['friendlyname'] = 'Gestionnaire de Modules';
 $lang['general_notice'] = 'Les version affichées ici représentent les derniers fichiers au format XML disponibles sur la <a href="http://dev.cmsmadesimple.org/" target="_blank">Forge CMSMS™</a>. Ils peuvent être ou non la dernière version disponible.';
-$lang['has_dependants'] = 'Modules dépendants&nbsp;';
 $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3>
 <p>Un client pour le dépôt de modules CMS Made Simple™ (ModuleRepository). Ce module permet la prévisualisation, et l\'installation de modules depuis la Forge CMSMS™ sans avoir besoin d\'utiliser le FTP ou de dézipper des archives. Les fichiers XML de modules sont téléchargés en utilisant REST, l\'intégrité est vérifiée et automatiquement ajustée.</p>
 <h3>Comment l\'utiliser&nbsp;?</h3>
@@ -170,7 +171,9 @@ $lang['tab_newversions'] = 'Mises à jour disponibles';
 $lang['time_warning'] = 'L\'installation des modules est une opération intensive sur les données et la mémoire. En fonction de la bande passante réseau et de la charge du serveur, sachez que l\'installation peut prendre quelques minutes.';
 $lang['title_advancedsearch'] = 'Activer la fonctionnalité de recherche avancée';
 $lang['title_cantremove'] = 'Les permissions du système de fichiers sur ce dossier module ne permettent pas de supprimer les fichiers';
+$lang['title_cantuninstall'] = 'D\'autres modules installés dépendent de ce module, donc vous ne pouvez pas le désinstaller maintenant.';
 $lang['title_chmod'] = 'Essayez de changer de manière récursive les permissions sur ce dossier';
+$lang['title_depends_upon'] = 'Ce module dépend d\'autre(s) module(s) pour son fonctionnement.';
 $lang['title_deprecated'] = 'Ce module est obsolète (le développement est  arrêté et et il n\'y aura pas de nouvelle version).';
 $lang['title_has_dependants'] = 'Ce module est nécessaire pour le fonctionnement d\'autres modules installés. Il ne peut donc pas être désinstallé';
 $lang['title_install'] = 'Installez ce module pour une utilisation dans votre site web';

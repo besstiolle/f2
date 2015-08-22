@@ -123,8 +123,8 @@ final class CmsLockOperations
   private static function delete_expired($expires = null,$type = null)
   {
     if( $expires == null ) $expires == time();
-    $db = cmsms()->GetDb();
-    $query = 'DELETE FROM '.cms_db_prefix().CmsLock::LOCK_TABLE.' WHERE expires < ?';
+    $db = CmsApp::get_instance()->GetDb();
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE expires < ?';
     $parms = array($expires);
     if( $type ) {
       $query .= ' AND type = ?';
@@ -140,8 +140,8 @@ final class CmsLockOperations
    */
   public static function get_locks($type)
   {
-    $db = cmsms()->GetDb();
-    $query = 'SELECT * FROM '.cms_db_prefix().CmsLock::LOCK_TABLE.' WHERE type = ?';
+    $db = CmsApp::get_instance()->GetDb();
+    $query = 'SELECT * FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
     $tmp = $db->GetArray($query,array($type));
     if( !is_array($tmp) || count($tmp) == 0 ) return;
 
@@ -159,8 +159,8 @@ final class CmsLockOperations
   public static function delete_for_user()
   {
     $uid = get_userid(FALSE);
-    $db = cmsms()->GetDb();
-    $query = 'DELETE FROM '.cms_db_prefix().CmsLock::LOCK_TABLE.' WHERE uid = ?';
+    $db = CmsApp::get_instance()->GetDb();
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE uid = ?';
     $db->Execute($query,array($uid));
   }
 

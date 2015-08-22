@@ -141,7 +141,7 @@ $lang['expiry_interval'] = 'Le nombre de jours (par défaut) avant qu\'un articl
 $lang['extra'] = 'Extra&nbsp;';
 $lang['extra_label'] = 'Extra :&nbsp;';
 $lang['fesubmit_redirect'] = 'PageID ou alias où se fera la redirection après qu\'un article ait été soumis via l\'action fesubmit&nbsp;';
-$lang['fesubmit_status'] = 'Le statut des articles soumis via les pages du site (frontend)&nbsp;';
+$lang['fesubmit_status'] = 'Le statut des articles soumis via les pages du site Web (frontend)&nbsp;';
 $lang['fielddef'] = 'Définition champ';
 $lang['fielddefadded'] = 'La définition du champ a été ajoutée avec succès.';
 $lang['fielddefdeleted'] = 'La définition du champ a été supprimée avec succès.';
@@ -160,13 +160,13 @@ $lang['help'] = '<h3>Notes Importantes</h3>
             <h4>Catégories</h4>
 	<p>Le module News (Articles) fournit un mécanisme de catégories hiérarchiques pour l\'organisation de vos articles. Un article ne peut être qu\'en un seul endroit dans la hiérarchie</p>
 	<h4>Date d\'expiration et statut</h4>
-	<p>Chaque article peut avoir une option de date d\'expiration, qui n\'affichera plus l\'article sur votre page Web. En outre, les articles peuvent être marqués comme <em>brouillon</em> pour les supprimer définitivement de l\'affichage votre page Web</p>
+	<p>Chaque article peut avoir une option de date d\'expiration au delà de laquelle il ne s\'affichera plus sur votre page Web. En outre, les articles peuvent être marqués comme <em>brouillon</em> pour ne pas les afficher sur votre page Web.</p>
 	<h3>Sécurité</h3>
 	<p>L\'utilisateur doit faire partie d\'un groupe avec la permission \'Modify News\' pour pouvoir ajouter, éditer ou supprimer des articles.</p>
 <p>Pour supprimer les articles, l\'utilisateur doit faire partie d\'un groupe avec la permission \'Delete News Articles\'..</p>
 	<p>Pour modifier la présentation des gabarits, l\'utilisateur doit faire partie d\'un groupe avec la permission "Modify Templates"</p>
 	<p>Pour modifier les préférences globales du module, l\'utilisateur doit faire partie d\'un groupe avec la permission \'Modify Site Preferences\'.</p>
-	<p>En plus, pour approuver les articles soumis par un visiteur sur la page du site (frontend) l\'utilisateur doit appartenir à un groupe avec la permission  \'Approve News\' .</p>
+	<p>En plus, pour approuver les articles soumis par un visiteur sur la page du site Web (frontend) l\'utilisateur doit appartenir à un groupe avec la permission  \'Approve News\' .</p>
 	<h3>Comment l\'utiliser&nbsp;?</h3>
 	<p>La façon la plus facile de l\'utiliser est avec la balise wrapper {news} (englobe le module dans une simple balise pour simplifier la syntaxe).  Cela insérera votre module dans votre gabarit ou votre page à l\'endroit désiré, et y affichera les articles.  Exemple de syntaxe : <code>{news number=\'5\'}</code></p>
 <h3>Gabarits</h3>
@@ -181,7 +181,7 @@ $lang['helpaction'] = 'Outrepasse l\'action par défaut. Les valeurs possibles s
 <ul>
 <li>"detail" - pour afficher l\'article en mode détail.</li>
 <li>"default" - pour afficher le sommaire de l\'article</li>
-<li>"fesubmit" - <strong>Obsolète </strong>pour afficher le gabarit de soumission (frontend) d\'articles des utilisateurs dans les pages du site. Ajouter le <code>{cms_init_editor}</code> dans la section des méta-données pour initialiser l\'éditeur WYSIWYG sélectionné (Administration du site/Paramètres globaux/WYSIWYG de la partie publique).</li>
+<li>"fesubmit" - <strong>Obsolète </strong>pour afficher le gabarit de soumission (frontend) d\'articles des utilisateurs dans les pages du site Web. Ajouter le <code>{cms_init_editor}</code> dans la section des méta-données pour initialiser l\'éditeur WYSIWYG sélectionné (Administration du site/Paramètres globaux/WYSIWYG de la partie publique).</li>
 <li>"browsecat" - pour afficher une liste de catégories.</li>
 </ul>';
 $lang['helpbrowsecat'] = 'Afficher une liste navigable de catégories';
@@ -189,7 +189,7 @@ $lang['helpbrowsecattemplate'] = 'Utilise la base de données pour afficher les 
 $lang['helpcategory'] = 'Affiche les articles de cette catégorie seulement. Utiliser * pour afficher les sous-catégories. Des catégories multiples peuvent être affichées en les séparant par une virgule. Laisser ce paramètre vide affichera tous les articles.';
 $lang['helpdetailpage'] = 'Page dans laquelle afficher le détail des articles. Vous pouvez entrer soit un alias, soit un ID de page. Utile pour permettre d\'afficher le détail de l\'article dans un gabarit de page différent de celui du sommaire. Ce paramètre n\'a aucun effet pour les articles qui ont des URLs personnalisées.';
 $lang['helpdetailtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission du détail des articles.  Ce gabarit doit exister dans la Gestion du design avec le type Article::Détail. Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé. Ce paramètre n\'est pas utilisé lors de la génération des URLs si vous avez défini une URL personnalisée.';
-$lang['helpformtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission de l\'article. Ce gabarit doit exister dans la Gestion du design avec le type Article::Formulaire du site (Frontend). Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
+$lang['helpformtemplate'] = 'Utilise la base de données pour afficher le formulaire de soumission de l\'article. Ce gabarit doit exister dans la Gestion du design avec le type Article::Formulaire du site Web (Frontend). Si ce paramètre n\'est pas spécifié le gabarit par défaut est utilisé.';
 $lang['helpmoretext'] = 'Texte à afficher à la fin d\'un article qui dépasse la longueur définie du sommaire. Par défaut = "Plus"';
 $lang['helpnumber'] = 'Le nombre maximal d\'articles à afficher -- laisser ce paramètre vide affichera tous les articles. C\'est identique au paramètre "pagelimit".';
 $lang['helpshowall'] = 'Si positionné à 1 : affiche tous les articles, quelle que soit la date de fin';
@@ -217,7 +217,7 @@ $lang['help_articles_pagelimit'] = 'Sélectionnez le nombre d\'articles à affic
 $lang['help_articles_sortby'] = 'Sélectionnez comment les articles seront initialement triés.';
 $lang['help_category_name'] = 'Entrez un nom pour cette catégorie. Le nom doit être valide pour les URLs et ne contenir aucuns caractères spéciaux.';
 $lang['help_category_parent'] = 'Spécifiez éventuellement une catégorie parent pour créer une hiérarchie de catégories.';
-$lang['help_fesubmit_redirect'] = 'ID de la page ou alias de redirection après une soumission réussie depuis le site web (frontend)';
+$lang['help_fesubmit_redirect'] = 'ID de la page ou alias de redirection après une soumission réussie depuis le site Web (frontend)';
 $lang['help_fielddef_maxlen'] = 'Pour les champs texte, vous pouvez spécifier la longueur maximale à entrer par l\'utilisateur (en caractères).';
 $lang['help_fielddef_name'] = 'Chaque définition de champ doit avoir un nom. Bien que cela ne soit pas strictement nécessaire, le nom du champ doit contenir uniquement des caractères alphanumériques et le caractère underscore. Ne pas d\'utiliser des espaces dans le nom du champ.';
 $lang['help_fielddef_options'] = 'Ici vous pouvez spécifier les options valides pour les champs de la liste déroulante.';
@@ -229,15 +229,16 @@ $lang['help_opt_dflt_category'] = 'Cette option permet de spécifier la catégor
 $lang['help_opt_hide_summary'] = 'Cette option permet de désactiver le champ sommaire lors de l\'ajout et/ou édition d\'un article <em>(y compris avec l\'action fesubmit)</em>';
 $lang['help_opt_allow_summary_wysiwyg'] = 'Ce champ indique qu\'un éditeur WYSIWYG doit être activé pour le champ sommaire lorsque vous éditez un article. Dans bien des cas, le champ sommaire est un texte simple, mais cela est facultatif. <br/>Ce paramètre est ignoré si le champ sommaire est désactivé complètement <em>(voir ci-dessus)</em>';
 $lang['help_opt_expiry_interval'] = 'Définissez le nombre de jours par défaut (minimum 1) auquel l\'article expirera, si la date d\'expiration est activée. La date d\'expiration peut être ajustée lorsque vous ajoutez ou éditez d\'un article.';
-$lang['help_pagelimit'] = 'Nombre maximal d\'articles affichés (par page). Si ce paramètre n\'est pas défini, tous les articles sont affichés. Si ce paramètre est défini, et que le nombre d\'articles est supérieur, les textes et les liens seront affichés pour permettre le défilement des résultats.';
+$lang['help_pagelimit'] = 'Nombre maximal d\'articles affichés (par page). Si ce paramètre n\'est pas défini, tous les articles sont affichés. Si ce paramètre est défini, et que le nombre d\'articles est supérieur, les textes et les liens seront affichés pour permettre le défilement des résultats. La valeur maximale pour ce paramètre est 1000.';
 $lang['hide_summary_field'] = 'Cacher le champ sommaire lors de l\'ajout ou de la modification d\'articles&nbsp;';
+$lang['info_allow_fesubmit'] = 'Cette option contrôle si l\'action "fesubmit" sera autorisé à fonctionner pour tout le site Web. Soyez prudent lorsque vous l\'activez.';
 $lang['info_categories'] = 'Pour des raisons d\'organisation les articles peuvent être organisés en catégories hiérarchiques.';
 $lang['info_detail_returnid'] = 'Cette préférence est utilisée pour déterminée si une page (et donc un gabarit) sert pour l\'affichage des pages de détails. Les URLs personnalisées ne fonctionneront pas si ce paramètre n\'est pas défini pour une page valide. En outre, si cette préférence est activée, et aucun paramètre de page de détail n\'est fourni sur la balise {news}, alors cette valeur sera utilisée pour des liens pages de détails.';
 $lang['info_expired_searchable'] = 'Si activé, les articles périmés peuvent continuer à être indexés par le module de recherche et apparaissent dans les résultats de la recherche.';
 $lang['info_expired_viewable'] = 'Si activée, les articles périmés peuvent être visualisées en mode détail (ce qui est l\'ancienne fonctionnalité). Le paramètre showall peut être utilisé avec l\'URL (si vous n\'utilisez pas les pretty URLs jolies)pour indiquer également que les articles périmés peuvent être consultés.';
 $lang['info_fesubmit_notification'] = 'Vous pouvez éventuellement envoyer un email à une adresse email unique lorsqu\'un nouvel article est soumis par l\'intermédiaire de l\'action fesubmit.';
 $lang['info_maxlength'] = 'Longueur maximale uniquement pour champ de texte.';
-$lang['info_public'] = 'Seuls les champs publics sont disponibles pour l\'édition sur le site (frontend), et/ou dans les vues de résumé ou de détail.';
+$lang['info_public'] = 'Seuls les champs publics sont disponibles pour l\'édition sur le site Web (frontend), et/ou dans les vues de résumé ou de détail.';
 $lang['info_reorder_categories'] = 'Faites glisser-déplacer chaque élément dans le bon ordre pour changer les relations entre catégories';
 $lang['info_searchable'] = 'Ce champ indique que cet article doit être indexé par le module de recherche';
 $lang['info_sysdefault'] = '(le gabarit utilisé par défaut quand un nouveau gabarit est sélectionné)';
@@ -282,6 +283,7 @@ $lang['post_date_desc'] = 'Date article posté descendante';
 $lang['preview'] = 'Aperçu';
 $lang['prevpage'] = '<';
 $lang['print'] = 'Imprimer';
+$lang['prompt_allow_fesubmit'] = 'Autoriser les articles soumis par le site Web (frontend)&nbsp;';
 $lang['prompt_default'] = 'Défaut';
 $lang['prompt_go'] = 'Aller';
 $lang['prompt_name'] = 'Nom';
@@ -340,7 +342,7 @@ $lang['title_fesubmit_form'] = 'Soumettre un article';
 $lang['title_fesubmit_settings'] = 'Paramètres de soumission via le Frontend';
 $lang['title_filter'] = 'Filtres';
 $lang['title_form_sysdefault'] = 'Gabarit de soumission article par défaut (frontend)';
-$lang['title_form_template'] = 'Éditeur du gabarit soumission d\'article via les pages du site (frontend)';
+$lang['title_form_template'] = 'Éditeur du gabarit soumission d\'article via les pages du site Web (frontend)';
 $lang['title_news_settings'] = 'Paramètres des articles';
 $lang['title_notification_settings'] = 'Paramètres des notifications';
 $lang['title_submission_settings'] = 'Paramètres de soumission des articles';
@@ -349,7 +351,7 @@ $lang['title_summary_template'] = 'Éditeur du gabarit du sommaire';
 $lang['toggle_bulk'] = 'Selectionner cet article pour une opération en série';
 $lang['type'] = 'Type&nbsp;';
 $lang['type_browsecat'] = 'Parcourir la catégorie';
-$lang['type_form'] = 'Formulaire du site (Frontend)';
+$lang['type_form'] = 'Formulaire du site Web (Frontend)';
 $lang['type_detail'] = 'Détail';
 $lang['type_News'] = 'Article';
 $lang['type_summary'] = 'Sommaire';

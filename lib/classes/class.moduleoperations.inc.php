@@ -114,9 +114,13 @@ final class ModuleOperations
     }
 
 
+    /**
+     * @internal
+     * @ignore
+     */
     private function _generate_moduleinfo( CMSModule &$modinstance )
     {
-        $dir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
+        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
         if( !is_writable( $dir ) && $brief == 0 ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
         $fh = fopen($dir."/moduleinfo.ini",'w');
@@ -155,7 +159,7 @@ final class ModuleOperations
         global $CMSMS_GENERATING_XML;
         $CMSMS_GENERATING_XML = 1;
         $filecount = 0;
-        $dir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
+        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
         if( !is_writable( $dir ) && $brief == 0 ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
         // generate the moduleinfo.ini file
@@ -221,10 +225,8 @@ final class ModuleOperations
      */
     function ExpandXMLPackage( $xmluri, $overwrite = 0, $brief = 0 )
     {
-        $gCms = cmsms();
-
         // first make sure that we can actually write to the module directory
-        $dir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules";
+        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
 
         if( !is_writable( $dir ) && $brief == 0 ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
@@ -386,18 +388,18 @@ final class ModuleOperations
     {
         debug_buffer('install_module '.$module_obj->GetName());
 
-        $gCms = cmsms(); // preserve the global.
+        $gCms = CmsApp::get_instance(); // preserve the global.
         $db = $gCms->GetDb();
 
         $result = $module_obj->Install();
         if( !isset($result) || $result === FALSE) {
             // install returned nothing, or FALSE, a successful installation
-            $query = 'DELETE FROM '.cms_db_prefix().'modules WHERE module_name = ?';
+            $query = 'DELETE FROM '.CMS_DB_PREFIX.'modules WHERE module_name = ?';
             $dbr = $db->Execute($query,array($module_obj->GetName()));
 
             $lazyload_fe    = (method_exists($module_obj,'LazyLoadFrontend') && $module_obj->LazyLoadFrontend())?1:0;
             $lazyload_admin = (method_exists($module_obj,'LazyLoadAdmin') && $module_obj->LazyLoadAdmin())?1:0;
-            $query = 'INSERT INTO '.cms_db_prefix().'modules
+            $query = 'INSERT INTO '.CMS_DB_PREFIX.'modules
                       (module_name,version,status,admin_only,active,allow_fe_lazyload,allow_admin_lazyload)
                       VALUES (?,?,?,?,?,?,?)';
             $dbr = $db->Execute($query,array($module_obj->GetName(),$module_obj->GetVersion(),'installed',
@@ -406,7 +408,7 @@ final class ModuleOperations
 
             $deps = $module_obj->GetDependencies();
             if( is_array($deps) && count($deps) ) {
-                $query = 'INSERT INTO '.cms_db_prefix().'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
+                $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
                           VALUES (?,?,?,NOW(),NOW())';
                 foreach( $deps as $depname => $depversion ) {
                     if( !$depname || !$depversion ) continue;
@@ -471,27 +473,26 @@ final class ModuleOperations
     private function &_get_module_info()
     {
         if( !is_array($this->_moduleinfo) || count($this->_moduleinfo) == 0 ) {
-            $db = cmsms()->GetDb();
-            $query = 'SELECT * FROM '.cms_db_prefix().'modules ORDER BY module_name';
+            $db = CmsApp::get_instance()->GetDb();
+            $query = 'SELECT * FROM '.CMS_DB_PREFIX.'modules ORDER BY module_name';
             $tmp = $db->GetArray($query);
 
             if( is_array($tmp) ) {
-                $dir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules";
+                $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
                 $this->_moduleinfo = array();
-                for( $i = 0; $i < count($tmp); $i++ ) {
+                for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
                     $name = $tmp[$i]['module_name'];
                     if( is_file($dir."/$name/$name.module.php") ) {
                         if( !isset($this->_moduleinfo[$name]) ) $this->_moduleinfo[$name] = $tmp[$i];
                     }
                 }
 
-                $query = 'SELECT * FROM '.cms_db_prefix().'module_deps ORDER BY parent_module';
-                $tmp2 = $db->GetArray($query);
-                if( is_array($tmp2) && count($tmp2) ) {
-                    foreach( $tmp2 as $rec ) {
-                        if( isset($this->_moduleinfo[$rec['parent_module']]) ) {
-                            $minfo =& $this->_moduleinfo[$rec['parent_module']];
-                            $minfo['dependants'][] = $rec['child_module'];
+                $all_deps = $this->_get_all_module_dependencies();
+                if( count($all_deps) ) {
+                    foreach( $all_deps as $mname => $deps ) {
+                        if( is_array($deps) && count($deps) && isset($this->_moduleinfo[$mname]) ) {
+                            $minfo =& $this->_moduleinfo[$mname];
+                            $minfo['dependants'] = array_keys($deps);
                         }
                     }
                 }
@@ -507,8 +508,8 @@ final class ModuleOperations
      */
     private function _load_module($module_name,$force_load = FALSE,$dependents = TRUE)
     {
-        $config = cmsms()->GetConfig();
-        $dir = $config['root_path'].'/modules';
+        $gCms = CmsApp::get_instance(); // backwards compatibility... set the global.
+        $dir = CMS_ROOT_PATH.'/modules';
 
         $info = $this->_get_module_info();
         if( !isset($info[$module_name]) && !$force_load ) {
@@ -521,13 +522,13 @@ final class ModuleOperations
         }
 
         global $CMS_INSTALL_PAGE;
-        $gCms = cmsms(); // backwards compatibility... set the global.
 
         // okay, lessee if we can load the dependants
         if( $dependents ) {
             $deps = $this->get_module_dependencies($module_name);
             if( is_array($deps) && count($deps) ) {
                 foreach( $deps as $name => $ver ) {
+                    if( $name == $module_name ) continue; // a module cannot depend on itself.
                     // this is the start of a recursive routine.
                     // get_module_instance may call _load_module.
                     $obj2 = $this->get_module_instance($name,$ver);
@@ -572,12 +573,13 @@ final class ModuleOperations
         if( is_object($obj) ) $this->_modules[$module_name] = $obj;
 
         if( (!isset($info[$module_name]) || $info[$module_name]['status'] != 'installed') &&
-            (isset($CMS_INSTALL_PAGE) || $this->_is_queued_for_install($module_name)) ) {
+            (isset($CMS_INSTALL_PAGE) || $this->IsQueuedForInstall($module_name)) ) {
             // not installed, can we auto-install it?
-            if( in_array($module_name,$this->cmssystemmodules) || $this->_is_queued_for_install($module_name) ) {
+            if( in_array($module_name,$this->cmssystemmodules) || $this->IsQueuedForInstall($module_name) ) {
                 $res = $this->_install_module($obj);
                 if( !isset($_SESSION['moduleoperations_result']) ) $_SESSION['moduleoperations_result'] = array();
                 $_SESSION['moduleoperations_result'][$module_name] = $res;
+                $this->_unqueue_install($module_name);
             }
             else {
                 // nope, can't auto install...
@@ -586,20 +588,22 @@ final class ModuleOperations
             }
         }
 
-        $tmp = cmsms()->get_installed_schema_version();
+        $tmp = CmsApp::get_instance()->get_installed_schema_version();
         if( $tmp == CMS_SCHEMA_VERSION ) {
             // can't auto upgrade modules if cmsms schema versions don't match.
             // check to see if an upgrade is needed.
             allow_admin_lang(TRUE); // isn't this ugly.
             if( isset($info[$module_name]) && $info[$module_name]['status'] == 'installed' ) {
+                // looks like upgrade is needed
                 $dbversion = $info[$module_name]['version'];
                 if( version_compare($dbversion, $obj->GetVersion()) == -1 ) {
-                    // upgrade is needed
-                    if( in_array($module_name,$this->cmssystemmodules) || $this->_is_queued_for_install($module_name) ) {
+                    if( in_array($module_name,$this->cmssystemmodules) || $this->IsQueuedForInstall($module_name) ) {
                         // we're allowed to upgrade
                         $res = $this->_upgrade_module($obj);
+                        $this->_unqueue_install($module_name);
                         if( !isset($_SESSION['moduleoperations_result']) ) $_SESSION['moduleoperations_result'] = array();
                         if( $res ) {
+                            // upgrade succeeded
                             $res2 = array(TRUE,lang('moduleupgraded'));
                             $_SESSION['moduleoperations_result'][$module_name] = $res2;
                         }
@@ -644,7 +648,7 @@ final class ModuleOperations
      */
     public function FindAllModules()
     {
-        $dir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules";
+        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
 
         $result = array();
         if( $handle = @opendir($dir) ) {
@@ -711,7 +715,7 @@ final class ModuleOperations
         if( $loadall ) $this->_load_all_modules();
         global $CMS_ADMIN_PAGE;
         global $CMS_STYLESHEET;
-        $config = cmsms()->GetConfig();
+        $config = CmsApp::get_instance()->GetConfig();
         $allinfo = $this->_get_module_info();
         if( !is_array($allinfo) ) return; // no modules installed, probably an empty database... edge case.
 
@@ -749,31 +753,36 @@ final class ModuleOperations
     private function _upgrade_module( &$module_obj, $to_version = '' )
     {
         // we can't upgrade a module if the schema is not up to date.
-        $tmp = cmsms()->get_installed_schema_version();
+        $gCms = CmsApp::get_instance();
+        $tmp = $gCms->get_installed_schema_version();
         if( $tmp && $tmp < CMS_SCHEMA_VERSION ) return array(FALSE,lang('error_coreupgradeneeded'));
 
         $info = $this->_get_module_info();
         $module_name = $module_obj->GetName();
         $dbversion = $info[$module_name]['version'];
         if( $to_version == '' ) $to_version = $module_obj->GetVersion();
+        $dbversion = $info[$module_name]['version'];
+        if( version_compare($dbversion, $to_version) != -1 ) {
+          return array(TRUE); // nothing to do.
+        }
 
-        $db = cmsms()->GetDb();
+        $db = $gCms->GetDb();
         $result = $module_obj->Upgrade($dbversion,$to_version);
         if( !isset($result) || $result === FALSE ) {
             $lazyload_fe    = (method_exists($module_obj,'LazyLoadFrontend') && $module_obj->LazyLoadFrontend())?1:0;
             $lazyload_admin = (method_exists($module_obj,'LazyLoadAdmin') && $module_obj->LazyLoadAdmin())?1:0;
 
-            $query = 'UPDATE '.cms_db_prefix().'modules SET version = ?, active = 1, allow_fe_lazyload = ?, allow_admin_lazyload = ?
+            $query = 'UPDATE '.CMS_DB_PREFIX.'modules SET version = ?, active = 1, allow_fe_lazyload = ?, allow_admin_lazyload = ?
                     WHERE module_name = ?';
             $dbr = $db->Execute($query,array($module_obj->GetVersion(),$lazyload_fe,$lazyload_admin,$module_obj->GetName()));
 
             // upgrade dependencies
-            $query = 'DELETE FROM '.cms_db_prefix().'module_deps WHERE child_module = ?';
+            $query = 'DELETE FROM '.CMS_DB_PREFIX.'module_deps WHERE child_module = ?';
             $dbr = $db->Execute($query,array($module_obj->GetName()));
 
             $deps = $module_obj->GetDependencies();
             if( is_array($deps) && count($deps) ) {
-                $query = 'INSERT INTO '.cms_db_prefix().'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
+                $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
                        VALUES (?,?,?,NOW(),NOW())';
                 foreach( $deps as $depname => $depversion ) {
                     if( !$depname || !$depversion ) continue;
@@ -782,7 +791,7 @@ final class ModuleOperations
             }
 
             $this->_moduleinfo = array();
-            cmsms()->clear_cached_files();
+            $gCms->clear_cached_files();
             audit('','Module', 'Upgraded module '.$module_obj->GetName().' to version '.$module_obj->GetVersion());
             Events::SendEvent('Core', 'ModuleUpgraded', array('name' => $module_obj->GetName(), 'oldversion' => $dbversion, 'newversion' => $module_obj->GetVersion()));
 
@@ -823,7 +832,7 @@ final class ModuleOperations
      */
     public function UninstallModule( $module)
     {
-        $gCms = cmsms();
+        $gCms = CmsApp::get_instance();
         $db = $gCms->GetDb();
 
         $modinstance = cms_utils::get_module($module);
@@ -834,19 +843,19 @@ final class ModuleOperations
 
         if (!isset($result) || $result === FALSE) {
             // now delete the record
-            $query = "DELETE FROM ".cms_db_prefix()."modules WHERE module_name = ?";
+            $query = "DELETE FROM ".CMS_DB_PREFIX."modules WHERE module_name = ?";
             $db->Execute($query, array($module));
 
             // delete any dependencies
-            $query = "DELETE FROM ".cms_db_prefix()."module_deps WHERE child_module = ?";
+            $query = "DELETE FROM ".CMS_DB_PREFIX."module_deps WHERE child_module = ?";
             $db->Execute($query, array($module));
 
             // clean up, if permitted
             if ($cleanup) {
                 // deprecated
-                $db->Execute('DELETE FROM '.cms_db_prefix().'module_templates where module_name=?',array($module));
-                $db->Execute('DELETE FROM '.cms_db_prefix().'event_handlers where module_name=?',array($module));
-                $db->Execute('DELETE FROM '.cms_db_prefix().'events where originator=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_templates where module_name=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'event_handlers where module_name=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'events where originator=?',array($module));
 
                 $types = CmsLayoutTemplateType::load_all_by_originator($module);
                 if( is_array($types) && count($types) ) {
@@ -861,11 +870,11 @@ final class ModuleOperations
                     }
                 }
 
-                $db->Execute('DELETE FROM '.cms_db_prefix().'module_smarty_plugins where module=?',array($module));
-                $db->Execute('DELETE FROM '.cms_db_prefix()."siteprefs WHERE sitepref_name LIKE '".
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins where module=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX."siteprefs WHERE sitepref_name LIKE '".
                              str_replace("'",'',$db->qstr($module))."_mapi_pref%'");
-                $db->Execute('DELETE FROM '.cms_db_prefix().'routes WHERE key1 = ?',array($module));
-                $db->Execute('DELETE FROM '.cms_db_prefix().'module_smarty_plugins WHERE module = ?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'routes WHERE key1 = ?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins WHERE module = ?',array($module));
             }
 
             // clear the cache.
@@ -921,8 +930,8 @@ final class ModuleOperations
             $info[$module_name]['active'] = 0;
         }
         if( $info[$module_name]['active'] != $o_state ) {
-            $db = cmsms()->GetDb();
-            $query = 'UPDATE '.cms_db_prefix().'modules SET active = ? WHERE module_name = ?';
+            $db = CmsApp::get_instance()->GetDb();
+            $query = 'UPDATE '.CMS_DB_PREFIX.'modules SET active = ? WHERE module_name = ?';
             $dbr = $db->Execute($query,array($info[$module_name]['active'],$module_name));
             $this->_moduleinfo = array();
             audit('','Module','Activated '.$module_name);
@@ -1005,20 +1014,11 @@ final class ModuleOperations
         return module_meta::get_instance()->module_list_by_capability($capability,$args);
     }
 
-
     /**
-     * A function to return a list of dependencies from a module.
-     * this method works by reading the dependencies from the database.
-     *
-     * @since 1.11.8
-     * @author Robert Campbell
-     * @param string $module_name The module name
-     * @return array Hash of module names and array of dependencies
+     * @ignore
      */
-    public function get_module_dependencies($module_name)
+    private function _get_all_module_dependencies()
     {
-        if( !$module_name ) return;
-
         if( !is_array($this->_moduledeps) ) {
             $fn = TMP_CACHE_LOCATION.'/f'.md5(__FILE__.'deps').'.dat';
             if( file_exists($fn) ) {
@@ -1027,8 +1027,8 @@ final class ModuleOperations
             }
             else {
                 $this->_moduledeps = array();
-                $db = cmsms()->GetDb();
-                $query = 'SELECT parent_module,child_module,minimum_version FROM '.cms_db_prefix().'module_deps';
+                $db = CmsApp::get_instance()->GetDb();
+                $query = 'SELECT parent_module,child_module,minimum_version FROM '.CMS_DB_PREFIX.'module_deps ORDER BY parent_module';
                 $dbr = $db->GetArray($query);
                 if( is_array($dbr) && count($dbr) ) {
                     foreach( $dbr as $row ) {
@@ -1036,11 +1036,28 @@ final class ModuleOperations
                         $this->_moduledeps[$row['child_module']][$row['parent_module']] = $row['minimum_version'];
                     }
                 }
-                file_put_contents($fn,serialize($this->_moduledeps));
+                global $CMS_INSTALL_PAGE;
+                if( isset($CMS_INSTALL_PAGE) ) file_put_contents($fn,serialize($this->_moduledeps));
             }
         }
+        return $this->_moduledeps;
+    }
 
-        if( isset($this->_moduledeps[$module_name]) ) return $this->_moduledeps[$module_name];
+    /**
+     * A function to return a list of dependencies from a module.
+     * this method works by reading the dependencies from the database.
+     *
+     * @since 1.11.8
+     * @author Robert Campbell
+     * @param string $module_name The module name
+     * @return array Hash of module names and dependencies
+     */
+    public function get_module_dependencies($module_name)
+    {
+        if( !$module_name ) return;
+
+        $deps = $this->_get_all_module_dependencies();
+        if( isset($deps[$module_name]) ) return $deps[$module_name];
     }
 
     /**
@@ -1137,7 +1154,7 @@ final class ModuleOperations
     {
         $obj = null;
         if( !$module_name ) {
-            if( cmsms()->is_frontend_request() ) {
+            if( CmsApp::get_instance()->is_frontend_request() ) {
                 $module_name = get_site_preference('frontendwysiwyg');
             }
             else {
@@ -1188,15 +1205,32 @@ final class ModuleOperations
 
 
     /**
+     * Check if a module is queued for install.
+     *
+     * This is an internal method, subject to change in later releases.  It should never be called for upgrading arbitrary modules.
+     * Any use of this function by third party code will not be supported.  Use at your own risk and do not report bugs or issues
+     * related to your use of this module.
+     *
      * @ignore
      */
-    private function _is_queued_for_install($module_name)
+    public function IsQueuedForInstall($module_name)
     {
+        $module_name = trim((string)$module_name);
+        if( !$module_name ) return;
         if( !isset($_SESSION['moduleoperations']) ) return FALSE;
         if( !isset($_SESSION['moduleoperations'][$module_name]) ) return FALSE;
         return TRUE;
     }
 
+    /**
+     * @ignore
+     */
+    private function _unqueue_install($module_name)
+    {
+        $module_name = trim((string)$module_name);
+        if( !$module_name ) return;
+        if( isset($_SESSION['moduleoperations'][$module_name]) ) unset($_SESSION['moduleoperations'][$module_name]);
+    }
 
     /**
      * Queue a module for install
@@ -1207,6 +1241,7 @@ final class ModuleOperations
      */
     public function QueueForInstall($module_name)
     {
+        $module_name = trim((string)$module_name);
         if( !$module_name ) return;
         if( !isset($_SESSION['moduleoperations']) ) $_SESSION['moduleoperations'] = array();
         if( !isset($_SESSION['moduleoperations'][$module_name]) ) $_SESSION['moduleoperations'][$module_name] = 1;

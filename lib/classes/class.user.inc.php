@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.user.inc.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: class.user.inc.php 9949 2015-05-10 01:43:22Z calguy1000 $
 
 /**
  * User class definition
@@ -123,14 +123,11 @@ class User
 	{
 		$result = false;
 
+        $userops = UserOperations::get_instance();
 		if ($this->id > -1) {
-			$gCms = cmsms();
-			$userops = $gCms->GetUserOperations();
 			$result = $userops->UpdateUser($this);
 		}
 		else {
-			$gCms = cmsms();
-			$userops = $gCms->GetUserOperations();
 			$newid = $userops->InsertUser($this);
 			if ($newid > -1) {
 				$this->id = $newid;
@@ -151,16 +148,11 @@ class User
 	function Delete()
 	{
 		$result = false;
-
 		if ($this->id > -1) {
-			$gCms = cmsms();
-			$userops = $gCms->GetUserOperations();
+			$userops = UserOperations::get_instance();
 			$result = $userops->DeleteUserByID($this->id);
-			if ($result) {
-				$this->SetInitialValues();
-			}
+			if ($result) $this->SetInitialValues();
 		}
-
 		return $result;
 	}
 }

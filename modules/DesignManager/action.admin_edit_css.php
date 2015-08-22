@@ -22,12 +22,20 @@ if (!isset($gCms)) exit ;
 if (!$this->CheckPermission('Manage Stylesheets')) return;
 
 $this->SetCurrentTab('stylesheets');
+$css_id = (int) get_parameter_value($params,'css');
 
 if( isset($params['cancel']) ) {
-    if( $params['cancel'] == $this->Lang('cancel') ) {
-        $this->SetMessage($this->Lang('msg_cancelled'));
-        $this->RedirectToAdminTab();
+    try {
+        if( $css_id && dm_utils::locking_enabled() ) {
+            $lock_id = CmsLockOperations::is_locked('stylesheet',$css_id);
+            CmsLockOperations::unlock($lock_id,'stylesheett',$css_id);
+        }
     }
+    catch( Exception $e ) {
+        // do nothing.
+    }
+    if( $params['cancel'] == $this->Lang('cancel') ) $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
 }
 
 try {
@@ -37,9 +45,9 @@ try {
     $apply = isset($params['apply']) ? 1 : 0;
     $extraparms = array();
 
-    if (isset($params['css'])) {
-        $css_ob = CmsLayoutStylesheet::load($params['css']);
-        $extraparms['css'] = $params['css'];
+    if ($css_id) {
+        $css_ob = CmsLayoutStylesheet::load($css_id);
+        $extraparms['css'] = $css_id;
     } else {
         $css_ob = new CmsLayoutStylesheet();
     }
@@ -47,12 +55,18 @@ try {
     //
     // prepare to display.
     //
-    if ($css_ob && $css_ob->get_id() && dm_utils::locking_enabled()) {
+    if (!$apply && $css_ob && $css_ob->get_id() && dm_utils::locking_enabled()) {
         $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
         $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
         try {
             $lock_id = CmsLockOperations::is_locked('stylesheet', $css_ob->get_id());
-            if ($lock_id > 0) CmsLockOperations::unlock($lock_id, 'stylesheet', $css_ob->get_id());
+            $lock = null;
+            if( $lock_id > 0 ) {
+                // it's locked... by somebody, make sure it's expired before we allow stealing it.
+                $lock = CmsLock::load('stylesheet',$css_ob->get_id());
+                if( !$lock->expired() ) throw new CmsLockException('CMSEX_L010');
+                CmsLockOperations::unlock($lock_id,'stylesheet',$css_ob->get_id());
+            }
             $lock = new CmsLock('stylesheet', $css_ob->get_id(), (int)$this->GetPreference('lock_timeout'));
             $smarty->assign('lock', $lock);
         } catch( CmsException $e ) {
@@ -89,6 +103,15 @@ try {
             $css_ob->save();
 
             if (!$apply) {
+                try {
+                    if( $css_id && dm_utils::locking_enabled() ) {
+                        $lock_id = CmsLockOperations::is_locked('stylesheet',$css_id);
+                        CmsLockOperations::unlock($lock_id,'stylesheet',$css_id);
+                    }
+                }
+                catch( \Exception $e ) {
+                    // do nothing.
+                }
                 $this->SetMessage($message);
                 $this->RedirectToAdminTab();
             }

@@ -101,6 +101,9 @@ $(document).ready(function(){
 	    {if $item.missing_deps}
               {capture assign='op'}<a class="modop mod_missingdeps important" style="color: red;" title="{$ModuleManager->Lang('title_missingdeps')}" href="{cms_action_url action='local_missingdeps' mod=$item.name}">{$ModuleManager->Lang('missingdeps')}</a>{/capture}{$ops[]=$op}
 	    {/if}
+  	    {if !$item.can_uninstall}
+              {capture assign='op'}<span title="{$ModuleManager->Lang('title_cantuninstall')}">{$ModuleManager->Lang('cantuninstall')}</span>{/capture}{$ops[]=$op}
+	    {/if}
           {/if}
           {if isset($item.e_status)}
             {capture assign='op'}{$tmp='status_'|cat:$item.e_status}<span {if $item.e_status == 'db_newer'}class="important"{/if} title="{$ModuleManager->Lang($tmp)}">{$ModuleManager->Lang($item.e_status)}</span>{/capture}{$ops[]=$op}
@@ -116,7 +119,7 @@ $(document).ready(function(){
 	    {foreach $item.dependants as $one}
 	      {$tmp[]="<a href=\"{cms_action_url}#_{$one}\">{$one}</a>"}
 	    {/foreach}
-            {capture assign='op'}<span title="{$ModuleManager->Lang('title_has_dependants')}">{$ModuleManager->Lang('has_dependants')}</span>: {implode(', ',$tmp)}{/capture}{$ops[]=$op}
+            {capture assign='op'}<span title="{$ModuleManager->Lang('title_depends_upon')}">{$ModuleManager->Lang('depends_upon')}</span>: {implode(', ',$tmp)}{/capture}{$ops[]=$op}
           {/if}
           {'<br/>'|implode:$ops}
       </td>
@@ -133,7 +136,7 @@ $(document).ready(function(){
             {capture assign='op'}<a class="modop mod_chmod" href="{cms_action_url action='local_chmod' mod=$item.name}" title="{$ModuleManager->Lang('title_chmod')}">{$ModuleManager->Lang('changeperms')}</a>{/capture}{$ops[]=$op}
           {/if}
         {else}
-	  {if !isset($item.dependants) & $item.can_uninstall}
+	  {if $item.can_uninstall}
             {if $item.name != 'ModuleManager' || $allow_modman_uninstall}
               {capture assign='op'}<a class="modop mod_uninstall" href="{cms_action_url action='local_uninstall' mod=$item.name}" title="{$ModuleManager->Lang('title_uninstall')}">{$ModuleManager->Lang('uninstall')}</a>{/capture}{$ops[]=$op}
 	    {/if}

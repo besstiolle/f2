@@ -16,28 +16,18 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_created_date($params, &$template)
+function smarty_function_created_date($params, &$smarty)
 {
-	$smarty = $template->smarty;
+    $content_obj = CmsApp::get_instance()->get_content_object();
 
-	$content_obj = cmsms()->variables['content_obj'];
+    $format = "%x %X";
+	if(!empty($params['format'])) $format = $params['format'];
 
-	if(empty($params['format']))
-	{
-		$format = "%x %X";
-	}
-	else
-	{
-		$format = $params['format'];
-	}
-
-	if (is_object($content_obj) && $content_obj->GetCreationDate() > -1)
-	{
+	if (is_object($content_obj) && $content_obj->GetCreationDate() > -1) {
 		$time = $content_obj->GetCreationDate();
 		$str = cms_htmlentities(strftime($format, $time));;
 
-		if( isset($params['assign']) )
-	    {
+		if( isset($params['assign']) ) {
 			$smarty->assign(trim($params['assign']),$str);
 			return;
 	    }

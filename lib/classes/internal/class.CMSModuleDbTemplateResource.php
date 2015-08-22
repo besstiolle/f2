@@ -39,10 +39,10 @@ class CMSModuleDbTemplateResource extends CMS_Fixed_Resource_Custom
     protected function fetch($name,&$source,&$mtime)
     {
         debug_buffer('','CMSModuleDbTemplateResource start'.$name);
-        $db = cmsms()->GetDb();
+        $db = CmsApp::get_instance()->GetDb();
 
         $tmp = explode(';',$name);
-        $query = "SELECT * from ".cms_db_prefix()."module_templates WHERE module_name = ? and template_name = ?";
+        $query = "SELECT * from ".CMS_DB_PREFIX."module_templates WHERE module_name = ? and template_name = ?";
         $parts = explode(';',$name);
         $row = $db->GetRow($query, $parts);
         if ($row) {
@@ -79,13 +79,12 @@ class CMSModuleFileTemplateResource extends CMS_Fixed_Resource_Custom
     {
         $source = null;
         $mtime = null;
-        $params = preg_split('/;/', $name);
+        $params = explode(';',$name);
         if( count($params) != 2 ) return;
 
-        $config = cmsms()->GetConfig();
         $files = array();
-        $files[] = cms_join_path($config['root_path'],'module_custom',$params[0],'templates',$params[1]);
-        $files[] = cms_join_path($config['root_path'],'modules',$params[0],'templates',$params[1]);
+        $files[] = cms_join_path(CMS_ROOT_PATH,'module_custom',$params[0],'templates',$params[1]);
+        $files[] = cms_join_path(CMS_ROOT_PATH,'modules',$params[0],'templates',$params[1]);
 
         foreach( $files as $one ) {
             if( file_exists($one) ) {

@@ -47,7 +47,7 @@ class BookmarkOperations
   {
 	  $config = cmsms()->GetConfig();
 	  $urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-      if( startswith($url,$config['root_url']) ) $url = str_replace($config['root_url'],'[ROOT_URL]',$url);
+      if( startswith($url,CMS_ROOT_URL) ) $url = str_replace(CMS_ROOT_URL,'[ROOT_URL]',$url);
       $url = str_replace($urlext,'[SECURITYTAG]',$url);
 	  return $url;
   }
@@ -65,7 +65,7 @@ class BookmarkOperations
 	  $config = cmsms()->GetConfig();
 	  $urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
-	  $map = array('[SECURITYTAG]'=>$urlext,'[ROOT_URL]'=>$config['root_url']);
+	  $map = array('[SECURITYTAG]'=>$urlext,'[ROOT_URL]'=>CMS_ROOT_URL);
 	  foreach( $map as $from => $to ) {
 		  $url = str_replace($from,$to,$url);
       }
@@ -87,7 +87,7 @@ class BookmarkOperations
 	  $config = $gCms->GetConfig();
 
 	  $result = array();
-	  $query = "SELECT bookmark_id, user_id, title, url FROM ".cms_db_prefix()."admin_bookmarks WHERE user_id = ? ORDER BY title";
+	  $query = "SELECT bookmark_id, user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE user_id = ? ORDER BY title";
 	  $dbresult = $db->Execute($query, array($user_id));
 
 	  while ($dbresult && $row = $dbresult->FetchRow()) {
@@ -114,7 +114,7 @@ class BookmarkOperations
 		$result = null;
 		$db = cmsms()->GetDb();
 
-		$query = "SELECT bookmark_id, user_id, title, url FROM ".cms_db_prefix()."admin_bookmarks WHERE bookmark_id = ?";
+		$query = "SELECT bookmark_id, user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		while ($dbresult && $row = $dbresult->FetchRow()) {
@@ -141,8 +141,8 @@ class BookmarkOperations
 		$db = cmsms()->GetDb();
 
 		$bookmark->url = $this->_prep_for_saving($bookmark->url);
-		$new_bookmark_id = $db->GenID(cms_db_prefix()."admin_bookmarks_seq");
-		$query = "INSERT INTO ".cms_db_prefix()."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
+		$new_bookmark_id = $db->GenID(CMS_DB_PREFIX."admin_bookmarks_seq");
+		$query = "INSERT INTO ".CMS_DB_PREFIX."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
 		$dbresult = $db->Execute($query, array($new_bookmark_id, $bookmark->user_id, $bookmark->url, $bookmark->title));
 		if ($dbresult !== false) $result = $new_bookmark_id;
 
@@ -161,7 +161,7 @@ class BookmarkOperations
 		$db = cmsms()->GetDb();
 
 		$bookmark->url = $this->_prep_for_saving($bookmark->url);
-		$query = "UPDATE ".cms_db_prefix()."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
+		$query = "UPDATE ".CMS_DB_PREFIX."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($bookmark->user_id, $bookmark->title, $bookmark->url, $bookmark->bookmark_id));
 		if ($dbresult !== false) $result = true;
 
@@ -179,7 +179,7 @@ class BookmarkOperations
 		$result = false;
 		$db = cmsms()->GetDb();
 
-		$query = "DELETE FROM ".cms_db_prefix()."admin_bookmarks where bookmark_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."admin_bookmarks where bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 		if ($dbresult !== false) $result = true;
 		return $result;

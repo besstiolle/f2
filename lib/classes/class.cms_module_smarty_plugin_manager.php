@@ -105,11 +105,11 @@ final class cms_module_smarty_plugin_manager
 
 		$this->_loaded = TRUE;
 		$this->_data = array();
-		$db = cmsms()->GetDb();
-		$query = 'SELECT * FROM '.cms_db_prefix().'module_smarty_plugins ORDER BY module';
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_smarty_plugins ORDER BY module';
 		$tmp = $db->GetArray($query);
 		if( is_array($tmp) ) {
-			for( $i = 0; $i < count($tmp); $i++ ) {
+			for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
 				$row = $tmp[$i];
 				$row['callback'] = unserialize($row['callback']);
 				// todo, verify signature
@@ -126,11 +126,11 @@ final class cms_module_smarty_plugin_manager
 		if( !is_array($this->_data) || count($this->_data) == 0 || $this->_modified == FALSE )
 			return;
 
-		$db = cmsms()->GetDb();
-		$query = 'TRUNCATE TABLE '.cms_db_prefix().'module_smarty_plugins';
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'TRUNCATE TABLE '.CMS_DB_PREFIX.'module_smarty_plugins';
 		$db->Execute($query);
 
-		$query = 'INSERT INTO '.cms_db_prefix().'module_smarty_plugins (sig,name,module,type,callback,cachable,available) VALUES';
+		$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_smarty_plugins (sig,name,module,type,callback,cachable,available) VALUES';
 		$fmt = " ('%s','%s','%s','%s','%s',%d,%d),";
 		foreach( $this->_data as $key => $row ) {
 			$query .= sprintf($fmt,$row['sig'],$row['name'],$row['module'],$row['type'],serialize($row['callback']),$row['cachable'],$row['available']);
@@ -286,9 +286,9 @@ final class cms_module_smarty_plugin_manager
 	 * @param string $name
 	 * @param string $type (function,block,modifier)
 	 */
-	public static function remove_by_name($name,$type)
+	public static function remove_by_name($name)
 	{
-		self::get_instance()->_remove_by_name($name,$type);
+		self::get_instance()->_remove_by_name($name);
 	}
 
 	/**
@@ -297,7 +297,7 @@ final class cms_module_smarty_plugin_manager
 	 * @param string $name
 	 * @param string $type (function,block,modifier)
 	 */
-	public function _remove_by_name($name,$type)
+	public function _remove_by_name($name)
 	{
 		$this->_load();
 		if( is_array($this->_data) && count($this->_data) ) {

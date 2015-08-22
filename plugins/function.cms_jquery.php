@@ -16,9 +16,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_cms_jquery($params, &$template)
+function smarty_function_cms_jquery($params, &$smarty)
 {
-	$smarty = $template->smarty;
 	$exclude = trim(get_parameter_value($params,'exclude'));
 	$cdn = cms_to_bool(get_parameter_value($params,'cdn'));
 	$append = trim(get_parameter_value($params,'append'));
@@ -28,12 +27,11 @@ function smarty_function_cms_jquery($params, &$template)
 
 	// get the output
 	$out = cms_get_jquery($exclude,$ssl,$cdn,$append,$custom_root,$include_css);
-	if( isset($params['assign']) )
-	{
+	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
 		return;
 	}
-	
+
 	return $out;
 }
 

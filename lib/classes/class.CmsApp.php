@@ -143,17 +143,18 @@ final class CmsApp {
 	 */
 	public function get_installed_schema_version()
 	{
-		static $_schema = -1;
-		if( $_schema == -1 ) {
-			$db = $this->GetDb();
-			$_schema = $db->GetOne('SELECT version FROM '.cms_db_prefix().'version');
-		}
-		return $_schema;
+        if( self::test_state(self::STATE_INSTALL) ) {
+            $db = $this->GetDb();
+            $query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+            return $db->GetOne($query);
+        }
+        return \CMSMS\internal\global_cache::get('schema_version');
 	}
 
 	/**
 	 * Retrieve the list of errors
 	 *
+     * @ignore
 	 * @since 1.9
 	 * @internal
 	 * @access private.
@@ -168,6 +169,7 @@ final class CmsApp {
 	/**
 	 * Add an error to the list
 	 *
+     * @ignore
 	 * @since 1.9
 	 * @internal
 	 * @access private
@@ -202,7 +204,7 @@ final class CmsApp {
 	public function set_content_type($mime_type = '')
 	{
 		$this->_content_type = null;
-		if( isset($txt) ) 	$this->_content_type = $mime_type;
+		if( isset($mime_type) ) $this->_content_type = $mime_type;
 	}
 
 	/**
@@ -215,7 +217,7 @@ final class CmsApp {
 	 */
 	public function set_content_object(ContentBase &$content)
 	{
-		$this->_current_content_page = $content;
+        if( !$this->_current_content_page ) $this->_current_content_page = $content;
 	}
 
 	/**
@@ -286,7 +288,7 @@ final class CmsApp {
 	final public function _setDb(ADOConnection $conn,$dbprefix = null)
 	{
 		$this->db = $conn;
-		$this->_setDbPrefix($dbprefix);
+        if( $dbprefix )	$this->_setDbPrefix($dbprefix);
 	}
 
 	/**
@@ -336,10 +338,8 @@ final class CmsApp {
 	 */
 	public function GetDbPrefix()
 	{
-		if( $this->dbprefix ) return $this->dbprefix;
-		$config = $this->GetConfig();
-		return $config['db_prefix'];
-	}
+		return CMS_DB_PREFIX;
+    }
 
 	/**
 	* Get a handle to the global CMS config.
@@ -362,6 +362,7 @@ final class CmsApp {
 	* @final
 	* @see ModuleOperations
 	* @return ModuleOperations handle to the ModuleOperations object
+    * @deprecated
 	*/
 	public function & GetModuleOperations()
 	{
@@ -376,6 +377,7 @@ final class CmsApp {
 	* @final
 	* @see UserOperations
 	* @return UserOperations handle to the UserOperations object
+    * @deprecated
 	*/
 	public function & GetUserOperations()
 	{
@@ -389,6 +391,7 @@ final class CmsApp {
 	* @final
 	* @see ContentOperations::get_instance()
 	* @return ContentOperations handle to the ContentOperations object
+    * @deprecated
 	*/
 	public function & GetContentOperations()
 	{
@@ -402,6 +405,7 @@ final class CmsApp {
 	* @final
 	* @see BookmarkOperations
 	* @return BookmarkOperations handle to the BookmarkOperations object, useful only in the admin
+    * @deprecated
 	*/
 	public function & GetBookmarkOperations()
 	{
@@ -417,6 +421,7 @@ final class CmsApp {
 	* @final
 	* @see GroupOperations
 	* @return GroupOperations handle to the GroupOperations object
+    * @deprecated
 	*/
 	public function & GetGroupOperations()
 	{
@@ -430,6 +435,7 @@ final class CmsApp {
 	* @final
 	* @see UserTagOperations
 	* @return UserTagOperations handle to the UserTagOperations object
+    * @deprecated
 	*/
 	public function & GetUserTagOperations()
 	{
@@ -470,7 +476,7 @@ final class CmsApp {
 		  and, if not, go ahead an create the instance. */
         if (!isset($this->hrinstance)) {
 			debug_buffer('', 'Start Loading Hierarchy Manager');
-			$contentops = $this->GetContentOperations();
+			$contentops = ContentOperations::get_instance();
 			$this->hrinstance = $contentops->GetAllContentAsHierarchy(false);
 			debug_buffer('', 'End Loading Hierarchy Manager');
 		}
@@ -483,6 +489,7 @@ final class CmsApp {
 	*
 	* @final
 	* @internal
+    * @ignore
 	* @access private
 	*/
 	public function dbshutdown()
@@ -512,17 +519,15 @@ final class CmsApp {
 		if( !defined('TMP_CACHE_LOCATION') ) return;
 		$the_time = time() - $age_days * 24*60*60;
 
-		$dirs = array(TMP_CACHE_LOCATION,TMP_TEMPLATES_C_LOCATION);
+		$dirs = array(TMP_CACHE_LOCATION,PUBLIC_CACHE_LOCATION,TMP_TEMPLATES_C_LOCATION);
 		foreach( $dirs as $start_dir ) {
 			$dirIterator = new RecursiveDirectoryIterator($start_dir);
 			$dirContents = new RecursiveIteratorIterator($dirIterator);
 			foreach( $dirContents as $one ) {
 				if( $one->isFile() && $one->getMTime() <= $the_time ) @unlink($one->getPathname());
 			}
+            @touch(cms_join_path($start_dir,'index.html'));
 		}
-
-		@touch(cms_join_path(TMP_CACHE_LOCATION,'index.html'));
-		@touch(cms_join_path(TMP_TEMPLATES_C_LOCATION,'index.html'));
 	}
 
 
@@ -533,8 +538,9 @@ final class CmsApp {
 	 * @since 1.11.3
 	 * @author Tapio Löytty
 	 * @return Smarty_Parser handle to the Smarty object
+     * @deprecated
 	 */
-	final public function &get_template_parser()
+	final public function & get_template_parser()
 	{
 		return Smarty_Parser::get_instance();
 	}
@@ -584,7 +590,7 @@ final class CmsApp {
 	 *
 	 * @since 1.11.2
 	 * @author Robert Campbell
-	 * @return Array of state strings, or null.
+	 * @return stringp[] Array of state strings, or null.
 	 */
     public function get_states()
     {
@@ -651,7 +657,7 @@ final class CmsApp {
      *
 	 * @since 1.11.12
 	 * @author Robert Campbell
-	 * @return boolean
+	 * @return bool
 	 */
     public function is_https_request()
     {
@@ -691,10 +697,11 @@ class CmsContentTypePlaceholder
 
 
 /**
- * Return the global cmsms() object
+ * Return the global cmsms() object.
  *
  * @since 1.7
  * @return CmsApp
+ * @see CmsApp::get_instance()
  */
 function &cmsms()
 {
@@ -707,9 +714,10 @@ function &cmsms()
  *
  * @since 0.4
  * @return string
+ * @see CmsApp::GetDbPrefix();
  */
 function cms_db_prefix() {
-  return cmsms()->GetDbPrefix();
+    return CMS_DB_PREFIX;
 }
 
 ?>

@@ -16,12 +16,11 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listbookmarks.php 9695 2014-08-18 18:56:33Z rolf1 $
+#$Id: listbookmarks.php 9878 2015-03-28 21:34:30Z JoMorg $
 
 $CMS_ADMIN_PAGE=1;
 
 require_once("../include.php");
-require_once(cms_join_path($dirname,'lib','html_entity_decode_utf8.php'));
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
@@ -79,7 +78,7 @@ include_once("header.php");
 				echo "<td><a href=\"editbookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\">";
                 echo $themeObject->DisplayImage('icons/system/edit.gif', lang('edit'),'','','systemicon');
                 echo "</a></td>\n";
-				echo "<td><a href=\"deletebookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\" onclick=\"return confirm('".cms_html_entity_decode_utf8(lang('deleteconfirm', $onemark->title),true)."');\">";
+				echo "<td><a href=\"deletebookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\" onclick=\"return confirm('".cms_html_entity_decode(lang('deleteconfirm', $onemark->title) )."');\">";
                 echo $themeObject->DisplayImage('icons/system/delete.gif', lang('delete'),'','','systemicon');
                 echo "</a></td>\n";
 				echo "</tr>\n";

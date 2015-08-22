@@ -260,10 +260,11 @@ $lang['help_opt_dflt_category'] = 'This option allows specifying the default cat
 $lang['help_opt_hide_summary'] = 'This option allows disabling the summary field when adding and/or editing a news article <em>(including with the fesubmit action)</em>';
 $lang['help_opt_allow_summary_wysiwyg'] = 'This field indicates whether a WYSIWYG editor should be enabled for the summary field when editing an article.  In many circumstances the summary field is a simple text field, however this is optional.<br/>This setting is ignored if the summary field is disabled completely <em>(see above)</em>';
 $lang['help_opt_expiry_interval'] = 'Set the default number of days (minimum 1) That articles will expire in when article expiry is enabled.   The expiry date can be adjusted when adding or editing a news article';
-$lang['help_pagelimit'] = 'Maximum number of items to display (per page).  If this parameter is not supplied all matching items will be displayed.  If it is, and there are more items available than specified in the parameter, text and links will be supplied to allow scrolling through the results';
+$lang['help_pagelimit'] = 'Maximum number of items to display (per page).  If this parameter is not supplied all matching items will be displayed.  If it is, and there are more items available than specified in the parameter, text and links will be supplied to allow scrolling through the results.  The maximum value for this parameter is 1000.';
 $lang['hide_summary_field'] = 'Hide the summary field when adding or editing articles';
 
 // I
+$lang['info_allow_fesubmit'] = 'This option controls wether the fesubmit action will be allowed to function at all for this site.  Use caution when enabling this.';
 $lang['info_categories'] = 'For organization purposes news articles can be organized into hierarchical categories';
 $lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLS will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
 $lang['info_expired_searchable'] = 'If enabled, expired articles may continue to be indexed by the search module, and appear in search results';
@@ -327,6 +328,7 @@ $lang['post_date_desc'] = 'Post Date Descending';
 $lang['preview'] = 'Preview';
 $lang['prevpage'] = '&lt;';
 $lang['print'] = 'Print';
+$lang['prompt_allow_fesubmit'] = 'Allow news articles to be submitted by the frontend';
 $lang['prompt_default'] = 'Default';
 $lang['prompt_go'] = 'Go';
 $lang['prompt_name'] = 'Name';

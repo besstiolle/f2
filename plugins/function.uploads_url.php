@@ -16,18 +16,17 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_uploads_url($params, &$template)
+function smarty_function_uploads_url($params, &$smarty)
 {
-	$smarty = $template->smarty;
-	$config = cmsms()->GetConfig();
-	
-	if( isset($params['assign']) )
-	{
-		$smarty->assign(trim($params['assign']),$config->smart_uploads_url());
+	$config = CmsApp::get_instance()->GetConfig();
+
+    $out = $config->smart_uploads_url();
+	if( isset($params['assign']) ) {
+		$smarty->assign(trim($params['assign']),$out);
 		return;
 	}
-	
-	return $config->smart_uploads_url();
+
+	return $out;
 }
 
 function smarty_cms_about_function_uploads_url() {

@@ -18,8 +18,7 @@ class CmsModuleInfo implements ArrayAccess
       return version_compare($this['mincmsversion'],CMS_VERSION,'<=');
 
     case 'dir':
-      $config = cmsms()->GetConfig();
-      return cms_join_path($config['root_path'],'modules',$this['name']);
+      return cms_join_path(CMS_ROOT_PATH,'modules',$this['name']);
 
     case 'writable':
       return is_directory_writable($this['dir']);
@@ -62,7 +61,7 @@ class CmsModuleInfo implements ArrayAccess
 
   private function _read_from_module_meta($module_name)
   {
-    $dir = dirname(dirname(dirname(__FILE__)))."/modules/$module_name";
+    $dir = dirname(dirname(__DIR__))."/modules/$module_name";
     $fn = cms_join_path($dir,'moduleinfo.ini');
     if( !file_exists($fn) ) return FALSE;
     $inidata = parse_ini_file($fn,TRUE);
@@ -84,8 +83,12 @@ class CmsModuleInfo implements ArrayAccess
 
     $fn = cms_join_path($dir,'changelog.inc');
     if( file_exists($fn) ) $this['changelog'] = file_get_contents($fn);
+    $fn = cms_join_path($dir,'doc/changelog.inc');
+    if( file_exists($fn) ) $this['changelog'] = file_get_contents($fn);
 
     $fn = cms_join_path($dir,'help.inc');
+    if( file_exists($fn) ) $this['help'] = file_get_contents($fn);
+    $fn = cms_join_path($dir,'doc/help.inc');
     if( file_exists($fn) ) $this['help'] = file_get_contents($fn);
 
     $this['has_meta'] = TRUE;
@@ -151,7 +154,7 @@ class CmsModuleInfo implements ArrayAccess
       }
     }; // _write_ini
 
-    $dir = dirname(dirname(dirname(__FILE__)))."/modules/$module_name";
+    $dir = dirname(dirname(__DIR__))."/modules/$module_name";
     $fn = cms_join_path($dir,'moduleinfo.ini');
     if( !file_exists($fn) ) {
       $out = array();

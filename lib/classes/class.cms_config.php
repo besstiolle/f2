@@ -36,8 +36,19 @@
  */
 final class cms_config implements ArrayAccess
 {
+  /**
+   * @ignore
+   */
   const TYPE_STRING = 'STRING';
+
+  /**
+   * @ignore
+   */
   const TYPE_INT = 'INT';
+
+  /**
+   * @ignore
+   */
   const TYPE_BOOL = 'BOOL';
 
   /**
@@ -137,9 +148,11 @@ final class cms_config implements ArrayAccess
 	$this->_types['tmp_cache_location'] = self::TYPE_STRING;
 	$this->_types['tmp_templates_c_location'] = self::TYPE_STRING;
 	$this->_types['public_cache_location'] = self::TYPE_STRING;
+    $this->_types['assets_path'] = self::TYPE_STRING;
+    $this->_types['permissive_smarty'] = self::TYPE_BOOL;
 
     $config = array();
-    if (defined('CONFIG_FILE_LOCATION') && file_exists(CONFIG_FILE_LOCATION)) {
+    if (defined('CONFIG_FILE_LOCATION') && is_file(CONFIG_FILE_LOCATION)) {
 		include(CONFIG_FILE_LOCATION);
 		foreach( $config as $key => &$value ) {
 			if( isset($this->_types[$key]) ) {
@@ -201,9 +214,56 @@ final class cms_config implements ArrayAccess
       self::$_instance->load_config();
 
 	  if( !defined('TMP_CACHE_LOCATION') ) {
+          /**
+           * A constant to indicate the location where private cachable files can be written.
+           *
+           * @return string
+           */
 		  define('TMP_CACHE_LOCATION',self::$_instance['tmp_cache_location']);
+
+          /**
+           * A constant to indicate where public (browsable) cachable files can be written.
+           *
+           * @return string
+           */
 		  define('PUBLIC_CACHE_LOCATION',self::$_instance['public_cache_location']);
+
+          /**
+           * A constant containing the smarty template compile directory.
+           *
+           * @return string
+           */
 		  define('TMP_TEMPLATES_C_LOCATION',self::$_instance['tmp_templates_c_location']);
+
+          /**
+           * A constant indicating if CMSMS is in debug mode.
+           *
+           * @return bool
+           */
+          define('CMS_DEBUG',self::$_instance['debug']);
+
+          /**
+           * A constant containing the directory where CMSMS is installed.
+           *
+           * @return string
+           */
+          define('CMS_ROOT_PATH',self::$_instance['root_path']);
+
+          /**
+           * A constant containing the CMSMS root url.
+           * If the root_url variable is not specified in the config file, then
+           * CMSMS will attempt to calculate one.
+           *
+           * @return string
+           */
+          define('CMS_ROOT_URL',self::$_instance['root_url']);
+
+          /**
+           * A constant containing the CMSMS database table prefix to be used on all queries.
+           *
+           * @return string
+           */
+          @define('CMS_DB_PREFIX',self::$_instance['db_prefix']);
 	  }
     }
 
@@ -274,6 +334,7 @@ final class cms_config implements ArrayAccess
 	  case 'query_var':
 		  return 'page';
 
+      case 'permissive_smarty':
 	  case 'persist_db_conn':
 		  return false;
 
@@ -281,7 +342,7 @@ final class cms_config implements ArrayAccess
 		  return true;
 
 	  case 'root_path':
-		  $out = dirname(dirname(dirname(__FILE__)));
+		  $out = dirname(dirname(__DIR__)); // realpath here?
 		  $this->_cache[$key] = $out;
 		  return $out;
 
@@ -307,7 +368,7 @@ final class cms_config implements ArrayAccess
 			  if( ($pos = strpos($path,'/index.php')) !== FALSE ) $path = substr($path,0,$pos);
 		  }
 		  $prefix = 'http://';
-		  if( cmsms()->is_https_request() ) $prefix = 'https://';
+		  if( CmsApp::get_instance()->is_https_request() ) $prefix = 'https://';
 		  $str = $prefix.$_SERVER['HTTP_HOST'].$path;
 		  $this->_cache[$key] = $str;
 		  return $str;
@@ -352,6 +413,9 @@ final class cms_config implements ArrayAccess
 
 	  case 'timezone':
 		  return '';
+
+      case 'assets_path':
+          return $this->OffsetGet('root_path').'/tmp';
 
 	  case 'db_port':
 		  return '';
@@ -467,7 +531,7 @@ final class cms_config implements ArrayAccess
 	  if( !$filename ) $filename = CONFIG_FILE_LOCATION;
 
 	  // backup the original config.php file (just in case)
-	  if( file_exists($filename) ) @copy($filename,cms_join_path(TMP_CACHE_LOCATION,basename($filename).time().'.bak'));
+	  if( is_file($filename) ) @copy($filename,cms_join_path(TMP_CACHE_LOCATION,basename($filename).time().'.bak'));
 
 	  $output = "<?php\n# CMS Made Simple Configuration File\n# Documentation: /doc/CMSMS_config_reference.pdf\n#\n";
 	  // output header to the config file.
@@ -492,7 +556,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_root_url()
   {
-	  if( cmsms()->is_https_request() ) return $this->offsetGet('ssl_url');
+	  if( CmsApp::get_instance()->is_https_request() ) return $this->offsetGet('ssl_url');
 	  return $this->offsetGet('root_url');
   }
 
@@ -501,7 +565,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_uploads_url()
   {
-	  if(cmsms()->is_https_request() ) return $this->offsetGet('ssl_uploads_url');
+	  if(CmsApp::get_instance()->is_https_request() ) return $this->offsetGet('ssl_uploads_url');
 	  return $this->offsetGet('uploads_url');
   }
 
@@ -510,7 +574,7 @@ final class cms_config implements ArrayAccess
    */
   public function smart_image_uploads_url()
   {
-	  if(cmsms()->is_https_request() ) return $this->offsetGet('ssl_image_uploads_url');
+	  if(CmsApp::get_instance()->is_https_request() ) return $this->offsetGet('ssl_image_uploads_url');
 	  return $this->offsetGet('image_uploads_url');
   }
 } // end of class

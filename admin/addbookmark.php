@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: addbookmark.php 9632 2014-06-25 14:19:40Z rolf1 $
+#$Id: addbookmark.php 9826 2015-02-19 16:04:56Z calguy1000 $
 
 $CMS_ADMIN_PAGE=1;
 
@@ -107,7 +107,7 @@ if ($error != "")
 						<input type="submit" value="<?php echo lang('submit')?>" class="pagebutton" />
 						<input type="submit" name="cancel" value="<?php echo lang('cancel')?>" class="pagebutton" />
 					</p>
-				</div>		
+				</div>
 			</form>
 	</div>
 </div>

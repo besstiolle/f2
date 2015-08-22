@@ -42,20 +42,34 @@ final class cms_siteprefs
 	 */
 	private function __construct() {}
 
+    /**
+     * @ignore
+     * @internal
+     */
+    public static function setup()
+    {
+        $obj = new \CMSMS\internal\global_cachable(__CLASS__,function(){
+                self::_read();
+                return self::$_prefs;
+            });
+        \CMSMS\internal\global_cache::add_cachable($obj);
+    }
+
 	/**
 	 * @ignore
+     * @internal
 	 */
 	private static function _read()
 	{
 		if( is_array(self::$_prefs) ) return;
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 
 		if( !$db ) return;
-		$query = 'SELECT sitepref_name,sitepref_value FROM '.cms_db_prefix().'siteprefs';
+		$query = 'SELECT sitepref_name,sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs';
 		$dbr = $db->GetArray($query);
 		if( is_array($dbr) ) {
 			self::$_prefs = array();
-			for( $i = 0; $i < count($dbr); $i++ ) {
+			for( $i = 0, $n = count($dbr); $i < $n; $i++ ) {
 				$row = $dbr[$i];
 				self::$_prefs[$row['sitepref_name']] = $row['sitepref_value'];
 			}
@@ -64,10 +78,20 @@ final class cms_siteprefs
 
 	/**
 	 * @ignore
+     * @internal
+	 */
+    private static function _restore()
+    {
+        self::$_prefs = \CMSMS\internal\global_cache::get(__CLASS__);
+    }
+
+	/**
+	 * @ignore
 	 */
 	private static function _reset()
 	{
 		self::$_prefs = null;
+        \CMSMS\internal\global_cache::clear(__CLASS__);
 	}
 
 	/**
@@ -79,7 +103,7 @@ final class cms_siteprefs
 	 */
 	public static function get($key,$dflt = '')
 	{
-		self::_read();
+        self::_restore();
 		if( isset(self::$_prefs[$key]) )  return self::$_prefs[$key];
 		return $dflt;
 	}
@@ -93,7 +117,7 @@ final class cms_siteprefs
 	 */
 	public static function exists($key)
 	{
-		self::_read();
+        self::_restore();
 		if( is_array(self::$_prefs) && in_array($key,array_keys(self::$_prefs)) ) return TRUE;
 		return FALSE;
 	}
@@ -107,16 +131,17 @@ final class cms_siteprefs
 	 */
 	public static function set($key,$value)
 	{
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		if( !self::exists($key) ) {
-			$query = 'INSERT INTO '.cms_db_prefix().'siteprefs (sitepref_name, sitepref_value) VALUES (?,?)';
+			$query = 'INSERT INTO '.CMS_DB_PREFIX.'siteprefs (sitepref_name, sitepref_value) VALUES (?,?)';
 			$dbr = $db->Execute($query,array($key,$value));
 		}
 		else {
-			$query = 'UPDATE '.cms_db_prefix().'siteprefs SET sitepref_value = ? WHERE sitepref_name = ?';
+			$query = 'UPDATE '.CMS_DB_PREFIX.'siteprefs SET sitepref_value = ? WHERE sitepref_name = ?';
 			$dbr = $db->Execute($query,array($value,$key));
 		}
 		self::$_prefs[$key] = $value;
+        \CMSMS\internal\global_cache::clear(__CLASS__);
 	}
 
 
@@ -128,12 +153,12 @@ final class cms_siteprefs
 	 */
 	public static function remove($key,$like = FALSE)
 	{
-		$query = 'DELETE FROM '.cms_db_prefix().'siteprefs WHERE sitepref_name = ?';
+		$query = 'DELETE FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name = ?';
 		if( $like ) {
-			$query = 'DELETE FROM '.cms_db_prefix().'siteprefs WHERE sitepref_name LIKE ?';
+			$query = 'DELETE FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name LIKE ?';
 			$key .= '%';
 		}
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$db->Execute($query,array($key));
 		self::_reset();
 	}
@@ -148,8 +173,8 @@ final class cms_siteprefs
 	public static function list_by_prefix($prefix)
 	{
 		if( !$prefix ) return;
-		$query = 'SELECT sitepref_name FROM '.cms_db_prefix().'siteprefs WHERE sitepref_name LIKE ?';
-		$db = cmsms()->GetDb();
+		$query = 'SELECT sitepref_name FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name LIKE ?';
+		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->GetCol($query,array($prefix.'%'));
 		if( is_array($dbr) && count($dbr) ) return $dbr;
 	}

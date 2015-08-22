@@ -130,7 +130,7 @@ abstract class CMSModule
         global $CMS_MODULE_PAGE;
         global $CMS_INSTALL_PAGE;
 
-        if( cmsms()->is_frontend_request() ) {
+        if( CmsApp::get_instance()->is_frontend_request() ) {
             $this->SetParameterType('assign',CLEAN_STRING);
             $this->SetParameterType('module',CLEAN_STRING);
             $this->SetParameterType('lang',CLEAN_STRING); // this will be ignored.
@@ -153,16 +153,16 @@ abstract class CMSModule
     {
         switch( $key ) {
         case 'cms':
-            return cmsms();
+            return CmsApp::get_instance();
 
         case 'smarty':
-            return cmsms()->GetSmarty();
+            return CmsApp::get_instance()->GetSmarty();
 
         case 'config':
-            return cmsms()->GetConfig();
+            return CmsApp::get_instance()->GetConfig();
 
         case 'db':
-            return cmsms()->GetDb();
+            return CmsApp::get_instance()->GetDb();
         }
 
         return null;
@@ -327,7 +327,7 @@ abstract class CMSModule
             if( isset($CMS_INSTALL_PAGE) ) return TRUE;
 
             // no lazy loading.
-            $gCms = cmsms();
+            $gCms = CmsApp::get_instance();
             $smarty = $gCms->GetSmarty();
             $smarty->register_function($this->GetName(), array($this->GetName(),'function_plugin'), $cachable );
             return TRUE;
@@ -415,7 +415,7 @@ abstract class CMSModule
     final public function GetModulePath()
     {
         if (is_subclass_of($this, 'CMSModule')) {
-            return cms_join_path($this->config['root_path'], 'modules' , $this->GetName());
+            return cms_join_path(CMS_ROOT_PATH, 'modules' , $this->GetName());
         }
         return __DIR__;
     }
@@ -429,7 +429,7 @@ abstract class CMSModule
      */
     final public function GetModuleURLPath($use_ssl=false)
     {
-        return ($use_ssl?$this->config['ssl_url']:$this->config['root_url']) . '/modules/' . $this->GetName();
+        return ($use_ssl?$this->config['ssl_url']:CMS_ROOT_URL) . '/modules/' . $this->GetName();
     }
 
     /**
@@ -617,10 +617,7 @@ abstract class CMSModule
                             $value = CLEANED_FILENAME;
                         }
                         else {
-                            $config = cmsms()->GetConfig();
-                            if( strpos($realpath, $config['root_path']) !== 0 ) {
-                                $value = CLEANED_FILENAME;
-                            }
+                            if( strpos($realpath, CMS_ROOT_PATH) !== 0 ) $value = CLEANED_FILENAME;
                         }
                         $mappedcount++;
                         $mapped = true;
@@ -848,7 +845,7 @@ abstract class CMSModule
      */
     final public function &GetConfig()
     {
-        return cmsms()->GetConfig();
+        return CmsApp::get_instance()->GetConfig();
     }
 
     /**
@@ -860,7 +857,7 @@ abstract class CMSModule
      */
     final public function &GetDb()
     {
-        return cmsms()->GetDb();
+        return CmsApp::get_instance()->GetDb();
     }
 
     /**
@@ -878,6 +875,7 @@ abstract class CMSModule
      * block types to the CMSMS content objects.
      *
      * @abstract
+     * @since 2.0
      * @param string $blockName Content block name
      * @param mixed  $value     Content block value
      * @param array  $params    Associative array containing content block parameters
@@ -885,7 +883,7 @@ abstract class CMSModule
      * @param ContentBase $content_obj The content object being edited.
      * @return mixed Either an array with two elements (prompt, and xhtml element) or a string containing only the xhtml input element.
      */
-    function GetContentBlockInput($blockName,$value,$params,$adding,ContentBase $content_obj)
+    function GetContentBlockFieldInput($blockName,$value,$params,$adding,ContentBase $content_obj)
     {
         return FALSE;
     }
@@ -902,13 +900,14 @@ abstract class CMSModule
      * block types to the CMSMS content objects.
      *
      * @abstract
+     * @since 2.0
      * @param string $blockName Content block name
      * @param array  $blockParams Content block parameters
      * @param array  $inputParams input parameters
      * @param ContentBase $content_obj The content object being edited.
      * @return mixed|false The content block value if possible.
      */
-    function GetContentBlockValue($blockName,$blockParams,$inputParams,ContentBase $content_obj)
+    function GetContentBlockFieldValue($blockName,$blockParams,$inputParams,ContentBase $content_obj)
     {
         return FALSE;
     }
@@ -922,13 +921,14 @@ abstract class CMSModule
      * block types to the CMSMS content objects.
      *
      * @abstract
+     * @since 2.0
      * @param string $blockName Content block name
      * @param mixed  $value     Content block value
      * @param arrray $blockparams Content block parameters.
      * @param contentBase $content_obj The content object that is currently being edited.
      * @return string An error message if the value is invalid, empty otherwise.
      */
-    function ValidateContentBlockValue($blockName,$value,$blockparams,ContentBase $content_obj)
+    function ValidateContentBlockFieldValue($blockName,$value,$blockparams,ContentBase $content_obj)
     {
         return '';
     }
@@ -971,7 +971,7 @@ abstract class CMSModule
     {
         $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.install.php';
         if (@is_file($filename)) {
-            $gCms = cmsms();
+            $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
             $config = $gCms->GetConfig();
             global $CMS_INSTALL_PAGE;
@@ -1012,7 +1012,7 @@ abstract class CMSModule
     {
         $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.uninstall.php';
         if (@is_file($filename)) {
-            $gCms = cmsms();
+            $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
             $config = $gCms->GetConfig();
             $smarty = $gCms->GetSmarty();
@@ -1084,7 +1084,7 @@ abstract class CMSModule
     {
         $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.upgrade.php';
         if (@is_file($filename)) {
-            $gCms = cmsms();
+            $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
             $config = $gCms->GetConfig();
             $smarty = $gCms->GetSmarty();
@@ -1121,11 +1121,11 @@ abstract class CMSModule
      */
     final public function CheckForDependents()
     {
-        $gCms = cmsms();
+        $gCms = CmsApp::get_instance();
         $db = $gCms->GetDb();
         $result = false;
 
-        $query = "SELECT child_module FROM ".cms_db_prefix()."module_deps WHERE parent_module = ? LIMIT 1";
+        $query = "SELECT child_module FROM ".CMS_DB_PREFIX."module_deps WHERE parent_module = ? LIMIT 1";
         $tmp = $db->GetOne($query,array($this->GetName()));
         if( $tmp ) $result = true;
         return $result;
@@ -1141,8 +1141,7 @@ abstract class CMSModule
      */
     final public function CreateXMLPackage( &$message, &$filecount )
     {
-        $gCms = cmsms();
-        $modops = $gCms->GetModuleOperations();
+        $modops = ModuleOperations::get_instance();
         return $modops->CreateXmlPackage($this, $message, $filecount);
     }
 
@@ -1301,10 +1300,9 @@ abstract class CMSModule
      *
      *
      * @abstract
-     * @param string $htmlresult The html-code of the page before replacing SyntaxHighlighter-stuff
      * @return string
      */
-    public function SyntaxGenerateHeader($htmlresult='')
+    public function SyntaxGenerateHeader()
     {
         return '';
     }
@@ -1373,9 +1371,9 @@ abstract class CMSModule
             //See: http://0x6a616d6573.blogspot.com/2010/02/cms-made-simple-166-file-inclusion.html
             $name = preg_replace('/[^A-Za-z0-9\-_+]/', '', $name);
 
-            $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/action.' . $name . '.php';
+            $filename = $this->GetModulePath().'/action.' . $name . '.php';
             if (@is_file($filename)) {
-                $gCms = cmsms();
+                $gCms = CmsApp::get_instance();
                 $db = $gCms->GetDb();
                 $config = $gCms->GetConfig();
                 $smarty = $gCms->GetSmarty();
@@ -1436,7 +1434,8 @@ abstract class CMSModule
         $id = cms_htmlentities($id);
         $name = cms_htmlentities($name);
 
-        $smarty = cmsms()->GetSmarty();
+        $gCms = CmsApp::get_instance();
+        $smarty = $gCms->GetSmarty();
         $smarty->assign('actionid',$id);
         $smarty->assign('actionparams',$params);
         $smarty->assign('returnid',$returnid);
@@ -1446,8 +1445,6 @@ abstract class CMSModule
         $output = $this->DoAction($name, $id, $params, $returnid);
 
         if( isset($params['assign']) ) {
-            $gCms = cmsms();
-            $smarty = $gCms->GetSmarty();
             $smarty->assign(cms_htmlentities($params['assign']),$output);
             return;
         }
@@ -2122,6 +2119,7 @@ abstract class CMSModule
      * Returns the xhtml equivalent of a textarea.	Also takes Syntax hilighter preference
      * into consideration if it's called from the admin side.
      *
+     * @deprecated
      * @param string $id The id given to the module on execution
      * @param string $text The text to display in the textarea's content
      * @param string $name The html name of the textarea
@@ -2382,7 +2380,7 @@ abstract class CMSModule
         $result=array();
         $tmp = ModuleOperations::get_modules_with_capability($capability,$params);
         if( is_array($tmp) && count($tmp) ) {
-            for( $i = 0; $i < count($tmp); $i++ ) {
+            for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
                 if( is_object($tmp[$i]) ) {
                     $result[] = get_class($tmp[$i]);
                 }
@@ -2611,7 +2609,7 @@ abstract class CMSModule
      */
     final public function ListUserTags()
     {
-        $gCms = cmsms();
+        $gCms = CmsApp::get_instance();
         $usertagops = $gCms->GetUserTagOperations();
         return $usertagops->ListUserTags();
     }
@@ -2627,7 +2625,7 @@ abstract class CMSModule
      */
     final public function CallUserTag($name, $params = array())
     {
-        $gCms = cmsms();
+        $gCms = CmsApp::get_instance();
         $usertagops = $gCms->GetUserTagOperations();
         return $usertagops->CallUserTag($name, $params);
     }
@@ -2769,7 +2767,7 @@ abstract class CMSModule
      */
     public function SetContentType($contenttype)
     {
-        cmsms()->set_content_type($contenttype);
+        CmsApp::get_instance()->set_content_type($contenttype);
     }
 
     /**
@@ -2965,7 +2963,7 @@ abstract class CMSModule
         $prefix = $this->GetName().'_mapi_pref_'.$prefix;
         $tmp = cms_siteprefs::list_by_prefix($prefix);
         if( is_array($tmp) && count($tmp) ) {
-            for( $i = 0; $i < count($tmp); $i++ ) {
+            for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
                 if( !startswith($tmp[$i],$prefix) ) {
                     throw new CmsInvalidDataException(__CLASS__.'::'.__METHOD__.' invalid prefix for preference');
                 }
@@ -3032,7 +3030,7 @@ abstract class CMSModule
                 . $originator . "." . $eventname . '.php';
 
             if (@is_file($filename)) {
-                $gCms = cmsms();
+                $gCms = CmsApp::get_instance();
                 $db = $gCms->GetDb();
                 $config = $gCms->GetConfig();
                 $smarty = $gCms->GetSmarty();

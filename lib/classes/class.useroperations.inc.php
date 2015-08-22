@@ -29,7 +29,7 @@
 /**
  * Include user class definition
  */
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'class.user.inc.php');
+require_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.user.inc.php');
 
 /**
  * Class for doing user related functions.  Maybe of the User object functions
@@ -89,12 +89,12 @@ class UserOperations
 	function &LoadUsers($limit = 10000,$offset = 0)
 	{
 		if( !is_array($this->_users) ) {
-			$gCms = cmsms();
+			$gCms = CmsApp::get_instance();
 			$db = $gCms->GetDb();
 			$result = array();
 
 			$query = "SELECT user_id, username, password, first_name, last_name, email, active, admin_access
-                      FROM ".cms_db_prefix()."users ORDER BY username";
+                      FROM ".CMS_DB_PREFIX."users ORDER BY username";
 			$dbresult = $db->SelectLimit($query,$limit,$offset);
 
 			while( $dbresult && !$dbresult->EOF ) {
@@ -127,11 +127,11 @@ class UserOperations
 	 */
 	function &LoadUsersInGroup($groupid)
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 		$result = array();
 
-		$query = "SELECT u.user_id, u.username, u.password, u.first_name, u.last_name, u.email, u.active, u.admin_access FROM ".cms_db_prefix()."users u, ".cms_db_prefix()."groups g, ".cms_db_prefix()."user_groups cg where cg.user_id = u.user_id and cg.group_id = g.group_id and g.group_id =? ORDER BY username";
+		$query = "SELECT u.user_id, u.username, u.password, u.first_name, u.last_name, u.email, u.active, u.admin_access FROM ".CMS_DB_PREFIX."users u, ".CMS_DB_PREFIX."groups g, ".CMS_DB_PREFIX."user_groups cg where cg.user_id = u.user_id and cg.group_id = g.group_id and g.group_id =? ORDER BY username";
 		$dbresult = $db->Execute($query, array($groupid));
 
 		while ($dbresult && $row = $dbresult->FetchRow()) {
@@ -165,14 +165,14 @@ class UserOperations
 	{
 		// note: does not use cache
 		$result = false;
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
 		$params = array();
 		$where = array();
 		$joins = array();
 
-		$query = "SELECT u.user_id FROM ".cms_db_prefix()."users u";
+		$query = "SELECT u.user_id FROM ".CMS_DB_PREFIX."users u";
 		$where[] = 'username = ?';
 		$params[] = $username;
 
@@ -182,7 +182,7 @@ class UserOperations
 		}
 
 		if ($activeonly == true) {
-			$joins[] = cms_db_prefix()."user_groups ug ON u.user_id = ug.user_id";
+			$joins[] = CMS_DB_PREFIX."user_groups ug ON u.user_id = ug.user_id";
 			$where[] = "u.active = 1";
 		}
 
@@ -213,10 +213,10 @@ class UserOperations
 		if( isset($this->_saved_users[$id]) ) return $this->_saved_users[$id];
 
 		$result = false;
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "SELECT username, password, active, first_name, last_name, admin_access, email FROM ".cms_db_prefix()."users WHERE user_id = ?";
+		$query = "SELECT username, password, active, first_name, last_name, admin_access, email FROM ".CMS_DB_PREFIX."users WHERE user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		while ($dbresult && $row = $dbresult->FetchRow()) {
@@ -247,17 +247,17 @@ class UserOperations
 	{
 		$result = -1;
 
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
 		// check for conflict in username
-		$query = 'SELECT user_id FROM '.cms_db_prefix().'users WHERE username = ?';
+		$query = 'SELECT user_id FROM '.CMS_DB_PREFIX.'users WHERE username = ?';
 		$tmp = $db->GetOne($query,array($user->username));
 		if( $tmp ) return $result;
 
 		$time = $db->DBTimeStamp(time());
-		$new_user_id = $db->GenID(cms_db_prefix()."users_seq");
-		$query = "INSERT INTO ".cms_db_prefix()."users (user_id, username, password, active, first_name, last_name, email, admin_access, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,".$time.",".$time.")";
+		$new_user_id = $db->GenID(CMS_DB_PREFIX."users_seq");
+		$query = "INSERT INTO ".CMS_DB_PREFIX."users (user_id, username, password, active, first_name, last_name, email, admin_access, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,".$time.",".$time.")";
 		$dbresult = $db->Execute($query, array($new_user_id, $user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1)); //Force admin access on
 		if ($dbresult !== false) $result = $new_user_id;
 
@@ -274,16 +274,16 @@ class UserOperations
 	function UpdateUser($user)
 	{
 		$result = false;
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
 		// check for username conflict
-		$query = 'SELECT user_id FROM '.cms_db_prefix().'users WHERE username = ? and user_id != ?';
+		$query = 'SELECT user_id FROM '.CMS_DB_PREFIX.'users WHERE username = ? and user_id != ?';
 		$tmp = $db->GetOne($query,array($user->username,$user->id));
 		if( $tmp ) return $result;
 
 		$time = $db->DBTimeStamp(time());
-		$query = "UPDATE ".cms_db_prefix()."users SET username = ?, password = ?, active = ?, modified_date = ".$time.", first_name = ?, last_name = ?, email = ?, admin_access = ? WHERE user_id = ?";
+		$query = "UPDATE ".CMS_DB_PREFIX."users SET username = ?, password = ?, active = ?, modified_date = ".$time.", first_name = ?, last_name = ?, email = ?, admin_access = ? WHERE user_id = ?";
 		#$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, $user->adminaccess, $user->id));
 		$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1, $user->id));
 		if ($dbresult !== false) $result = true;
@@ -304,19 +304,19 @@ class UserOperations
  		if( !check_permission(get_userid(),'Manage Users') ) return false;
 
 		$result = false;
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "DELETE FROM ".cms_db_prefix()."user_groups where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."user_groups where user_id = ?";
 		$db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".cms_db_prefix()."additional_users where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users where user_id = ?";
 		$db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".cms_db_prefix()."users where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."users where user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".cms_db_prefix()."userprefs where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."userprefs where user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		if ($dbresult !== false) $result = true;
@@ -333,10 +333,10 @@ class UserOperations
 	function CountPageOwnershipByID($id)
 	{
 		$result = 0;
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "SELECT count(*) AS count FROM ".cms_db_prefix()."content WHERE owner_id = ?";
+		$query = "SELECT count(*) AS count FROM ".CMS_DB_PREFIX."content WHERE owner_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		if ($dbresult && $dbresult->RecordCount() > 0) {
@@ -412,8 +412,8 @@ class UserOperations
 	function GetMemberGroups($uid)
 	{
 		if( !is_array(self::$_user_groups) || !isset(self::$_user_groups[$uid]) ) {
-			$db = cmsms()->GetDb();
-			$query = 'SELECT group_id FROM '.cms_db_prefix().'user_groups WHERE user_id = ?';
+			$db = CmsApp::get_instance()->GetDb();
+			$query = 'SELECT group_id FROM '.CMS_DB_PREFIX.'user_groups WHERE user_id = ?';
 			$col = $db->GetCol($query,array((int)$uid));
 			if( !is_array(self::$_user_groups) ) self::$_user_groups = array();
 			self::$_user_groups[$uid] = $col;
@@ -433,9 +433,9 @@ class UserOperations
 		$gid = (int)$gid;
 		if( $uid < 1 || $gid < 1 ) return;
 
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$now = $db->DbTimeStamp(time());
-		$query = 'INSERT INTO '.cms_db_prefix()."user_groups
+		$query = 'INSERT INTO '.CMS_DB_PREFIX."user_groups
                   (group_id,user_id,create_date,modified_date)
                   VALUES (?,?,$now,$now)";
 		$dbr = $db->Execute($query,array($uid,$gid));
@@ -460,9 +460,7 @@ class UserOperations
 
 		try {
 			foreach( $groups as $gid ) {
-				if( GroupOperations::get_instance()->CheckPermission($gid,$permname) ) {
-					return TRUE;
-				}
+				if( GroupOperations::get_instance()->CheckPermission($gid,$permname) ) return TRUE;
 			}
 		}
 		catch( CmsException $e ) {

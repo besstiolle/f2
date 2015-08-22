@@ -15,7 +15,8 @@ else {
 }
 
 $cache_id = '|ns'.md5(serialize($params));
-if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
+$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id);
+if( !$tpl_ob->IsCached() ) {
   $detailpage = '';
   $tmp = $this->GetPreference('detail_returnid',-1);
   if( $tmp > 0 ) $detailpage = $tmp;
@@ -38,34 +39,34 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
 
   $entryarray = array();
   $query1 = "
-            SELECT 
-                mn.*, 
-                mnc.news_category_name, 
-                mnc.long_name, 
-                u.username, 
+            SELECT
+                mn.*,
+                mnc.news_category_name,
+                mnc.long_name,
+                u.username,
                 u.first_name,
-                u.last_name 
-            FROM " . 
-    cms_db_prefix() . "module_news mn
-            LEFT OUTER JOIN " . cms_db_prefix() . "module_news_categories mnc 
-            ON mnc.news_category_id = mn.news_category_id 
-            LEFT OUTER JOIN " . cms_db_prefix() . "users u 
-            ON u.user_id = mn.author_id 
-            WHERE 
-                status = 'published' 
+                u.last_name
+            FROM " .
+    CMS_DB_PREFIX . "module_news mn
+            LEFT OUTER JOIN " . CMS_DB_PREFIX . "module_news_categories mnc
+            ON mnc.news_category_id = mn.news_category_id
+            LEFT OUTER JOIN " . CMS_DB_PREFIX . "users u
+            ON u.user_id = mn.author_id
+            WHERE
+                status = 'published'
             AND
         ";
 
   $query2 = "
             SELECT count(mn.news_id) as count
             FROM " .
-    cms_db_prefix() . "module_news mn
-            LEFT OUTER JOIN " . cms_db_prefix() . "module_news_categories mnc 
-            ON mnc.news_category_id = mn.news_category_id 
-            LEFT OUTER JOIN " . cms_db_prefix() . "users u 
-            ON u.user_id = mn.author_id 
-            WHERE 
-                status = 'published' 
+    CMS_DB_PREFIX . "module_news mn
+            LEFT OUTER JOIN " . CMS_DB_PREFIX . "module_news_categories mnc
+            ON mnc.news_category_id = mn.news_category_id
+            LEFT OUTER JOIN " . CMS_DB_PREFIX . "users u
+            ON u.user_id = mn.author_id
+            WHERE
+                status = 'published'
             AND
         ";
 
@@ -113,7 +114,7 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
     $query1 .= ") AND ";
     $query2 .= ") AND ";
   }
-  
+
   if( isset($params['showall']) ) {
     // show everything irrespective of end date.
     $query1 .= 'IF(start_time IS NULL,news_date <= NOW(),start_time <= NOW())';
@@ -137,10 +138,10 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
   switch( $sortby ) {
     case 'news_category':
       if (isset($params['sortasc']) && (strtolower($params['sortasc']) == 'true')) {
-        $query1 .= "ORDER BY mnc.long_name ASC, mn.news_date "; 
+        $query1 .= "ORDER BY mnc.long_name ASC, mn.news_date ";
       } else {
         $query1 .= "ORDER BY mnc.long_name DESC, mn.news_date ";
-      }    
+      }
       break;
 
     case 'random':
@@ -165,21 +166,21 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
 
   if( $sortrandom == false ) {
     if (isset($params['sortasc']) && (strtolower($params['sortasc']) == 'true')) {
-      $query1 .= "asc"; 
+      $query1 .= "asc";
     }
     else {
-      $query1 .= "desc"; 
+      $query1 .= "desc";
     }
   }
 
-  $pagelimit = 100000;
+  $pagelimit = 1000;
   if( isset( $params['pagelimit'] ) ) {
-    $pagelimit = intval($params['pagelimit']);
+      $pagelimit = (int) ($params['pagelimit']);
   }
   else if( isset( $params['number'] ) ) {
-    $pagelimit = intval($params['number']);
+      $pagelimit = (int) ($params['number']);
   }
-  $pagelimit = max(2,$pagelimit);
+  $pagelimit = max(1,min(1000,$pagelimit)); // maximum of 1000 entries.
 
   // Get the number of rows (so we can determine the numer of pages)
   $pagecount = -1;
@@ -206,35 +207,35 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
 
   // Assign some pagination variables to smarty
   if( $pagenumber == 1 ) {
-    $smarty->assign('prevpage',$this->Lang('prevpage'));
-    $smarty->assign('firstpage',$this->Lang('firstpage'));
+    $tpl_ob->assign('prevpage',$this->Lang('prevpage'));
+    $tpl_ob->assign('firstpage',$this->Lang('firstpage'));
   }
   else {
     $params['pagenumber']=$pagenumber-1;
-    $smarty->assign('prevpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('prevpage'),$params));
-    $smarty->assign('prevurl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
+    $tpl_ob->assign('prevpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('prevpage'),$params));
+    $tpl_ob->assign('prevurl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
     $params['pagenumber']=1;
-    $smarty->assign('firstpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('firstpage'),$params));
-    $smarty->assign('firsturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
+    $tpl_ob->assign('firstpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('firstpage'),$params));
+    $tpl_ob->assign('firsturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
   }
-  
+
   if( $pagenumber >= $pagecount ) {
-    $smarty->assign('nextpage',$this->Lang('nextpage'));
-    $smarty->assign('lastpage',$this->Lang('lastpage'));
+    $tpl_ob->assign('nextpage',$this->Lang('nextpage'));
+    $tpl_ob->assign('lastpage',$this->Lang('lastpage'));
   }
   else {
     $params['pagenumber']=$pagenumber+1;
-    $smarty->assign('nextpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('nextpage'),$params));
-    $smarty->assign('nexturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
+    $tpl_ob->assign('nextpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('nextpage'),$params));
+    $tpl_ob->assign('nexturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
     $params['pagenumber']=$pagecount;
-    $smarty->assign('lastpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('lastpage'),$params));
-    $smarty->assign('lasturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
+    $tpl_ob->assign('lastpage',$this->CreateFrontendLink($id,$returnid,'default',$this->Lang('lastpage'),$params));
+    $tpl_ob->assign('lasturl',$this->CreateFrontendLink($id,$returnid,'default','',$params, '', true));
   }
-  $smarty->assign('pagenumber',$pagenumber);
-  $smarty->assign('pagecount',$pagecount);
-  $smarty->assign('oftext',$this->Lang('prompt_of'));
-  $smarty->assign('pagetext',$this->Lang('prompt_page'));
-  
+  $tpl_ob->assign('pagenumber',$pagenumber);
+  $tpl_ob->assign('pagecount',$pagecount);
+  $tpl_ob->assign('oftext',$this->Lang('prompt_of'));
+  $tpl_ob->assign('pagetext',$this->Lang('prompt_page'));
+
   $dbresult = '';
   if( $pagelimit < 100000 || $startelement > 0 ) {
     $dbresult = $db->SelectLimit( $query1,$pagelimit,$startelement);
@@ -242,7 +243,7 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
   else {
     $dbresult = $db->Execute($query1);
   }
-  
+
   {
     // build a list of news id's so we can preload stuff from other tables.
     $result_ids = array();
@@ -257,7 +258,7 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
   while( $dbresult && !$dbresult->EOF ) {
     $row = $dbresult->fields;
     $onerow = new stdClass();
-    
+
     $onerow->author_id = $row['author_id'];
     if( $onerow->author_id > 0 ) {
       $onerow->author = $row['username'];
@@ -293,13 +294,13 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
     $onerow->fields = news_ops::get_fields($row['news_id'],TRUE);
     $onerow->fieldsbyname = $onerow->fields; // dumb, I know.
     $onerow->file_location = $gCms->config['uploads_url'].'/news/id'.$row['news_id'];
-    
+
     $moretext = isset($params['moretext'])?$params['moretext']:$this->Lang('more');
     $sendtodetail = array('articleid'=>$row['news_id']);
     if (isset($params['showall'])) $sendtodetail['showall'] = $params['showall'];
     if (isset($params['detailpage'])) $sendtodetail['origid'] = $returnid;
     if (isset($params['detailtemplate'])) $sendtodetail['detailtemplate'] = $params['detailtemplate'];
-    
+
     $prettyurl = $row['news_url'];
     if( $prettyurl == '' ) {
       $aliased_title = munge_string_to_url($row['news_title']);
@@ -311,28 +312,28 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
     if (isset($params['category_id'])) $sendtodetail['category_id'] = $params['category_id'];
     if (isset($params['pagelimit'])) $sendtodetail['pagelimit'] = $params['pagelimit'];
 
-    $onerow->link = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, '', $sendtodetail,'', true, false, '', true, 
+    $onerow->link = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, '', $sendtodetail,'', true, false, '', true,
 				      $prettyurl);
-    $onerow->titlelink = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $row['news_title'], $sendtodetail, '', 
+    $onerow->titlelink = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $row['news_title'], $sendtodetail, '',
 					   false, false, '', true, $prettyurl);
-    $onerow->morelink = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $moretext, $sendtodetail, '', false, 
+    $onerow->morelink = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $moretext, $sendtodetail, '', false,
 					  false, '', true, $prettyurl);
-    $onerow->moreurl = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $moretext, $sendtodetail, '', true, false, '', 
+    $onerow->moreurl = $this->CreateLink($id, 'detail', $detailpage!=''?$detailpage:$returnid, $moretext, $sendtodetail, '', true, false, '',
 					 true, $prettyurl);
 
     $entryarray[]= $onerow;
     $dbresult->MoveNext();
   }
 
-  $smarty->assign('itemcount', count($entryarray));
-  $smarty->assign('items', $entryarray);
-  $smarty->assign('category_label', $this->Lang('category_label'));
-  $smarty->assign('author_label', $this->Lang('author_label'));
+  $tpl_ob->assign('itemcount', count($entryarray));
+  $tpl_ob->assign('items', $entryarray);
+  $tpl_ob->assign('category_label', $this->Lang('category_label'));
+  $tpl_ob->assign('author_label', $this->Lang('author_label'));
 
   foreach( $params as $key => $value ) {
     if( $key == 'mact' || $key == 'action' ) continue;
 
-    $smarty->assign('param_'.$key,$value);
+    $tpl_ob->assign('param_'.$key,$value);
   }
 
   $catName = '';
@@ -340,17 +341,18 @@ if( !$smarty->isCached($this->GetDatabaseResource($template),$cache_id) ) {
     $catName = $params['category'];
   }
   else if (isset($params['category_id'])) {
-    $catName = $db->GetOne('SELECT news_category_name FROM '.cms_db_prefix() . 'module_news_categories where news_category_id=?',array($params['category_id']));		
+    $catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?',array($params['category_id']));
   }
-  $smarty->assign('category_name',$catName);
+  $tpl_ob->assign('category_name',$catName);
 
   unset($params['pagenumber']);
   $items = news_ops::get_categories($id,$params,$returnid);
-  $smarty->assign('count', count($items));
-  $smarty->assign('cats', $items);
+  $tpl_ob->assign('count', count($items));
+  $tpl_ob->assign('cats', $items);
 }
 
+
 // Display template
-echo $smarty->fetch($this->GetDatabaseResource($template),$cache_id);
+$tpl_ob->display();
 
 ?>

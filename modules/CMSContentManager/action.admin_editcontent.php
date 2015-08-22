@@ -40,54 +40,53 @@ $this->SetCurrentTab('pages');
 //
 // init
 //
-$this->SetCurrentTab('pages');
-$user_id = get_userid();
-$content_id = null;
-$content_obj = null;
-$pagedefaults = CmsContentManagerUtils::get_pagedefaults();
-$content_type = $pagedefaults['contenttype'];
-$error = null;
+try {
+    $user_id = get_userid();
+    $content_id = null;
+    $content_obj = null;
+    $pagedefaults = CmsContentManagerUtils::get_pagedefaults();
+    $content_type = $pagedefaults['contenttype'];
+    $error = null;
 
-if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
+    if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
 
-if( isset($params['cancel']) ) {
-    try {
-        if( $content_id && CmsContentManagerUtils::locking_enabled() ) {
-            $lock_id = CmsLockOperations::is_locked('content',$content_id);
-            CmsLockOperations::unlock($lock_id,'content',$content_id);
+    if( isset($params['cancel']) ) {
+        try {
+            if( $content_id ) {
+                $lock_id = CmsLockOperations::is_locked('content',$content_id);
+                CmsLockOperations::unlock($lock_id,'content',$content_id);
+            }
+        }
+        catch( Exception $e ) {
+            // do nothing.
+        }
+        unset($_SESSION['__cms_copy_obj__']);
+        $this->SetMessage($this->Lang('msg_cancelled'));
+        $this->RedirectToAdminTab();
+    }
+
+    if( $content_id < 1 ) {
+        // adding.
+        if( !$this->CheckPermission('Add Pages') ) {
+            // no permission to add pages.
+            $this->SetError($this->Lang('error_editpage_permission'));
+            $this->RedirectToAdminTab();
         }
     }
-    catch( Exception $e ) {
-        // do nothing.
-    }
-    unset($_SESSION['__cms_copy_obj__']);
-    $this->SetMessage($this->Lang('msg_cancelled'));
-    $this->RedirectToAdminTab();
-}
-
-if( $content_id < 1 ) {
-    // adding.
-    if( !$this->CheckPermission('Add Pages') ) {
-        // no permission to add pages.
+    else if( !$this->CanEditContent($content_id) ) {
+        // nope, can't edit this page anyways.
         $this->SetError($this->Lang('error_editpage_permission'));
         $this->RedirectToAdminTab();
     }
-}
-else if( !$this->CanEditContent($content_id) ) {
-    // nope, can't edit this page anyways.
-    $this->SetError($this->Lang('error_editpage_permission'));
-    $this->RedirectToAdminTab();
-}
 
-// Get a list of content types and pick a default if necessary
-$gCms = cmsms();
-$contentops = $gCms->GetContentOperations();
-$existingtypes = $contentops->ListContentTypes(false,true);
+    // Get a list of content types and pick a default if necessary
+    $gCms = cmsms();
+    $contentops = $gCms->GetContentOperations();
+    $existingtypes = $contentops->ListContentTypes(false,true);
 
-//
-// load or create the initial content object
-//
-try {
+    //
+    // load or create the initial content object
+    //
     if( $content_id == 'copy' && isset($_SESSION['__cms_copy_obj__']) ) {
         // we're copying a content object.
         $content_obj = unserialize($_SESSION['__cms_copy_obj__']);
@@ -184,7 +183,8 @@ try {
             audit($content_obj->Id(),'Content Item: '.$content_obj->Name(),' Edited');
             if( isset($params['submit']) ) {
                 try {
-                    if( $content_id && CmsContentManagerUtils::locking_enabled() ) {
+                    if( $content_id ) {
+                        // unconditionally unlock, even if locking is not enabled.
                         $lock_id = CmsLockOperations::is_locked('content',$content_id);
                         CmsLockOperations::unlock($lock_id,'content',$content_id);
                     }
@@ -222,10 +222,18 @@ catch( CmsContentException $e ) {
 //
 if( $content_id && CmsContentManagerUtils::locking_enabled() ) {
     try {
-        // here we are attempting to steal a lock.
+        // check if this thing is already locked.
         $lock_id = CmsLockOperations::is_locked('content',$content_id);
-        if( $lock_id > 0 ) CmsLockOperations::unlock($lock_id,'content',$content_id);
+        $lock = null;
+        if( $lock_id > 0 ) {
+            // it's locked... by somebody, make sure it's expired before we allow stealing it.
+            $lock = CmsLock::load('content',$content_id);
+            if( !$lock->expired() ) throw new CmsLockException('CMSEX_L010');
+            CmsLockOperations::unlock($lock_id,'content',$content_id);
+        }
+        // get a new lock.
         $lock = new CmsLock('content',$content_id, (int) $this->GetPreference('lock_timeout'));
+        $lock->save();
         $smarty->assign('lock',$lock);
     }
     catch( CmsException $e ) {

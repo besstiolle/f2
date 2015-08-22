@@ -13,5 +13,4 @@ $config['url_rewriting'] = 'mod_rewrite';
 $config['page_extension'] = '';
 $config['developer_mode'] = 'TRUE';
 $config['root_url'] = 'http://f2.localhost';
-
 ?>

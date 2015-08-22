@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: style.php 9506 2014-04-24 20:05:22Z calguy1000 $
+#$Id: style.php 9938 2015-05-05 15:44:01Z calguy1000 $
 
 $CMS_ADMIN_PAGE = TRUE;
 $CMS_STYLESHEET = TRUE;
@@ -48,12 +48,8 @@ if( is_object($thelang) && $thelang->direction() == 'rtl' ) $style.="-rtl";
 if (isset($_GET['ie'])) $style.="_ie";
 $style .= ".css";
 
-if (file_exists(dirname(__FILE__)."/themes/".$theme."/css/".$style)) {
-    $cms_readfile(dirname(__FILE__)."/themes/".$theme."/css/".$style);
-}
-if (file_exists(dirname(__FILE__)."/themes/".$theme."/extcss/".$style)) {
-    $cms_readfile(dirname(__FILE__)."/themes/".$theme."/extcss/".$style);
-}
+if (file_exists(__DIR__."/themes/".$theme."/css/".$style)) $cms_readfile(__DIR__."/themes/".$theme."/css/".$style);
+if (file_exists(__DIR__."/themes/".$theme."/extcss/".$style)) $cms_readfile(__DIR__."/themes/".$theme."/extcss/".$style);
 
 $allmodules = ModuleOperations::get_instance()->GetLoadedModules();
 if( is_array($allmodules) && count($allmodules) ) {

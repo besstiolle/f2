@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.group.inc.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: class.group.inc.php 9949 2015-05-10 01:43:22Z calguy1000 $
 
 /**
  * Classes and functions related to CMSMS admin groups.
@@ -81,7 +81,7 @@ class Group
 	function Save()
 	{
 		$result = false;
-		$groupops = cmsms()->GetGroupOperations();
+		$groupops = GroupOperations::get_instance();
 
 		if ($this->id > -1) {
 			$result = $groupops->UpdateGroup($this);
@@ -108,7 +108,7 @@ class Group
 		$result = false;
 
 		if ($this->id > -1) {
-			$groupops = cmsms()->GetGroupOperations();
+			$groupops = GroupOperations::get_instance();
 			$result = $groupops->DeleteGroupByID($this->id);
 			if ($result) $this->SetInitialValues();
 		}
@@ -130,7 +130,7 @@ class Group
 	public function HasPermission($perm)
 	{
 		if( $this->id <= 0 ) return FALSE;
-		$groupops = cmsms()->GetGroupOperations();
+		$groupops = GroupOperations::get_instance();
 		return $groupops->CheckPermission($this->id,$perm);
 	}
 
@@ -148,7 +148,7 @@ class Group
 	{
 		if( $this->id <= 0 ) return;
 		if( $this->HasPermission($perm) ) return;
-		$groupops = cmsms()->GetGroupOperations();
+		$groupops = GroupOperations::get_instance();
 		return $groupops->GrantPermission($this->id,$perm);
 	}
 
@@ -166,7 +166,7 @@ class Group
 	{
 		if( $this->id <= 0 ) return;
 		if( !$this->HasPermission($perm) ) return;
-		$groupops = cmsms()->GetGroupOperations();
+		$groupops = GroupOperations::get_instance();
 		return $groupops->RemovPermission($this->id,$perm);
 	}
 

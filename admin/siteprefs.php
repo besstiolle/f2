@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: siteprefs.php 9642 2014-07-19 16:09:30Z calguy1000 $
+#$Id: siteprefs.php 10016 2015-06-01 14:56:46Z calguy1000 $
 
 /**
  * Init variables / objects
@@ -91,7 +91,6 @@ $mail_is_set = cms_siteprefs::get('mail_is_set',0);
 $testresults = lang('untested');
 $thumbnail_width = 96;
 $thumbnail_height = 96;
-$disablesafemodewarning = 0;
 $enablenotifications = 1;
 $sitedownexcludes = '';
 $sitedownexcludeadmins = '';
@@ -168,7 +167,6 @@ $logintheme = cms_siteprefs::get('logintheme',$logintheme);
 $backendwysiwyg = cms_siteprefs::get('backendwysiwyg',$backendwysiwyg);
 $metadata = cms_siteprefs::get('metadata',$metadata);
 $sitename = cms_siteprefs::get('sitename',$sitename);
-$disablesafemodewarning = cms_siteprefs::get('disablesafemodewarning',$disablesafemodewarning);
 $enablenotifications = cms_siteprefs::get('enablenotifications',$enablenotifications);
 $lock_timeout = (int)cms_siteprefs::get('lock_timeout',$lock_timeout);
 $sitedownexcludes = cms_siteprefs::get('sitedownexcludes',$sitedownexcludes);
@@ -207,6 +205,7 @@ if( isset($_POST['testmail']) ) {
     }
     else {
         $addr = cleanValue($_POST['mailtest_testaddress']);
+        $addr = cms_html_entity_decode($addr);
         if( !is_email($addr) ) {
             $error .= '<li>'.lang('error_mailtest_notemail').'</li>';
         }
@@ -384,7 +383,6 @@ if (isset($_POST["editsiteprefs"])) {
             break;
 
         case 'setup':
-            if (isset($_POST["disablesafemodewarning"])) $disablesafemodewarning = (int)$_POST['disablesafemodewarning'];
             if (isset($_POST["enablenotifications"])) $enablenotifications = (int)$_POST['enablenotifications'];
             if (isset($_POST["lock_timeout"])) $lock_timeout = (int)$_POST['lock_timeout'];
             if (isset($_POST["xmlmodulerepository"])) $xmlmodulerepository = cleanValue($_POST["xmlmodulerepository"]);
@@ -393,7 +391,6 @@ if (isset($_POST["editsiteprefs"])) {
             cms_siteprefs::set('global_umask', $global_umask);
             cms_siteprefs::set('xmlmodulerepository', $xmlmodulerepository);
             cms_siteprefs::set('checkversion', $checkversion);
-            cms_siteprefs::set('disablesafemodewarning',$disablesafemodewarning);
             cms_siteprefs::set('enablenotifications',$enablenotifications);
             cms_siteprefs::set('lock_timeout',$lock_timeout);
             if( isset($_POST['allow_browser_cache']) ) {
@@ -527,7 +524,6 @@ $smarty->assign('enablesitedownmessage',$enablesitedownmessage);
 $smarty->assign('use_wysiwyg',$use_wysiwyg);
 $smarty->assign('textarea_sitedownmessage',create_textarea($use_wysiwyg,$sitedownmessage,'sitedownmessage','pagesmalltextarea'));
 $smarty->assign('checkversion',$checkversion);
-$smarty->assign('disablesafemodewarning',$disablesafemodewarning);
 $smarty->assign('defaultdateformat',$defaultdateformat);
 $smarty->assign('enablenotifications',$enablenotifications);
 $smarty->assign('lock_timeout',$lock_timeout);

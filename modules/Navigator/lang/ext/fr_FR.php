@@ -32,8 +32,8 @@ $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3>
   <li>$node->modified -- Date de modification de l\'élément</li>
 			<li>$node->parent -- Renvoie true (vrai) si cet élément est le parent de la page actuelle</li>
 			<li>$node->current -- Renvoie true (vrai) si cet élément est la page sélectionnée</li>
-	<li>\$node->has_children -- TRUE si le node a des enfants (if this node has any children at all).</li>
-	<li>\$node->children -- un tableau objets représentant les nodes enfants de ce node affichables. Non défini si le nœud n\'a pas d\'enfants à afficher.</li>
+	<li>$node->has_children -- TRUE si le node a des enfants (if this node has any children at all).</li>
+	<li>$node->children -- un tableau objets représentant les nodes enfants de ce node affichables. Non défini si le nœud n\'a pas d\'enfants à afficher.</li>
 </ul>
 <h3>Exemples :</h3>
    <br />- Affiche une navigation simple à seulement 2 niveaux, en utilisant le modèle par défaut :<br />
@@ -45,14 +45,11 @@ $lang['help'] = '<h3>Que fait ce module&nbsp;?</h3>
    <br />- Affiche une navigation simple à deux niveaux en commençant par les enfants de la page courante, en utilisant le modèle par défaut :<br />
      <pre><code>{Navigator number_of_levels=2 childrenof=$page_alias}</code></pre>
   
-   <br />- Affiche une navigation simple à deux niveaux à partir de la page en cours, et les pages suivantes, en utilisant le modèle par défaut :<br />
-     <pre><code>{Navigator number_of_levels=2 start_page=$page_alias}</code></pre>
+   <br />- Affiche une navigation à deux niveaux à partir de la page en cours, et les pages suivantes, en utilisant le modèle par défaut :<br />
+     <pre><code>{Navigator number_of_levels=2 start_page=$page_alias show_root_siblings=1}</code></pre>
 
-   <br />- Affiche une navigation à deux niveaux à partir de la page en cours, de ses pairs, et les pages suivantes, en utilisant le modèle par défaut :<br />
-     <pre><code>{Navigator start_page=$page_alias show_root_siblings=1}</code></pre>
-
-   <br />- Affiche une navigation des menus spécifiques et leurs enfants, en Utilisant le gabarit "MyMenu" :<br />
-     <pre><code>{Navigator items=\'alias1,alias2,alias3\' number_of_levels=20 template=mymenu }</code></pre>';
+   <br />- Affiche une navigation des menus spécifiques et leurs enfants, en utilisant le gabarit "MyMenu" :<br />
+     <pre><code>{Navigator items=\'alias1,alias2,alias3\' number_of_levels=3 template=mymenu}</code></pre>';
 $lang['help_action'] = 'Spécifier l\'action du module. Ce module prend en charge deux actions :
 <ul>
 <li><em>default</em> - Utilisé pour construire une navigation primaire. (cette action est implicite si aucune action n\'est spécifié).</li>
@@ -66,16 +63,16 @@ $lang['help_items'] = 'Spécifier une liste des alias, séparés par des virgule
 $lang['help_loadprops'] = 'Utiliser ce paramètre lorsque vous n\'utilisez PAS les propriétés avancées  dans votre gabarit de gestionnaire de menu. Ce paramètre permet de désactiver le chargement de toutes les propriétés des contenus de tous les nœuds (tel que extra1, image, thumbnail, etc). Cette opération réduira considérablement le nombre de requêtes nécessaires à la construction d\'un menu en contrepartie la consommation en mémoire augmente, mais cela permet de gérer des menus plus avancés.';
 $lang['help_nlevels'] = 'Alias pour number_of_levels (nombre de niveaux)';
 $lang['help_number_of_levels'] = 'Ce réglage limite la profondeur du menu généré au nombre spécifié de niveaux. Par défaut la valeur de ce paramètre est illimité pour montrer tous les niveaux enfants, sauf si vous utilisez simultanément le paramètre "items" dans ce cas number_of_levels est par défaut égal à 1';
-$lang['help_root'] = 'Utilisé uniquement dans l\'action breadcrumbs ce paramètre indique que le fil d\'Ariane n\'aille pas plus loin vers le haut de l\'arborescence de la page que l\'alias de page spécifié.';
+$lang['help_root2'] = 'Utilisé uniquement dans l\'action breadcrumbs ce paramètre indique que le fil d\'Ariane n\'aille pas plus loin vers le haut de l\'arborescence de la page que l\'alias de page spécifié. La spécification d\'un nombre de valeur négative affichera le fil d\'Ariane jusqu\'au niveau supérieur et ignorera la page par défaut.';
 $lang['help_show_all'] = 'Cette option affichera tous les niveaux même s\'ils sont configuré pour ne pas être afficher dans le menu. Il n\'affichera pas les pages inactives.';
 $lang['help_show_root_siblings'] = 'Cette option est utile lorsque start_element ou start_page est utilisé. Les autres éléments du même niveau que l\'élément sélectionné seront affichés.';
 $lang['help_start_element'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'un élément donné (start_element), ainsi que les niveaux en-dessous de cet élément.  la valeur doit être égale à la position hiérarchique de l\'élément (exemple : 5.1.2).';
 $lang['help_start_level'] = 'Grâce à cette option un menu n\'affichera des éléments qu\'à partir d\'un niveau donné. Prenons un exemple simple : vous avez un premier menu sur une page avec le paramètre number_of_level=\'1\'. Puis un deuxième menu avec start_level=\'2\'. Maintenant, votre second menu affichera ses éléments en fonction de ce qui est sélectionné sur le premier menu.';
 $lang['help_start_page'] = 'Cette option permet d\'afficher uniquement les éléments à partir d\'une page donnée (start_page), ainsi que les niveaux en-dessous de cet élément.  la valeur doit être égale à l\'alias de l\'élément.';
 $lang['help_template'] = 'Le gabarit à utiliser pour l\'affichage du menu. Le gabarit doit exister dans le module DesignManager sinon une erreur sera affichée. Si ce paramètre n\'est pas spécifié le gabarit par défaut de type Navigator::Navigation sera utilisé.';
-$lang['help_start_text'] = 'Utile que dans l\'action breadcrumbs, ce paramètre permet de spécifier un texte facultatif à afficher au début du fil d\'ariane. Un exemple serait "Ici".';
+$lang['help_start_text'] = 'Utile seulement avec l\'action breadcrumbs, ce paramètre permet de spécifier un texte facultatif à afficher au début du fil d\'ariane. Un exemple serait "Vous êtes ici".';
 $lang['type_breadcrumbs'] = 'Fil d\'Ariane';
 $lang['type_Navigator'] = 'Navigator&nbsp;';
 $lang['type_navigation'] = 'Navigation&nbsp;';
-$lang['youarehere'] = 'Ici&nbsp;';
+$lang['youarehere'] = 'Vous êtes ici&nbsp;';
 ?>

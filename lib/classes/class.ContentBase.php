@@ -689,8 +689,7 @@ abstract class ContentBase
 	 */
 	public function Hierarchy()
 	{
-		$gCms = cmsms();
-		$contentops = $gCms->GetContentOperations();
+		$contentops = ContentOperations::get_instance();
 		return $contentops->CreateFriendlyHierarchyPosition($this->mHierarchy);
 	}
 
@@ -978,7 +977,7 @@ abstract class ContentBase
 	 */
 	public function SetAlias($alias = null, $doAutoAliasIfEnabled = true)
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$config = $gCms->GetConfig();
 
 		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
@@ -990,7 +989,7 @@ abstract class ContentBase
 			$alias = munge_string_to_url($alias, $tolower);
 
 			// Make sure auto-generated new alias is not already in use on a different page, if it does, add "-2" to the alias
-			$contentops = $gCms->GetContentOperations();
+			$contentops = ContentOperations::get_instance();
 			$error = $contentops->CheckAliasError($alias, $this->Id());
 			if ($error !== FALSE) {
 				if (FALSE == empty($alias)) {
@@ -1042,7 +1041,7 @@ abstract class ContentBase
 	 */
 	public function ChildCount()
 	{
-		$hm = cmsms()->GetHierarchyManager();
+		$hm = CmsApp::get_instance()->GetHierarchyManager();
 		$node = $hm->getNodeById($this->mId);
 		if( $node ) return $node->count_children();
 	}
@@ -1095,9 +1094,9 @@ abstract class ContentBase
 		if( $this->mId <= 0 ) return FALSE;
 
 		$this->_props = array();
-		$db = cmsms()->GetDb();
-		$query = 'SELECT * FROM '.cms_db_prefix().'content_props WHERE content_id = ?';
-		$dbr = $db->GetArray($query,array($this->mId));
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
+		$dbr = $db->GetArray($query,array((int)$this->mId));
 
 		foreach( $dbr as $row ) {
 			$this->_props[$row['prop_name']] = $row['content'];
@@ -1113,15 +1112,15 @@ abstract class ContentBase
 		if( $this->mId <= 0 ) return FALSE;
 		if( !is_array($this->_props) || count($this->_props) == 0 ) return FALSE;
 
-		$db = cmsms()->GetDb();
-		$query = 'SELECT prop_name FROM '.cms_db_prefix().'content_props WHERE content_id = ?';
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT prop_name FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 		$gotprops = $db->GetCol($query,array($this->mId));
 
 		$now = $db->DbTimeStamp(time());
-		$iquery = 'INSERT INTO '.cms_db_prefix()."content_props
+		$iquery = 'INSERT INTO '.CMS_DB_PREFIX."content_props
                     (content_id,type,prop_name,content,modified_date)
                     VALUES (?,?,?,?,$now)";
-		$uquery = 'UPDATE '.cms_db_prefix()."content_props SET content = ?, modified_date = $now WHERE content_id = ? AND prop_name = ?";
+		$uquery = 'UPDATE '.CMS_DB_PREFIX."content_props SET content = ?, modified_date = $now WHERE content_id = ? AND prop_name = ?";
 
 		foreach( $this->_props as $key => $value ) {
 			if( in_array($key,$gotprops) ) {
@@ -1349,6 +1348,7 @@ abstract class ContentBase
 			$this->Insert();
 		}
 
+        ContentOperations::get_instance()->SetContentModified();
 		Events::SendEvent('Core', 'ContentEditPost', array('content' => &$this));
 	}
 
@@ -1368,14 +1368,13 @@ abstract class ContentBase
 	 */
 	protected function Update()
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
-		$config = $gCms->GetConfig();
 		$result = false;
 
 		// Figure out the item_order (if necessary)
 		if ($this->mItemOrder < 1) {
-			$query = "SELECT ".$db->IfNull('max(item_order)','0')." as new_order FROM ".cms_db_prefix()."content WHERE parent_id = ?";
+			$query = "SELECT ".$db->IfNull('max(item_order)','0')." as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
 			$row = $db->GetRow($query,array($this->mParentId));
 
 			if ($row) {
@@ -1390,7 +1389,7 @@ abstract class ContentBase
 
 		$this->mModifiedDate = trim($db->DBTimeStamp(time()), "'");
 
-		$query = "UPDATE ".cms_db_prefix()."content SET content_name = ?, owner_id = ?, type = ?, template_id = ?, parent_id = ?, active = ?, default_content = ?, show_in_menu = ?, cachable = ?, secure = ?, page_url = ?, menu_text = ?, content_alias = ?, metadata = ?, titleattribute = ?, accesskey = ?, tabindex = ?, modified_date = ?, item_order = ?, last_modified_by = ? WHERE content_id = ?";
+		$query = "UPDATE ".CMS_DB_PREFIX."content SET content_name = ?, owner_id = ?, type = ?, template_id = ?, parent_id = ?, active = ?, default_content = ?, show_in_menu = ?, cachable = ?, secure = ?, page_url = ?, menu_text = ?, content_alias = ?, metadata = ?, titleattribute = ?, accesskey = ?, tabindex = ?, modified_date = ?, item_order = ?, last_modified_by = ? WHERE content_id = ?";
 		$dbresult = $db->Execute($query, array(
                                      $this->mName,
                                      $this->mOwner,
@@ -1417,7 +1416,7 @@ abstract class ContentBase
 
 		if ($this->mOldParentId != $this->mParentId) {
 			// Fix the item_order if necessary
-			$query = "UPDATE ".cms_db_prefix()."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
+			$query = "UPDATE ".CMS_DB_PREFIX."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
 			$result = $db->Execute($query, array($this->mOldParentId,$this->mOldItemOrder));
 
 			$this->mOldParentId = $this->mParentId;
@@ -1425,12 +1424,12 @@ abstract class ContentBase
 		}
 
 		if (isset($this->mAdditionalEditors)) {
-			$query = "DELETE FROM ".cms_db_prefix()."additional_users WHERE content_id = ?";
+			$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users WHERE content_id = ?";
 			$db->Execute($query, array($this->Id()));
 
 			foreach ($this->mAdditionalEditors as $oneeditor) {
-				$new_addt_id = $db->GenID(cms_db_prefix()."additional_users_seq");
-				$query = "INSERT INTO ".cms_db_prefix()."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
+				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
+				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
 				$db->Execute($query, array($new_addt_id, $oneeditor, $this->Id()));
 			}
 		}
@@ -1461,15 +1460,18 @@ abstract class ContentBase
         # :TODO: This function should return something
         # :TODO: Take care bout hierarchy here, it has no value !
         # :TODO: Figure out proper item_order
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
-		$config = $gCms->GetConfig();
 
 		$result = false;
 
+        $query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
+        $dflt_pageid = (int) $db->GetOne($query);
+        if( $dflt_pageid < 1 ) $this->SetDefaultContent(TRUE);
+
 		// Figure out the item_order
 		if ($this->mItemOrder < 1) {
-			$query = "SELECT max(item_order) as new_order FROM ".cms_db_prefix()."content WHERE parent_id = ?";
+			$query = "SELECT max(item_order) as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
 			$row = $db->Getrow($query, array($this->mParentId));
 
 			if ($row) {
@@ -1482,12 +1484,12 @@ abstract class ContentBase
 			}
 		}
 
-		$newid = $db->GenID(cms_db_prefix()."content_seq");
+		$newid = $db->GenID(CMS_DB_PREFIX."content_seq");
 		$this->mId = $newid;
 
 		$this->mModifiedDate = $this->mCreationDate = trim($db->DBTimeStamp(time()), "'");
 
-		$query = "INSERT INTO ".cms_db_prefix()."content (content_id, content_name, content_alias, type, owner_id, parent_id, template_id, item_order, hierarchy, id_hierarchy, active, default_content, show_in_menu, cachable, secure, page_url, menu_text, metadata, titleattribute, accesskey, tabindex, last_modified_by, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		$query = "INSERT INTO ".CMS_DB_PREFIX."content (content_id, content_name, content_alias, type, owner_id, parent_id, template_id, item_order, hierarchy, id_hierarchy, active, default_content, show_in_menu, cachable, secure, page_url, menu_text, metadata, titleattribute, accesskey, tabindex, last_modified_by, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		$dbresult = $db->Execute($query, array(
                                      $newid,
@@ -1527,8 +1529,8 @@ abstract class ContentBase
 		}
 		if (isset($this->mAdditionalEditors)) {
 			foreach ($this->mAdditionalEditors as $oneeditor) {
-				$new_addt_id = $db->GenID(cms_db_prefix()."additional_users_seq");
-				$query = "INSERT INTO ".cms_db_prefix()."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
+				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
+				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
 				$db->Execute($query, array($new_addt_id, $oneeditor, $this->Id()));
 			}
 		}
@@ -1581,8 +1583,7 @@ abstract class ContentBase
 
 		if (!$this->HandlesAlias()) {
 			if ($this->mAlias != $this->mOldAlias || ($this->mAlias == '' && $this->RequiresAlias()) ) {
-				$gCms = cmsms();
-				$contentops = $gCms->GetContentOperations();
+				$contentops = ContentOperations::get_instance();
 				$error = $contentops->CheckAliasError($this->mAlias, $this->mId);
 				if ($error !== FALSE) {
 					$errors[]= $error;
@@ -1601,7 +1602,7 @@ abstract class ContentBase
 				}
 				else {
 					// if it don't explicitly say 'flat' we're creating a hierarchical url.
-					$gCms = cmsms();
+					$gCms = CmsApp::get_instance();
 					$tree = $gCms->GetHierarchyManager();
 					$node = $tree->find_by_tag('id',$this->ParentId());
 					$stack = array($this->mAlias);
@@ -1655,27 +1656,26 @@ abstract class ContentBase
 	 */
 	function Delete()
 	{
-		$gCms = cmsms();
-		$config = $gCms->GetConfig();
+		$gCms = CmsApp::get_instance();
 		Events::SendEvent('Core', 'ContentDeletePre', array('content' => &$this));
 		$db = $gCms->GetDb();
 		$result = false;
 
 		if ($this->mId > 0) {
-			$query = "DELETE FROM ".cms_db_prefix()."content WHERE content_id = ?";
+			$query = "DELETE FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
 			$dbresult = $db->Execute($query, array($this->mId));
 
 			// Fix the item_order if necessary
-			$query = "UPDATE ".cms_db_prefix()."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
+			$query = "UPDATE ".CMS_DB_PREFIX."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
 			$result = $db->Execute($query,array($this->ParentId(),$this->ItemOrder()));
 
 			// DELETE properties
-			$query = 'DELETE FROM '.cms_db_prefix().'content_props WHERE content_id = ?';
+			$query = 'DELETE FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
 			$this->_props = null;
 
 			// Delete additional editors.
-			$query = 'DELETE FROM '.cms_db_prefix().'additional_users WHERE content_id = ?';
+			$query = 'DELETE FROM '.CMS_DB_PREFIX.'additional_users WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
 			$this->mAdditionalEditors = null;
 
@@ -1808,33 +1808,38 @@ abstract class ContentBase
 	 */
 	public function GetURL($rewrite = true)
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$config = $gCms->GetConfig();
 		$url = "";
 		$alias = ($this->mAlias != ''?$this->mAlias:$this->mId);
 
-		$base_url = $config['root_url'];
+		$base_url = CMS_ROOT_URL;
 		if( $this->Secure() ) $base_url = $config['ssl_url'];
 
 		/* use root_url for default content */
-		if($this->mDefaultContent) {
+		if($this->DefaultContent()) {
 			$url =  $base_url . '/';
 			return $url;
 		}
 
-		if ($config["url_rewriting"] == 'mod_rewrite' && $rewrite == true) {
-			$str = $this->HierarchyPath();
-			if( $this->mURL != '') $str = $this->mURL;	// we have a url path
-			$url = $base_url. '/' . $str . (isset($config['page_extension'])?$config['page_extension']:'.html');
-		}
-		else if (isset($_SERVER['PHP_SELF']) && $config['url_rewriting'] == 'internal' && $rewrite == true) {
-			$str = $this->HierarchyPath();
-			if( $this->mURL != '') $str = $this->mURL; // we have a url path
-			$url = $base_url . '/index.php/' . $str . (isset($config['page_extension'])?$config['page_extension']:'.html');
-		}
-		else {
-			$url = $base_url . '/index.php?' . $config['query_var'] . '=' . $alias;
-		}
+        if( $rewrite == true ) {
+            $url_rewriting = $config['url_rewriting'];
+            $page_extension = $config['page_extension'];
+            if ($url_rewriting == 'mod_rewrite') {
+                $str = $this->HierarchyPath();
+                if( $this->mURL != '') $str = $this->mURL;	// we have a url path
+                $url = $base_url . '/' . $str . $page_extension;
+                return $url;
+            }
+            else if (isset($_SERVER['PHP_SELF']) && $url_rewriting == 'internal') {
+                $str = $this->HierarchyPath();
+                if( $this->mURL != '') $str = $this->mURL; // we have a url path
+                $url = $base_url . '/index.php/' . $str . $page_extension;
+                return $url;
+            }
+        }
+
+        $url = $base_url . '/index.php?' . $config['query_var'] . '=' . $alias;
 		return $url;
 	}
 
@@ -1848,25 +1853,25 @@ abstract class ContentBase
 	 */
 	public function ChangeItemOrder($direction)
 	{
-		$db = cmsms()->GetDb();
+		$db = CmsApp::get_instance()->GetDb();
 		$time = $db->DBTimeStamp(time());
 		$parentid = $this->ParentId();
 		$order = $this->ItemOrder();
 		if( $direction < 0 && $this->ItemOrder() > 1 ) {
 			// up
-			$query = 'UPDATE '.cms_db_prefix().'content SET item_order = (item_order + 1), modified_date = '.$time.'
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.'
                   WHERE item_order = ? AND parent_id = ?';
 			$db->Execute($query,array($order-1,$parentid));
-			$query = 'UPDATE '.cms_db_prefix().'content SET item_order = (item_order - 1), modified_date = '.$time.'
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.'
                   WHERE content_id = ?';
 			$db->Execute($query,array($this->Id()));
 		}
 		else if( $direction > 0 ) {
 			// down.
-			$query = 'UPDATE '.cms_db_prefix().'content SET item_order = (item_order - 1), modified_date = '.$time.'
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.'
                   WHERE item_order = ? AND parent_id = ?';
 			$db->Execute($query,array($order+1,$parentid));
-			$query = 'UPDATE '.cms_db_prefix().'content SET item_order = (item_order + 1), modified_date = '.$time.'
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.'
                   WHERE content_id = ?';
 			$db->Execute($query,array($this->Id()));
 		}
@@ -2017,14 +2022,13 @@ abstract class ContentBase
 	 */
 	public function HasChildren($activeonly = false)
 	{
-		$hm = cmsms()->GetHierarchyManager();
-		$node = $hm->getNodeById($this->mId);
+        $node = ContentOperations::get_instance()->quickfind_node_by_id($id);
 		if( !$node->has_children() ) return false;
 		if( $activeonly == false) return true;
 
 		$children = $node->get_children();
 		if( $children ) {
-			for( $i = 0; $i < count($children); $i++ ) {
+			for( $i = 0, $n = count($children); $i < $n; $i++ ) {
 				$content = $children[$i]->getContent();
 				if( $content->Active() ) return true;
 			}
@@ -2042,11 +2046,11 @@ abstract class ContentBase
 	public function GetAdditionalEditors()
 	{
 		if (!isset($this->mAdditionalEditors)) {
-			$gCms = cmsms();
+			$gCms = CmsApp::get_instance();
 			$db = $gCms->GetDb();
 			$this->mAdditionalEditors = array();
 
-			$query = "SELECT user_id FROM ".cms_db_prefix()."additional_users WHERE content_id = ?";
+			$query = "SELECT user_id FROM ".CMS_DB_PREFIX."additional_users WHERE content_id = ?";
 			$dbresult = $db->Execute($query,array($this->mId));
 
 			while ($dbresult && !$dbresult->EOF) {
@@ -2079,9 +2083,8 @@ abstract class ContentBase
 	static public function GetAdditionalEditorOptions()
 	{
 		$opts = array();
-		$gCms = cmsms();
-		$userops = $gCms->GetUserOperations();
-		$groupops = $gCms->GetGroupOperations();
+		$userops = UserOperations::get_instance();
+		$groupops = GroupOperations::get_instance();
 		$allusers = $userops->LoadUsers();
 		$allgroups = $groupops->LoadGroups();
 		foreach ($allusers as $oneuser) {
@@ -2165,7 +2168,7 @@ abstract class ContentBase
 	{
 		if( !is_array($this->_attributes) ) return;
 		$tmp = array();
-		for( $i = 0; $i < count($this->_attributes); $i++ ) {
+		for( $i = 0, $n = count($this->_attributes); $i < $n; $i++ ) {
 			if( is_object($this->_attributes[$i]) && $this->_attributes[$i]->name == $name ) continue;
 			$tmp[] = $this->_attributes[$i];
 		}
@@ -2243,7 +2246,7 @@ abstract class ContentBase
 	 */
 	protected function display_single_element($one,$adding)
 	{
-		$gCms = cmsms();
+		$gCms = CmsApp::get_instance();
 		$config = $gCms->GetConfig();
 
 		switch( $one ) {
@@ -2263,7 +2266,7 @@ abstract class ContentBase
 						 '<input type="text" name="menutext" id="in_menutext" required="required" value="'.cms_htmlentities($this->mMenuText).'" />');
 
 		case 'parent':
-			$contentops = $gCms->GetContentOperations();
+			$contentops = ContentOperations::get_instance();
 			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', 0, 1, 0, 1,get_site_preference('listcontent_showtitle',true) );
 			if( empty($tmp) && !check_permission(get_userid(),'Manage All Content') ) {
 				return array('','<input type="hidden" name="parent_id" value="'.$this->mParentId.'" />');
@@ -2367,8 +2370,8 @@ abstract class ContentBase
 						 '<input type="text" name="extra3" id="extra3" maxlength="255" size="80" value="'.cms_htmlentities($this->GetPropertyValue('extra3')).'" />');
 
 		case 'owner':
-			$showadmin = cmsms()->GetContentOperations()->CheckPageOwnership(get_userid(), $this->Id());
-			$userops = $gCms->GetUserOperations();
+			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(), $this->Id());
+			$userops = UserOperations::get_instance();
 			if (!$adding && (check_permission(get_userid(),'Manage All Content') || $showadmin) ) {
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
 				return array('<label for="owner">'.lang('owner').':</label>'.$help, $userops->GenerateDropdown($this->Owner()));
@@ -2378,7 +2381,7 @@ abstract class ContentBase
 		case 'additionaleditors':
 			// do owner/additional-editor stuff
 			if( $adding || check_permission(get_userid(),'Manage All Content') ||
-				cmsms()->GetContentOperations()->CheckPageOwnership(get_userid(),$this->Id()) ) {
+				ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->Id()) ) {
 				return $this->ShowAdditionalEditors();
 			}
 			break;

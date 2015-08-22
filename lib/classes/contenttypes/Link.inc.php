@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: Link.inc.php 9406 2014-03-28 23:06:42Z calguy1000 $
+#$Id: Link.inc.php 9952 2015-05-10 17:14:31Z calguy1000 $
 
 /**
  * Define the link content type
@@ -100,8 +100,6 @@ class Link extends ContentBase
 
     function EditAsArray($adding = false, $tab = 0, $showadmin = false)
     {
-		$gCms = cmsms();
-
 		switch($tab) {
 		case '0':
 			return $this->display_attributes($adding);

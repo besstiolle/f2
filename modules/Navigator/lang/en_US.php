@@ -60,14 +60,11 @@ $lang['help'] = <<<EOT
    <li>Display a simple navigation two levels deep starting with the children of the current page.  Use the default template:</li>
      <pre><code>{Navigator number_of_levels=2 childrenof=\$page_alias}</code></pre>
    </li>
-   <li>Display a simple navigation two levels deep starting with the current page, and everything below it.  Use the default template:</li>
-     <pre><code>{Navigator number_of_levels=2 start_page=\$page_alias}</code></pre>
-   </li>
-   <li>Display a navigation two levels deep starting with the current page, its peers, and everything below it.  Use the default template:</li>
-     <pre><code>{Navigator start_page=\$page_alias show_root_siblings=1}</code></pre>
+   <li>Display a navigation two levels deep starting with the current page, its peers, and everything below them.  Use the default template:</li>
+     <pre><code>{Navigator number_of_levels=2 start_page=\$page_alias show_root_siblings=1}</code></pre>
    </li>
    <li>Display a navigation of the specified menu items and their children.  Use the template named mymenu</li>
-     <pre><code>{Navigator items='alias1,alias2,alias3' number_of_levels=20 template=mymenu}</code></pre>
+     <pre><code>{Navigator items='alias1,alias2,alias3' number_of_levels=3 template=mymenu}</code></pre>
    </li>
 </ul>
 EOT;
@@ -84,7 +81,7 @@ $lang['help_items'] = 'Specify a comma separated list of page aliases that this 
 $lang['help_loadprops'] = 'Use this parameter when NOT using advanced properties in your menu manager template.  This will disable the loading of all of the content properties for each node (such as extra1, image, thumbnail, etc.).  This will dramatically decrease the number of queries required to build a menu, and increase memory requirements, but will remove the possibility for much more advanced menus';
 $lang['help_nlevels'] = 'Alias for number_of_levels';
 $lang['help_number_of_levels'] = 'This setting will limit the depth of the generated menu to the specified number of levels.  By default the value for this parameter is implied to be unlimited, except when using the items parameter, in which case the number_of_levels parameter is implied to be 1';
-$lang['help_root'] = 'Used only in the &quot;breadcrumbs&quot; action this parameter indicates that the breadcrumbs should go no further up the page tree than the specified page alias.';
+$lang['help_root2'] = 'Used only in the &quot;breadcrumbs&quot; action this parameter indicates that the breadcrumbs should go no further up the page tree than the specified page alias.  Specifying a negative integer value will only display the breadcrumbs up to the top level and will ignore the default page.';
 $lang['help_show_all'] = 'This option will cause the menu to show all nodes even if they are set to not show in the menu. It will still not display inactive pages however.';
 $lang['help_show_root_siblings'] = 'This option only becomes useful if start_element or start_page are used.  It basically will display the siblings along side of the selected start_page/element.';
 $lang['help_start_element'] = 'Starts the menu displaying at the given start_element and showing that element and it\'s children only.  Takes a hierarchy position (e.g. 5.1.2).';

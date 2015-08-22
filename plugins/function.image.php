@@ -16,16 +16,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_image($params, &$template)
+function smarty_function_image($params, &$smarty)
 {
-	$smarty = $template->smarty;
-
+  $gCms = CmsApp::get_instance();
 	$text = '';
 	$imgstart = '<img src=';
 	$imgend = '/>';
 	if( !empty($params['src'] ) ) {
-		$text = $imgstart .= '"'.cmsms()->config['image_uploads_url'].'/'.$params['src'].'"';
-		$size = @getimagesize(cmsms()->config['image_uploads_path'].'/'.$params['src']);
+		$text = $imgstart .= '"'.$gCms->config['image_uploads_url'].'/'.$params['src'].'"';
+		$size = @getimagesize($gCms->config['image_uploads_path'].'/'.$params['src']);
 
         if( !empty($params['width'] ) ) {
             $text .= ' width="'.$params['width'].'"';
