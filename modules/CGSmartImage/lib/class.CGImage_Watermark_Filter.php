@@ -48,7 +48,10 @@ class CGImage_Watermark_Filter extends CGImageFilterBase
             $this->_wmtext = \cge_param::get_string($input,'text');
         }
         else if( is_array($input) && count($input) >= 1 ) {
-            $this->_wmtext = \cge_param::get_string($input,0);
+            $tmp = \cge_param::get_string($input,0);
+            if( is_string($tmp) && !is_numeric($tmp) ) {
+                $this->_wmtext = $tmp;
+            }
         }
     }
 

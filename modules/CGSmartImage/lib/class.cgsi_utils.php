@@ -436,21 +436,21 @@ final class cgsi_utils
             $src_decoded = urldecode($opp['src']);
             if( !$srcfile && startswith($src_decoded,$config['uploads_url']) ) {
                 $tmp = str_replace($config['uploads_url'],$config['uploads_path'],$src_decoded);
-                if( file_exists($tmp) ) {
+                if( is_file($tmp) ) {
                     $relative_to = 'uploads';
                     $srcfile = $tmp;
                 }
             }
             if( !$srcfile && startswith($src_decoded,$config['root_url']) ) {
                 $tmp = str_replace($config['root_url'],$config['root_path'],$src_decoded);
-                if( file_exists($tmp) ) {
+                if( is_file($tmp) ) {
                     $relative_to = 'root';
                     $srcfile = $tmp;
                 }
             }
             if( !$srcfile && isset($config['ssl_url']) && startswith($src_decoded,$config['ssl_url']) ) {
                 $tmp = str_replace($config['ssl_url'],$config['root_path'],$src_decoded);
-                if( file_exists($tmp) ) {
+                if( is_file($tmp) ) {
                     $relative_to = 'root';
                     $srcfile = $tmp;
                 }
@@ -459,7 +459,7 @@ final class cgsi_utils
                 // treat as absolute filename
                 $rp1 = realpath($config['root_path']);
                 $rp2 = realpath($opp['src']);
-                if( startswith($rp2,$rp1) && file_exists($opp['src']) ) {
+                if( startswith($rp2,$rp1) && is_file($opp['src']) ) {
                     $relative_to = 'root';
                     $srcfile = $opp['src'];
                 }
@@ -469,7 +469,7 @@ final class cgsi_utils
                 $tmp = cms_join_path($config['uploads_path'],$opp['src']);
                 $rp1 = realpath($config['uploads_path']);
                 $rp2 = realpath($tmp);
-                if( startswith($rp2,$rp1) && file_exists($tmp) ) {
+                if( startswith($rp2,$rp1) && is_file($tmp) ) {
                     $relative_to = 'uploads';
                     $srcfile = $tmp;
                 }
@@ -479,7 +479,7 @@ final class cgsi_utils
                 $tmp = cms_join_path($config['root_path'],$opp['src']);
                 $rp1 = realpath($config['root_path']);
                 $rp2 = realpath($tmp);
-                if( startswith($rp2,$rp1) && file_exists($tmp) ) {
+                if( startswith($rp2,$rp1) && is_file($tmp) ) {
                     $relative_to = 'root';
                     $srcfile = $tmp;
                 }
@@ -489,7 +489,7 @@ final class cgsi_utils
                 // okay, gotta assume that ths is a remote file
                 // get it, and cache it.
                 $cachefile = TMP_CACHE_LOCATION.'/cgsi_'.md5($opp['src']).'.img';
-                if( !file_exists($cachefile) ) {
+                if( !is_file($cachefile) ) {
                     $data = file_get_contents($opp['src']);
                     if( $data ) {
                         file_put_contents($cachefile,$data);
@@ -706,8 +706,14 @@ final class cgsi_utils
                 if( $tmp_a != $srcinfo['mime'] ) $want_transform = 1;
             }
 
-            // if we got the image from a remote location, but there are no other filters, we will do a simple transform.
-            if( !$relative_to ) $want_transform = 1;
+            // if we got the image from a remote location, but there are no other filters, we will do a simple transform
+            if( !$relative_to ) {
+                $want_transform = 1;
+                if( !count($opp['filters']) ) {
+                    $filter = 'CGImage_NOOP_Filter';
+                    $opp['filters'][] = array($filter,array());
+                }
+            }
 
             // if we have a last filter... add it.
             if( $lastfilter ) $opp['filters'][] = $lastfilter;
@@ -742,8 +748,8 @@ final class cgsi_utils
 
                 $dest_url = $mod->get_cached_image_url($destname);
                 $t1 = filemtime($srcfile);
-                $t2 = file_exists($dest_fname) ? filemtime($dest_fname) : 0;
-                if( !file_exists($dest_fname) || (($t2 < $t1) && !$opp['notimecheck']) || $opp['overwrite']  ) $do_transform = 1;
+                $t2 = is_file($dest_fname) ? filemtime($dest_fname) : 0;
+                if( !is_file($dest_fname) || (($t2 < $t1) && !$opp['notimecheck']) || $opp['overwrite']  ) $do_transform = 1;
             }
             else {
                 // no transofmration... just use the src image
