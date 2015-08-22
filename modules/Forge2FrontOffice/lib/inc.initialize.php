@@ -14,6 +14,12 @@ $smarty->assign('forge_id',$id);
 
 $smarty->addTemplateDir($root_path.'/modules/Forge2FrontOffice/templates'); 
 
+
+require_once(dirname(__FILE__).'/../../CustomContent/lib/class.ccUser.php');
+$smarty = cmsms()->GetSmarty();
+if( !$smarty ) return;
+$smarty->assign('ccUser',ccUser::get_instance());
+
 //Initiate the errorGenerator just-in-case
 errorGenerator::init($this, $id, $returnid, $root_url);
 

@@ -15,16 +15,16 @@
 		{block name=sidebar}
 
 			<div class="panel">
-				{if ccUser::loggedin()}
-					<p><b>Hello {ccUser::property('pseudo')}</b></p><a href={cms_selflink page='account' urlonly=true}>see my account</a>
+				{if $ccUser->loggedin()}
+					<p><b>Hello {$ccUser->property('pseudo')}</b></p><a href={cms_selflink page='account' urlonly=true}>see my account</a>
 				{else}
 					<p><b>Not already with us ?</b></p><a href={cms_selflink page='account'  urlonly=true}>signin</a> - signup
 				{/if}
 			</div>
 
-			{if ccUser::loggedin()}
+			{if $ccUser->loggedin()}
 				<div class="panel">
-					{Forge2FrontOffice action='my_modules' user_id=ccUser::loggedin()}
+					{Forge2FrontOffice action='my_modules' user_id=$ccUser->loggedin()}
 				</div>
 			{/if}
 

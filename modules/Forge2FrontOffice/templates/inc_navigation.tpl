@@ -1,4 +1,5 @@
 {strip}
+{*get_template_vars*}
 
 {if isset($project)}
 	{capture assign='doesPageExists'}{Wiki action='doesPageExists' pprefix="project/{$project.id}/{$project.unix_name}/wiki"}{/capture}
@@ -22,7 +23,7 @@
 		<li><a class='button success tiny' href='{$root_url}/project/{$project.id}/{$project.unix_name}/request/list'>Features Requests</a></li>
 
 	{/if}
-	{if ccUser::loggedin()}
+	{if $ccUser->loggedin()}
 	<li><a class='button tiny' href='{$root_url}/account'>My Account</a></li>
 	<li><a class='button tiny' href='{$root_url}/account'>Logout</a></li>
 	{else}
