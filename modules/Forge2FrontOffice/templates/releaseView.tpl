@@ -44,7 +44,7 @@
 				<li>
 					{$file.filename}
 					<span class="counters">{$file.downloads} Hits</span>
-					<span class="size">{if $file.size < 1048576}{round($file.size/1024)}Ko{else}{round($file.size/1048576)}Mo{/if}
+					<span class="size">{$file.size_human_readable}</span>
 				</li>
 			{/foreach}
 			</ul>

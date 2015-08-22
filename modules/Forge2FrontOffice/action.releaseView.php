@@ -17,6 +17,17 @@ if(empty($params['all'])){
 	if($release === FALSE){ return; }
 	$release['current'] = true;
 	$releases = array($release);
+	
+	//Prepare the size in human readable way
+	for($j=0; $j < count($releases); $j++) {
+		for($k=0; $k < count($releases[$j]['files']); $k++) {
+			if($releases[$j]['files'][$k]['size'] < 1048576){
+				$releases[$j]['files'][$k]['size_human_readable'] = round($releases[$j]['files'][$k]['size'] / 1024).'Ko';
+			} else {
+				$releases[$j]['files'][$k]['size_human_readable'] = round($releases[$j]['files'][$k]['size'] / 1048576).'Mo';
+			}
+		}
+	}
 
 	/**
 	 Check the project
@@ -63,6 +74,17 @@ if(empty($params['all'])){
 	if($result === FALSE){ return; }
 
 	$releases = $result[0];
+	//Prepare the size in human readable way
+	for($j=0; $j < count($releases); $j++) {
+		for($k=0; $k < count($releases[$j]['files']); $k++) {
+			if($releases[$j]['files'][$k]['size'] < 1048576){
+				$releases[$j]['files'][$k]['size_human_readable'] = round($releases[$j]['files'][$k]['size'] / 1024).'Ko';
+			} else {
+				$releases[$j]['files'][$k]['size_human_readable'] = round($releases[$j]['files'][$k]['size'] / 1048576).'Mo';
+			}
+		}
+	}
+
 	$page_counter = $result[1];
 
 
